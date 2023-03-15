@@ -1,5 +1,5 @@
 <template>
-    <router-view/>
+    <!-- <router-view/> -->
     <BreadCrumbs/>
     <div class="container">
         <img id = "girlImage" src="@/assets/girl.jpg" alt = "">

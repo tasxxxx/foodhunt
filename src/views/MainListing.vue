@@ -1,9 +1,13 @@
 <template>
-    <router-view/>
+    <!-- <router-view/> -->
     <BreadCrumbs/>
 <div class = "main">
   <v-container>
-  <br><br><br>
+    <router-link to="/test"><button>Go to test page</button></router-link>
+    <br><br>
+    <router-link to="/test2"><button>Go to ratings card page</button></router-link>
+    <br><br>
+    <router-link to="/custprofile"><button>Go to CUSTOMER PROFILE page</button></router-link>
     <!-- <input type="checkbox" id="checkbox1" name="checkbox1" value="option1">
     <label for="checkbox1">Option 1</label> -->
     <v-alert
@@ -94,7 +98,7 @@
 import BreadCrumbs from '@/components/icons/BreadCrumbs.vue'
 
 export default {
-  name: "PartnerUs",
+  name: "MainListing",
   components:{
     BreadCrumbs
   },

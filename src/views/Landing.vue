@@ -1,8 +1,8 @@
 <template>
   <!-- <router-link to="/register"><button>Register</button></router-link> |
   <router-link to="/login"><button>Login</button></router-link> -->
-  <router-view/>
-
+  
+  <!-- <router-view/> -->
   <img id = "landingimage" src="@/assets/landingimage.jpg" alt = "">
 
   <div class = "rightHalf">

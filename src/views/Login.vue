@@ -57,8 +57,10 @@
 </template>
   
 <script>
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, setPersistence } from "@firebase/auth";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, setPersistence, browserSessionPersistence } from "@firebase/auth";
 import firebaseApp from "../firebase";
+//import firebase from 'firebase/compat/app';
+//import { firebase } from 'firebase/app';
 const auth = getAuth();
 
 export default {
@@ -94,12 +96,15 @@ export default {
         console.log('Logging in:', this.form);
         // Backend API code
         try {
-          
-          ///await setPersistence(auth, firebaseApp.auth().Persistence.SESSIION);
+          console.log("remember me: " + this.form.rememberMe)
+          //await setPersistence(auth, firebase.auth.Auth.Persistence.SESSION);
           const user = await signInWithEmailAndPassword(auth, this.form.email, this.form.password);
-          // if (rememberMe) {
-          //   return setPersistence(auth, firebaseApp.auth().Persistence.LOCAL);
-          // }
+          
+          if (this.form.rememberMe) {
+            console.log("remembering you")
+            setPersistence(auth, browserSessionPersistence)
+            //return setPersistence(auth, firebase.auth.Auth.Persistence.LOCAL);
+          }
           this.$router.push('/mainlisting')
         } catch (error) {
           this.formErrors.password = [error.message];

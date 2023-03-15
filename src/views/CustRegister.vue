@@ -100,9 +100,6 @@ export default {
       //   this.formErrors.lastName = ['Last name is required'];
       // }
 
-      // if (!this.form.phoneNo) {
-      //   this.formErrors.phoneNo = ['Phone number is required'];
-      // }
 
       if (!this.form.email) {
         this.formErrors.email = ['Email is required'];
@@ -118,6 +115,11 @@ export default {
       // if (this.form.password !== this.form.confirmPassword) {
       //   this.formErrors.confirmPassword = ['Passwords do not match'];
       // }
+
+      if (!this.form.phoneNo) {
+        this.formErrors.phoneNo = ['Phone number is required'];
+      }
+
       // Submit form if no errors
       if (Object.keys(this.formErrors).length === 0) {
         try {
@@ -133,6 +135,7 @@ export default {
           //const docRef = await frebaseApp.createUserWithEmailAndPassword(this.email, this.password);
           //console.log(user.uid);
           await this.updateUser();
+          this.$router.push('/mainlisting')
           // You can use your backend API to handle the signup process here
         } catch(error) {
           console.log(error.message);
@@ -149,11 +152,12 @@ export default {
       getAuth().onAuthStateChanged(user => {
         if (user) {
           const uid = user.uid;
-          console.log(uid);
+          console.log("User ID: " + uid);
           setDoc(doc(db, "Users", user.uid), {
             UserID: user.uid,
             UserType: "Customer",
             Email: this.form.email,
+            PhoneNo: this.form.phoneNo,
             // Phone: this.form.phoneNo
           })
         } else {
