@@ -31,9 +31,8 @@ components:{
 
 <style scoped>
 #girlImage{
-    margin-top: 11.5vh;
     width: 100vw;
-    height: 89vh;
+    height: 90vh;
     position: absolute;
     opacity: 1;
 }
