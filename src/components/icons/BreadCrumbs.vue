@@ -1,10 +1,10 @@
 <template>  
   <div class = "BreadCrumbs">
-    <v-breadcrums id = "logo">
+    <v-breadcrumbs id = "logo">
     <v-breadcrumbs-item :to="{ name: 'landing'}">
       <img id = "foodimage" src="@/assets/FoodHuntLogo.png" alt = "">
     </v-breadcrumbs-item>
-    </v-breadcrums>
+    </v-breadcrumbs>
 
     <v-breadcrumbs id= "lpbreadcrumbs">
     <v-breadcrumbs-item :to="{ name: 'partnerus'}">
@@ -27,13 +27,14 @@ export default {
 </script>
 
 <style scoped>
-
+/*
 .BreadCrumbs {
   width: 100%;
   position: absolute;
   right: 0px;
   height: 100%;
 }
+*/
 
 #logo {
     height: 7vh;
