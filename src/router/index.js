@@ -7,6 +7,8 @@ import Test from '../views/Test.vue'
 import Test2 from '../views/Test2.vue'
 import CustProfile from '../views/CustProfile.vue'
 import PartnerUs from '../views/PartnerUs.vue'
+import MyReservation from '../views/MyReservation.vue'
+import MyCart from '../views/MyCart.vue'
 
 const routes = [
   {
@@ -34,6 +36,16 @@ const routes = [
     name: 'mainlisting',
     component: MainListing
   },
+  {
+    path: '/myreservation',
+    name: 'myreservation',
+    component: MyReservation
+  }, 
+  {
+    path: '/mycart',
+    name: 'mycart',
+    component: MyCart
+  }, 
   {
     path: '/test',
     name: 'test',

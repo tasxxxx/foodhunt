@@ -1,6 +1,6 @@
 <template>
     <!-- <router-view/> -->
-    <BreadCrumbs/>
+    <NavigationBar1/>
 <div class = "main">
   <v-container>
     <router-link to="/test"><button>Go to test page</button></router-link>
@@ -95,12 +95,12 @@
 </template>
 
 <script>
-import BreadCrumbs from '@/components/icons/BreadCrumbs.vue'
+import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
 
 export default {
   name: "MainListing",
   components:{
-    BreadCrumbs
+    NavigationBar1
   },
   data() {
     return {
