@@ -1,6 +1,6 @@
 <template>
+    <NavigationBar1/>
     <h1>Email: {{ email }}</h1>
-    <v-btn v-on:click = "signOut" type="submit" color="primary" block>Sign Out</v-btn>
 </template>
 
 <script>
@@ -8,9 +8,14 @@ import firebaseApp from "../firebase";
 import { collection, getFirestore } from "firebase/firestore";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { getAuth, signOut } from "@firebase/auth";
+import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
+ 
 const db = getFirestore(firebaseApp);
 
 export default {
+  components:{
+    NavigationBar1
+  },
   data() {
     return {
       email: "test",
