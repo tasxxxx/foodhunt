@@ -40,7 +40,7 @@ export default {
 */
 
 #logo {
-    height: 7vh;
+    height: 5.5vh;
     top: 2vh;
     left: 3vw;
     background-position: center center;
@@ -50,7 +50,7 @@ export default {
 }
 
 #foodimage { 
-  height: 7vh;
+  height: 5.5vh;
     top: 0vh;
     left: 3vw;
     background-position: center center;
@@ -63,7 +63,7 @@ export default {
     color: rgba(109,93,36,1);
     position: relative;
     height: 0vh;
-    top: -4vh;
+    top: -2.5vh;
     left: 77vw;
     font-family: Nunito; 
     font-size: 1.1vw;

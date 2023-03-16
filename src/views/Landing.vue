@@ -57,7 +57,7 @@ export default {
 }
 
 #foodimage { 
-    height: 6.7vh;
+    height: 5.5vh;
     top: 1.9vh;
     left: 3vw;
     background-position: center center;
@@ -70,7 +70,7 @@ export default {
     color: rgba(109,93,36,1);
     position: relative;
     height: 0vh;
-    top: -4vh;
+    top: -2.5vh;
     left: 32vw;
     font-family: Nunito; 
     font-size: 1.1vw;

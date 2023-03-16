@@ -21,12 +21,12 @@
                 <v-icon icon="mdi-account" v-bind="props"></v-icon>
                 </template>
                 <v-list>
-                    <v-breadcrumbs-item :to="{ name: 'custprofile'}" style= "font-family:Nunito; font-size:1vw">
+                    <v-breadcrumbs-item :to="{ name: 'custprofile'}" style= "font-family:Nunito; font-size:0.9vw">
                       <v-icon icon="mdi-account-details"></v-icon>
                     My Profile 
                     </v-breadcrumbs-item>
                     <br>
-                    <v-breadcrumbs-item :to="{ name: 'landing'}" @click="signOut" style= "font-family:Nunito; font-size:1vw">
+                    <v-breadcrumbs-item :to="{ name: 'landing'}" @click="signOut" style= "font-family:Nunito; font-size:0.9vw">
                       <v-icon icon="mdi-logout"></v-icon>
                     Log Out 
                     </v-breadcrumbs-item>    
@@ -65,7 +65,7 @@
   */
 
   #logo {
-      height: 7vh;
+      height: 5.5vh;
       top: 2vh;
       left: 3vw;
       background-position: center center;
@@ -75,7 +75,7 @@
   }
   
   #foodimage { 
-    height: 7vh;
+    height: 5.5vh;
       top: 0vh;
       left: 3vw;
       background-position: center center;
@@ -88,10 +88,10 @@
       color: rgba(109,93,36,1);
       position: relative;
       height: 0vh;
-      top: -4vh;
+      top: -2.5vh;
       left: 77vw;
       font-family: Nunito; 
-      font-size: 1.3vw;
+      font-size: 1.1vw;
       text-align: right;
       display: flex;
   } 
