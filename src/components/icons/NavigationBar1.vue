@@ -8,28 +8,26 @@
   
       <v-breadcrumbs id= "lpbreadcrumbs">
         <v-breadcrumbs-item :to="{ name: 'myreservation'}">
-            My Reservations /
+          <v-icon icon="mdi-shopping"></v-icon>
+            My Reservations |
         </v-breadcrumbs-item>
         <v-breadcrumbs-item :to="{ name: 'mycart'}">
-            <!-- <div class="cartcount" v-if="getCartCount > 0">{{ getCartCount }}</div> -->
-            My Cart / 
+            <v-icon icon="mdi-cart"></v-icon>
+            My Cart |
         </v-breadcrumbs-item>
         <div class="text-center">
             <v-menu open-on-hover>
                 <template v-slot:activator="{ props }">
-                <!-- EVENTUALLY I WANT IT TO BE ICON INSTEAD OF TEXT -->
-                <v-text
-                    v-bind="props"
-                >
-                User
-                </v-text>
+                <v-icon icon="mdi-account" v-bind="props"></v-icon>
                 </template>
                 <v-list>
-                    <v-breadcrumbs-item :to="{ name: 'custprofile'}" style= "font-family:Nunito; font-size:1.1vw">
+                    <v-breadcrumbs-item :to="{ name: 'custprofile'}" style= "font-family:Nunito; font-size:1vw">
+                      <v-icon icon="mdi-account-details"></v-icon>
                     My Profile 
                     </v-breadcrumbs-item>
                     <br>
-                    <v-breadcrumbs-item :to="{ name: 'landing'}" @click="signOut" style= "font-family:Nunito; font-size:1.1vw">
+                    <v-breadcrumbs-item :to="{ name: 'landing'}" @click="signOut" style= "font-family:Nunito; font-size:1vw">
+                      <v-icon icon="mdi-logout"></v-icon>
                     Log Out 
                     </v-breadcrumbs-item>    
                 </v-list>

@@ -11,12 +11,15 @@
     </v-breadcrumbs-item>
     <v-breadcrumbs id= "lpbreadcrumbs">
     <v-breadcrumbs-item :to="{ name: 'partnerus'}">
-      Partner Us /
+      <v-icon icon="mdi-handshake" size></v-icon>
+      Partner Us |
     </v-breadcrumbs-item>
     <v-breadcrumbs-item :to="{ name: 'register'}">
-      Register / 
+      <v-icon icon="mdi-account-plus"></v-icon>
+      Register | 
     </v-breadcrumbs-item>
     <v-breadcrumbs-item :to="{ name: 'login'}">
+      <v-icon icon="mdi-login"></v-icon>
       Login 
     </v-breadcrumbs-item>
     </v-breadcrumbs>
@@ -70,7 +73,7 @@ export default {
     top: -4vh;
     left: 32vw;
     font-family: Nunito; 
-    font-size: 1.3vw;
+    font-size: 1.1vw;
     text-align: right;
     display: flex;
 } 
