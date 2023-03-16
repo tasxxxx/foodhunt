@@ -39,13 +39,14 @@
 
   <script>
     // Error when uncommenting firebaseApp, cannot find
-    // import firebaseApp from "../firebase.js";
+    // import firebaseApp from "../firebase";
     // import { collection, getFirestore } from "firebase/firestore";
     // import { doc, setDoc, getDoc } from "firebase/firestore";
     // import { getAuth, signOut } from "@firebase/auth";
     // const db = getFirestore(firebaseApp);
 
   export default {
+    // methods: { 
     // async signOut() {
     //   const user = await signOut(getAuth());
     //   this.$router.push('/landing')
@@ -95,8 +96,4 @@
       text-align: right;
       display: flex;
   } 
-
-  #usericon {
-    size: 1px;
-  }
   </style>
