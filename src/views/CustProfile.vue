@@ -23,7 +23,9 @@ export default {
   },
   async mounted() {
     const user = getAuth().currentUser;
-    if (!user) {
+    if (user) {
+      // User is signed in
+    } else {
       console.log("No user is currently signed in");
       return;
     }
