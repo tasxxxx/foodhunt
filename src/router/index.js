@@ -9,6 +9,8 @@ import CustProfile from '../views/CustProfile.vue'
 import PartnerUs from '../views/PartnerUs.vue'
 import MyReservation from '../views/MyReservation.vue'
 import MyCart from '../views/MyCart.vue'
+import VendorDashboard from '../views/VendorDashboard.vue'
+import CreateListing from '../views/CreateListing.vue'
 
 const routes = [
   {
@@ -60,6 +62,16 @@ const routes = [
     path: '/custprofile',
     name: 'custprofile',
     component: CustProfile
+  },
+  {
+    path: '/vendor-dashboard',
+    name: 'vendor-dashboard',
+    component: VendorDashboard
+  },
+  {
+    path: '/create-listing',
+    name: 'create-listing',
+    component: CreateListing
   },
 ]
 
