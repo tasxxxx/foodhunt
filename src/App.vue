@@ -23,9 +23,8 @@ export default {
 
 
 <style scoped>
-  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@800&family=Oxygen:wght@300&display=swap');
   @import url('https://fonts.googleapis.com/css2?family=Lato:wght@900&family=Nunito:wght@800&family=Oxygen:wght@300&display=swap');
-
+  @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;@900&family=Nunito:wght@600;@800&family=Mulish&display=swap');
 /*
 header {
   line-height: 1.5;

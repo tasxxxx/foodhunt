@@ -8,6 +8,7 @@ import Test2 from '../views/Test2.vue'
 import CustProfile from '../views/CustProfile.vue'
 import PartnerUs from '../views/PartnerUs.vue'
 import MyReservation from '../views/MyReservation.vue'
+import MyRestaurant from '../views/Restaurant.vue'
 import MyCart from '../views/MyCart.vue'
 import VendorDashboard from '../views/VendorDashboard.vue'
 import CreateListing from '../views/CreateListing.vue'
@@ -17,6 +18,11 @@ const routes = [
     path: '/',
     name: 'landing',
     component: Landing
+  },
+  {
+    path: '/restaurant',
+    name: 'restaurant',
+    component: MyRestaurant
   },
   {
     path: '/partnerus',
