@@ -71,6 +71,6 @@
     }
     .text-right {
       margin-top:-65px;
-      margin-right:50px;
+      margin-right:5vw;
   }
 </style>
