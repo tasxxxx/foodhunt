@@ -12,6 +12,7 @@ import MyRestaurant from '../views/Restaurant.vue'
 import MyCart from '../views/MyCart.vue'
 import VendorDashboard from '../views/VendorDashboard.vue'
 import CreateListing from '../views/CreateListing.vue'
+import VendorPersonalisation from '../views/VendorPersonalisation.vue'
 
 const routes = [
   {
@@ -78,6 +79,11 @@ const routes = [
     path: '/create-listing',
     name: 'create-listing',
     component: CreateListing
+  },
+  {
+    path: '/vendor-personalisation',
+    name: 'vendor-personalisation',
+    component: VendorPersonalisation
   },
 ]
 
