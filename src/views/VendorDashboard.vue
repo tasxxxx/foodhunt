@@ -1,6 +1,6 @@
 <template  v-if="user">
-    <BreadCrumbs/>
-      <v-layout>
+    <VendorBreadCrumbs/>
+    <v-layout>
         <v-main>
             <v-row>
             <v-col cols="12">
@@ -65,7 +65,7 @@
   
 <script>
 import BreadCrumbs from '@/components/icons/BreadCrumbs.vue'
-import girlImage from '@/assets/girl.jpg'
+import VendorBreadCrumbs from '../components/icons/VendorBreadCrumbs.vue'
 
 export default {
     name: "PartnerUs",
@@ -75,7 +75,8 @@ export default {
       }
     },
     components:{
-        BreadCrumbs
+        BreadCrumbs,
+        VendorBreadCrumbs
     },
     methods: {
         goCreateListing() {
