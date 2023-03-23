@@ -1,36 +1,201 @@
 <template>
     <div class="container">
-      <img id = "backgroundimg" src="@/assets/loginbg.jpg" alt = "">
+      <!-- This looks super weird atm with the background image so let's just comment this out first :)-->
+      <!-- <img id = "backgroundimg" src="@/assets/loginbg.jpg" alt = ""> -->
+
       <div class="pa-6-wrapper">
     
         <v-container>
         <v-card class="pa-6">
           <v-breadcrumbs-item :to="{ name: 'landing'}"><img id = "backgroundimg1" src="@/assets/foodhuntlogo.png" alt = "">
           </v-breadcrumbs-item>
-          <h2 class="text-center mb-6" style="font-family:Nunito">Log In</h2>
-          <v-form ref="form" @submit.prevent="login">
+ 
+          <h2 class="text-center mb-6" style="font-family:Nunito">Personalisation</h2>
+
+            <v-form ref="form">
+
+            <!-- Address -->
             <v-text-field
-              v-model="form.email"
-              label="Email"
+              v-model="form.address"
+              label="Address"
               required
-              :error-messages="formErrors.email"
+              :error-messages="formErrors.address"
               style="font-family:Nunito"
             ></v-text-field>
+
+            <!-- Tags -->
+            
+            <v-card class="mx-auto" width="500">
+                <v-list v-model:opened="open">
+                    <v-list-item title="Tags" style="font-family:Nunito"></v-list-item>
+            
+                <v-list-group value="Cuisines">
+                    <template v-slot:activator="{ props }">
+                        <v-list-item
+                        v-bind="props"
+                        title="Cuisines"
+                        style="font-family:'Nunito"
+                        ></v-list-item>
+                    </template>
+
+                    <v-item-group multiple selected-class="bg-grey">
+                        <v-item v-for="cuisine in cuisiness" :key="cuisine.type"
+                            v-slot="{ selectedClass, toggle }">
+
+                            <v-chip :class="selectedClass" @click="toggle" v-text = "cuisine.type" style="font-family:Nunito"></v-chip>
+                        </v-item>
+                    </v-item-group>
+                </v-list-group>
+                
+                <v-list-group value="Price Range">
+                    <template v-slot:activator="{ props }">
+                        <v-list-item
+                        v-bind="props"
+                        title="Price Range"
+                        style="font-family:Nunito"
+                        ></v-list-item>
+                    </template>
+                    <v-item-group multiple selected-class="bg-grey">
+                        <v-item v-for="pr in pricerange" :key="pr.type"
+                            v-slot="{ selectedClass, toggle }">
+
+                            <v-chip :class="selectedClass" @click="toggle" v-text = "pr.type" style="font-family:Nunito"></v-chip>
+                        </v-item>
+                    </v-item-group>
+                </v-list-group>
+
+                <v-list-group value="Town">
+                    <template v-slot:activator="{ props }">
+                        <v-list-item
+                        v-bind="props"
+                        title="Town"
+                        style="font-family:Nunito"
+                        ></v-list-item>
+                    </template>
+                    <v-item-group multiple selected-class="bg-grey">
+                        <v-item v-for="town in townss" :key="town.type"
+                            v-slot="{ selectedClass, toggle }">
+
+                            <v-chip :class="selectedClass" @click="toggle" v-text = "town.type" style="font-family:Nunito"></v-chip>
+                        </v-item>
+                    </v-item-group>
+                </v-list-group>
+                </v-list>
+            </v-card><br>
+
+            <!-- Operating hours -->
+            <center>
+                <v-card class="max-auto" width="500">
+                    <v-list v-model:opened="open">
+                        <v-list-item title="Operating Hours" style="font-family:Nunito"></v-list-item>
+                
+                        <v-container fluid>
+                            <v-row>
+                                <v-col cols="4">
+                                <v-list-subheader style="font-family:Nunito">Monday</v-list-subheader>
+                                </v-col>
+                        
+                                <v-col cols="8">
+                                <v-text-field
+                                    label="Start - End"
+                                    style="font-family:Nunito"
+                                ></v-text-field>
+                                </v-col>
+                            </v-row>
+                        
+                            <v-row>
+                                <v-col cols="4">
+                                <v-list-subheader style="font-family:Nunito">Tuesday</v-list-subheader>
+                                </v-col>
+                        
+                                <v-col cols="8">
+                                <v-text-field
+                                    label="Start - End"
+                                    style="font-family:Nunito"
+                                ></v-text-field>
+                                </v-col>
+                            </v-row>
+
+                            <v-row>
+                                <v-col cols="4">
+                                <v-list-subheader style="font-family:Nunito">Wednesday</v-list-subheader>
+                                </v-col>
+                        
+                                <v-col cols="8">
+                                <v-text-field
+                                    label="Start - End"
+                                    style="font-family:Nunito"
+                                ></v-text-field>
+                                </v-col>
+                            </v-row>
+
+                            <v-row>
+                                <v-col cols="4">
+                                <v-list-subheader style="font-family:Nunito">Thursday</v-list-subheader>
+                                </v-col>
+                        
+                                <v-col cols="8">
+                                <v-text-field
+                                    label="Start - End"
+                                    style="font-family:Nunito"
+                                ></v-text-field>
+                                </v-col>
+                            </v-row>
+
+                            <v-row>
+                                <v-col cols="4">
+                                <v-list-subheader style="font-family:Nunito">Friday</v-list-subheader>
+                                </v-col>
+                        
+                                <v-col cols="8">
+                                <v-text-field
+                                    label="Start - End"
+                                    style="font-family:Nunito"
+                                ></v-text-field>
+                                </v-col>
+                            </v-row>
+
+                            <v-row>
+                                <v-col cols="4">
+                                <v-list-subheader style="font-family:Nunito">Saturday</v-list-subheader>
+                                </v-col>
+                        
+                                <v-col cols="8">
+                                <v-text-field
+                                    label="Start - End"
+                                    style="font-family:Nunito"
+                                ></v-text-field>
+                                </v-col>
+                            </v-row>
+
+                            <v-row>
+                                <v-col cols="4">
+                                <v-list-subheader style="font-family:Nunito">Sunday</v-list-subheader>
+                                </v-col>
+                        
+                                <v-col cols="8">
+                                <v-text-field
+                                    label="Start - End"
+                                    style="font-family:Nunito"
+                                ></v-text-field>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </v-list>
+                </v-card>
+            </center><br>
+
+            <!-- Remarks -->
+            <v-list-item title="Remarks" style="font-family:Nunito"></v-list-item>
             <v-text-field
-              v-model="form.password"
-              label="Password"
-              type="password"
+              v-model="form.address"
+              label=""
               required
-              :error-messages="formErrors.password"
+              :error-messages="formErrors.address"
               style="font-family:Nunito"
             ></v-text-field>
-            <v-checkbox
-              v-model="form.rememberMe"
-              label="Remember me"
-              color="red"
-              class="mt-4"
-              style="font-family:Nunito"
-            ></v-checkbox>
+
+            <!-- Register as vendor button -->
             <v-btn
               type="submit"
               color="primary"
@@ -38,17 +203,10 @@
               :loading="isLoading"
               block
               style="font-family:Nunito"
-            >
-              Log In
-            </v-btn>
-            <router-link to="/mainlisting"  style= "font-family:Nunito"> Bypass Login </router-link> <br>
-            <router-link to="/vendor-dashboard"  style= "font-family:Nunito"> Bypass Login to vendor</router-link>
+            >Register</v-btn>
+
           </v-form>
-          <div class="text-center mt-6" style="font-family:Nunito">
-            <span>Don't have an account?</span>
-            <!-- <v-btn text to="/signup">Sign Up</v-btn> -->
-            <router-link to="/register"> Register </router-link>
-          </div>
+
         </v-card>
       </v-container>
     
@@ -58,70 +216,64 @@
     </template>
       
     <script>
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, setPersistence, browserSessionPersistence } from "@firebase/auth";
     import firebaseApp from "../firebase";
     //import firebase from 'firebase/compat/app';
     //import { firebase } from 'firebase/app';
-    const auth = getAuth();
     
     export default {
       data() {
         return {
           form: {
-            email: '',
-            password: '',
-            rememberMe: false,
+            address: '',
+            tags: ''
           },
+
+          cuisiness: [
+            {
+                type: 'Chinese'
+            },
+            {
+                type: 'Indian'
+            },
+            {
+                type: 'Malay'
+            },
+            {
+                type: 'Café'
+            }
+          ],
+
+          pricerange: [
+            {
+                type: '$'
+            },
+            {
+                type: '$$'
+            },
+            {
+                type: '$$$'
+            }
+          ],
+          townss: [
+            {
+                type: 'AMK'
+            },
+            {
+                type: 'Orchard'
+            },
+            {
+                type: 'Tampines'
+            }
+          ],
+
+          open: ['Cuisines'],
+
           formErrors: {},
           isLoading: false,
         };
       },
       methods: {
-        async login() {
-          this.formErrors = {};
-    
-          // Check if valid inputs
-          if (!this.form.email) {
-            this.formErrors.email = ['Email is required'];
-          } else if (!this.validEmail(this.form.email)) {
-            this.formErrors.email = ['Please enter a valid email address'];
-          }
-    
-          if (!this.form.password) {
-            this.formErrors.password = ['Password is required'];
-          }
-    
-          // Validation code
-          if (Object.keys(this.formErrors).length === 0) {
-            this.isLoading = true;
-            console.log('Logging in:', this.form);
-            // Backend API code
-            try {
-              console.log("remember me: " + this.form.rememberMe)
-              //await setPersistence(auth, firebase.auth.Auth.Persistence.SESSION);
-              const user = await signInWithEmailAndPassword(auth, this.form.email, this.form.password);
-              
-              if (this.form.rememberMe) {
-                console.log("remembering you")
-                setPersistence(auth, browserSessionPersistence)
-                //return setPersistence(auth, firebase.auth.Auth.Persistence.LOCAL);
-              }
-              this.$router.push('/mainlisting')
-            } catch (error) {
-              this.formErrors.password = [error.message];
-            }
-            setTimeout(() => {
-              this.isLoading = false;
-            }, 2000);
-    
-            
-          }
-        },
-        validEmail(email) {
-          // Email validation code
-          const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(?!.*\.\w{2,})(?:[a-zA-Z]{2,}|xn--[a-zA-Z0-9]+)/;
-          return regex.test(email.trim());
-        },
+
       },
     };
     </script>
