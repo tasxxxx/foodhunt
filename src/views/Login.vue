@@ -60,6 +60,7 @@
 <script>
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, setPersistence, browserSessionPersistence } from "@firebase/auth";
 import firebaseApp from "../firebase";
+import { useToast } from 'vue-toastification'
 //import firebase from 'firebase/compat/app';
 //import { firebase } from 'firebase/app';
 const auth = getAuth();
@@ -79,6 +80,7 @@ export default {
   methods: {
     async login() {
       this.formErrors = {};
+      const toast = useToast();
 
       // Check if valid inputs
       if (!this.form.email) {
