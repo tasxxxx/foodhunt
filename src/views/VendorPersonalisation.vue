@@ -195,7 +195,7 @@
               style="font-family:Nunito"
             ></v-text-field>
 
-            <!-- Register as vendor button -->
+            <!-- Register as vendor button FOR NOW GO TO VENDOR DASHBOARD PAGE-->
             <v-btn
               type="submit"
               color="primary"
@@ -203,6 +203,7 @@
               :loading="isLoading"
               block
               style="font-family:Nunito"
+              href="/vendor-dashboard"
             >Register</v-btn>
 
           </v-form>

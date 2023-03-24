@@ -13,6 +13,7 @@ import MyCart from '../views/MyCart.vue'
 import VendorDashboard from '../views/VendorDashboard.vue'
 import CreateListing from '../views/CreateListing.vue'
 import VendorPersonalisation from '../views/VendorPersonalisation.vue'
+import VendorRegister from '../views/VendorRegister.vue'
 
 const routes = [
   {
@@ -86,6 +87,11 @@ const routes = [
     path: '/vendor-personalisation',
     name: 'vendor-personalisation',
     component: VendorPersonalisation
+  },
+  {
+    path: '/vendor-register',
+    name: 'vendor-register',
+    component: VendorRegister
   },
 ]
 
