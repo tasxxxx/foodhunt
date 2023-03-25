@@ -11,7 +11,7 @@
         My Dashboard
       </v-breadcrumbs-item>
       
-      <v-btn color="black" icon="mdi-account-circle" size="medium" :to="{ name: 'vendor-personalisation'}"></v-btn>
+      <v-btn color="black" icon="mdi-account-circle" size="medium" :to="{ name: 'vendor-profileeditone'}"></v-btn>
       </v-breadcrumbs>
     </div>
   </template>

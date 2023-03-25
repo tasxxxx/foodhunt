@@ -14,6 +14,8 @@ import VendorDashboard from '../views/VendorDashboard.vue'
 import CreateListing from '../views/CreateListing.vue'
 import VendorPersonalisation from '../views/VendorPersonalisation.vue'
 import VendorRegister from '../views/VendorRegister.vue'
+import VendorProfileEditOne from '../views/VendorProfileEditOne.vue'
+import VendorProfileEditTwo from '../views/VendorProfileEditTwo.vue'
 
 const routes = [
   {
@@ -90,6 +92,16 @@ const routes = [
     path: '/vendor-register',
     name: 'vendor-register',
     component: VendorRegister
+  },
+  {
+    path: '/vendor-profileeditone',
+    name: 'vendor-profileeditone',
+    component: VendorProfileEditOne
+  },
+  {
+    path: '/vendor-profileedittwo',
+    name: 'vendor-profileedittwo',
+    component: VendorProfileEditTwo
   },
 ]
 
