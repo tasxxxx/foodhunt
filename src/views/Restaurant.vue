@@ -2,6 +2,7 @@
     <NavigationBar1/>
     <div class="restaurant-info">
       <img id = "restaurantimg" src="@/assets/mcdonalds.jpg" alt = "">
+      <img id="restaurantimg1" :src="restaurant.imageurl" alt="">
       <h1 id="restaurantname">{{ restaurant.name }}</h1>       
       <h3 id="restauranttag" v-html="restaurant.tags"></h3>
       <div class="text-right">
@@ -68,15 +69,40 @@
               </v-card>
             </v-dialog>
           </div>
-      </div>    
+      </div> 
+
+  <h2 class="text" style="font-family:Nunito">Available Products</h2>
+  <div class="product-card-info">
+      <div v-for="prod in products" :key="prod.name" className="product">
+          <img src="@/assets/mcdonalds.jpg" alt="Restaurant Image" className="product-img">
+          <!-- {{ f.id }} -->
+          <div className="product-name">
+            {{ prod.Name }}
+          </div>
+          <div className="description"> 
+            {{ prod.Description }}
+          </div>
+          <div className="addedQty"> 
+            <label for="quantity">Added Quantity: </label>
+              <select>
+              <option v-for="i in prod.AvailableQty" :key="i" :value="selectedQuantity">{{ i }}</option>
+              </select>          
+          </div>
+          <div className="price"> 
+            Price: ${{ prod.Price }}
+          </div>
+          <add-to-cart id="ATC"></add-to-cart>
+      </div>
+      
+    </div> 
 </template>
 
 <script> 
 import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
-// import AddToCart from '@/components/icons/AddToCart.vue';
-import firebaseApp from '../firebase.js';
+import AddToCart from '@/components/icons/AddToCart.vue';
+import firebaseApp from "../firebase";
 import { getFirestore } from 'firebase/firestore';
-import { getDoc, doc} from 'firebase/firestore';
+import { getDoc, doc, getDocs, collection} from 'firebase/firestore';
 const db = getFirestore(firebaseApp);
 
 export default {
@@ -84,25 +110,27 @@ export default {
   // props: ['id'],
   components:{
     NavigationBar1,
-    // AddToCart
+    AddToCart
   }, 
   data() {
     return {
       dialog: false, 
       restaurant: [],
-      products: []
+      products: [],
+      imageurl: "",
+      selectedQuantity: 1
     }
   },  
   async mounted() {
     // for the time being it is hardcoded, but i will need to wait for the router to be ready before I can... 
     const restaurantRef = doc(db, 'restaurant_personalisation', 'McDonalds');
     const docSnap = await getDoc(restaurantRef);
-    console.log(docSnap);
 
     if (docSnap.exists()) {
       const documentData = docSnap.data();
 
       const name = documentData.Name;
+      // const image = documentData.imageID;
       const tags = documentData.Tags.join(" / ");
       const address = documentData.Address;
       const monday = documentData.Monday; 
@@ -126,13 +154,20 @@ export default {
         sunday, 
         remarks,
       };
+      this.imageurl = documentData.imageID;
     } else {
       console.log('No such document!');
     }
-  },
-};
-</script>
 
+    const productRef = await getDocs(collection(db, "food_listings"))
+    productRef.forEach((doc) => {
+      if ('McDonalds' === doc.data().Vendor) {
+              this.products.push(doc.data()); 
+            }
+      });
+    } 
+  };  
+</script>
 <style scoped>
 #restaurantimg {
   width: 100vw;
@@ -150,6 +185,69 @@ export default {
 .text-right {
   margin-top:-65px;
   margin-right:5vw;
+}
+
+.product-card-info {
+  display:flex;
+  flex-wrap: wrap;
+  margin-left:4vw;
+  margin-top: 10px;
+
+}
+.text { 
+  margin-left:5vw;
+  margin-top: 50px;
+}
+.product{
+  border: 2px solid #d3cdcd;
+  width: 300px;
+  height: 260px;
+  box-shadow: 0 2px #d3cdcd;
+  border-radius: 15px;
+  position: relative;
+  margin: 20px;
+} 
+
+.product-name {
+  font-size: 20px;
+  margin-top: -8px;
+  margin-left: 5px;
+  font-family:"Lato";
+
+}
+.product-img {
+  width: 100%;
+  height: 150px;
+  border-radius: 15px;
+  font-family:"Lato";
+}
+
+.description{
+  width: 99999999999999px;
+  margin-left: 5px;
+  font-family:"Lato";
+}
+.addedQty{
+  width: 99999999999999px;
+  margin-left: 5px;
+  font-family:"Lato";
+}
+
+.price{
+  width: 99999999999999px;
+  margin-left: 5px;
+  font-family:"Lato";
+}
+
+#ATC{
+  left: 170px;
+  margin-top:-60px;
+  height: 10%;
+  width: 42%;
+}
+
+select {
+  -webkit-appearance: listbox !important;
 }
 
 </style>
