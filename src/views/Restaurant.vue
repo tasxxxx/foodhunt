@@ -84,14 +84,15 @@
           </div>
           <div className="addedQty"> 
             <label for="quantity">Added Quantity: </label>
-              <select>
-              <option v-for="i in prod.AvailableQty" :key="i" :value="selectedQuantity">{{ i }}</option>
+              <select v-model="selectedQuantity">
+              <!-- to fix: why the value moves together... -->
+              <option v-for="i in prod.AvailableQty" :key="i" :value="i">{{ i }}</option>
               </select>          
           </div>
           <div className="price"> 
             Price: ${{ prod.Price }}
           </div>
-          <add-to-cart id="ATC"></add-to-cart>
+          <add-to-cart id="ATC" :quantity = "selectedQuantity" :prodID= "prod"></add-to-cart>
       </div>
       
     </div> 
@@ -118,7 +119,7 @@ export default {
       restaurant: [],
       products: [],
       imageurl: "",
-      selectedQuantity: 1
+      selectedQuantity: null
     }
   },  
   async mounted() {
