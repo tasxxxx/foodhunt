@@ -62,23 +62,6 @@
 
             // Update the cart document in Firestore with the updated vendor list
             await setDoc(cartRef, { vendors: vendors });
-    
-            // // Retrieve the user's shopping cart
-            // const cartRef = doc(db, "shopping_carts", this.user.email);
-            // const cartData = await getDoc(cartRef);
-
-            // // Get the current list of products in the cart, or create an empty list if none exists
-            // const products = cartData.exists() ? cartData.data().products : {};
-
-            // // Add the desired quantity of the product to the cart
-            // if (products.hasOwnProperty(this.prodID.Name)) {
-            //     products[this.prodID.Name] += this.quantity;
-            //   } else {
-            //     products[this.prodID.Name] = this.quantity;
-            // }
-
-            // // Update the cart document in Firestore with the updated product list
-            // await setDoc(cartRef, { products: products });
 
             toast.success("Product is successfully added to the cart!", {
             position: "top-right",
