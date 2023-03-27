@@ -2,6 +2,12 @@
     <!-- <router-view/> -->
     <NavigationBar1/>
 <div class = "main">
+  <v-breadcrumbs-item :to="{ name: 'restaurant'}">
+          <v-icon icon="mdi-shopping"></v-icon>
+            My restaurant |
+        </v-breadcrumbs-item>
+        <add-to-cart></add-to-cart>
+      
   <v-container>
     <router-link to="/test"><button>Go to test page</button></router-link>
     <br><br>
@@ -99,11 +105,13 @@
 
 <script>
 import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
+import AddToCart from '@/components/icons/AddToCart.vue';
 
 export default {
   name: "MainListing",
   components:{
-    NavigationBar1
+    NavigationBar1,
+    AddToCart
   },
   data() {
     return {

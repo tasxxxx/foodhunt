@@ -2,7 +2,7 @@
 <div class="container">
   <img id = "backgroundimg" src="@/assets/loginbg.jpg" alt = "">
   <div class="pa-6-wrapper">
-    <v-app>
+
     <v-container>
     <v-card class="pa-6">
       <v-breadcrumbs-item :to="{ name: 'landing'}"><img id = "backgroundimg1" src="@/assets/foodhuntlogo.png" alt = "">
@@ -41,7 +41,8 @@
         >
           Log In
         </v-btn>
-        <router-link to="/mainlisting"  style= "font-family:Nunito"> Bypass Login </router-link>
+        <router-link to="/mainlisting"  style= "font-family:Nunito"> Bypass Login </router-link> <br>
+        <router-link to="/vendor-dashboard"  style= "font-family:Nunito"> Bypass Login to vendor</router-link>
       </v-form>
       <div class="text-center mt-6" style="font-family:Nunito">
         <span>Don't have an account?</span>
@@ -50,7 +51,7 @@
       </div>
     </v-card>
   </v-container>
-  </v-app>
+
   </div>
 </div>
 
@@ -59,6 +60,7 @@
 <script>
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, setPersistence, browserSessionPersistence } from "@firebase/auth";
 import firebaseApp from "../firebase";
+import { useToast } from 'vue-toastification'
 //import firebase from 'firebase/compat/app';
 //import { firebase } from 'firebase/app';
 const auth = getAuth();
@@ -78,6 +80,7 @@ export default {
   methods: {
     async login() {
       this.formErrors = {};
+      const toast = useToast();
 
       // Check if valid inputs
       if (!this.form.email) {

@@ -12,6 +12,8 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import router from './router'
+import Toast from "vue-toastification";
+import "vue-toastification/dist/index.css";
 
 
 
@@ -48,4 +50,4 @@ const vuetify = createVuetify({
   // },
 })
 
-createApp(App).use(vuetify).use(router).mount('#app')
+createApp(App).use(vuetify).use(router).use(Toast).mount('#app')

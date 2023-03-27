@@ -14,7 +14,8 @@
                 policy also pushes for an environmentally friendly solution to an everyday problem. 
                 So what are you waiting for? Join us by clicking the button below and let us build a food hunting ecosystem like no other! Happy hunting!
             </div><br><br>
-            <center><v-btn id = 'searchbutton' variant="outlined">Register as a vendor!</v-btn></center>
+
+            <center><v-btn id = 'searchbutton' variant="outlined" href="/vendor-register">Register as a vendor!</v-btn></center>
         </div>
 </template>
   
