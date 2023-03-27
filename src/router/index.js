@@ -16,12 +16,13 @@ import VendorPersonalisation from '../views/VendorPersonalisation.vue'
 import VendorRegister from '../views/VendorRegister.vue'
 import VendorProfileEditOne from '../views/VendorProfileEditOne.vue'
 import VendorProfileEditTwo from '../views/VendorProfileEditTwo.vue'
+import RestaurantListing from '../views/RestaurantListing.vue';
 
 const routes = [
   {
     path: '/',
     name: 'landing',
-    component: Landing
+    component: Landing,
   },
   {
     // path: '/restaurants/:id',
@@ -33,47 +34,52 @@ const routes = [
   {
     path: '/partnerus',
     name: 'partnerus',
-    component: PartnerUs
+    component: PartnerUs,
   },
   {
     path: '/register',
     name: 'register',
-    component: CustRegister
+    component: CustRegister,
   },
   {
     path: '/login',
     name: 'login',
-    component: Login
+    component: Login,
   },
   {
     path: '/mainlisting',
     name: 'mainlisting',
-    component: MainListing
+    component: MainListing,
+  },
+  {
+    path: '/restaurantlisting',
+    name: 'restaurantlisting',
+    component: RestaurantListing,
   },
   {
     path: '/myreservation',
     name: 'myreservation',
-    component: MyReservation
-  }, 
+    component: MyReservation,
+  },
   {
     path: '/mycart',
     name: 'mycart',
-    component: MyCart
-  }, 
+    component: MyCart,
+  },
   {
     path: '/test',
     name: 'test',
-    component: Test
+    component: Test,
   },
   {
     path: '/test2',
     name: 'test2',
-    component: Test2
+    component: Test2,
   },
   {
     path: '/custprofile',
     name: 'custprofile',
-    component: CustProfile
+    component: CustProfile,
   },
   {
     path: '/vendor-dashboard',
@@ -110,7 +116,7 @@ const routes = [
 const router = createRouter({
   mode: 'history',
   history: createWebHistory(),
-  routes
-})
+  routes,
+});
 
-export default router
+export default router;
