@@ -37,49 +37,57 @@
           // Can access the details here. 
           const productData = this.prodID;
           if(this.user) {
-            // Retrieve the user's shopping cart
-            const cartRef = doc(db, "shopping_carts", this.user.email);
-            const cartData = await getDoc(cartRef);
+              // Retrieve the user's shopping cart
+              const cartRef = doc(db, "shopping_carts", this.user.email);
+              const cartData = await getDoc(cartRef);
+                
+              // Get the current list of products in the cart, or create an empty list if none exists
+              const products = cartData.exists() ? cartData.data().products : {};
 
-            // Get the current list of vendors in the cart, or create an empty list if none exists
-            const vendors = cartData.exists() ? cartData.data().vendors : {};
-
-            // Get the vendor's ID from the product information
-            const vendorID = this.prodID.Vendor;
-
-            // Get the current list of products for the vendor, or create an empty list if none exists
-            const vendorProducts = vendors.hasOwnProperty(vendorID) ? vendors[vendorID] : {};
-
-            // Add the desired quantity of the product to the vendor's list in the cart
-            if (vendorProducts.hasOwnProperty(this.prodID.Name)) {
-                vendorProducts[this.prodID.Name] += this.quantity;
-            } else {
-                vendorProducts[this.prodID.Name] = this.quantity;
+              // Add the desired quantity of the product to the cart
+              if (this.quantity === undefined) { 
+                toast.error("Error in adding to cart!", {
+                position: "top-right",
+                timeout: 2019,
+                closeOnClick: true,
+                pauseOnFocusLoss: false,
+                pauseOnHover: false,
+                draggable: true,
+                draggablePercent: 2,
+                showCloseButtonOnHover: false,
+                hideProgressBar: false,
+                closeButton: "button",
+                icon: true,
+                rtl: false
+                }); 
+                 
+              } else {
+                if (products.hasOwnProperty([this.prodID.Vendor, this.prodID.Name, this.prodID.Price])) {
+                  products[[this.prodID.Vendor, this.prodID.Name, this.prodID.Price]] += this.quantity;
+                } else {
+                  products[[this.prodID.Vendor, this.prodID.Name, this.prodID.Price]] = this.quantity;
+              }
+              // Update the cart document in Firestore with the updated product list
+              await setDoc(cartRef, { products: products });
+              toast.success("Product is successfully added to the cart!", {
+              position: "top-right",
+              timeout: 2019,
+              closeOnClick: true,
+              pauseOnFocusLoss: false,
+              pauseOnHover: false,
+              draggable: true,
+              draggablePercent: 2,
+              showCloseButtonOnHover: false,
+              hideProgressBar: false,
+              closeButton: "button",
+              icon: true,
+              rtl: false
+              }); 
             }
-
-            // Add or update the vendor's list in the cart
-            vendors[vendorID] = vendorProducts;
-
-            // Update the cart document in Firestore with the updated vendor list
-            await setDoc(cartRef, { vendors: vendors });
-
-            toast.success("Product is successfully added to the cart!", {
-            position: "top-right",
-            timeout: 2019,
-            closeOnClick: true,
-            pauseOnFocusLoss: false,
-            pauseOnHover: false,
-            draggable: true,
-            draggablePercent: 2,
-            showCloseButtonOnHover: false,
-            hideProgressBar: false,
-            closeButton: "button",
-            icon: true,
-            rtl: false
-            }); 
-          }
-          else { //// if user is not logged in, and when it clicks on the add to cart
-            //// error button will be prompted and push to login. 
+            } 
+        else { 
+          //// if user is not logged in, and when it clicks on the add to cart
+          //// error button will be prompted and push to login. 
             toast.error("Non-registered users are not permitted to add to cart!", {
             position: "top-right",
             timeout: 2019,
