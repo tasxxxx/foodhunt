@@ -1,11 +1,41 @@
 <template>  
+    <!-- <div className="navbar" style="display: inline-block;" >
+      <div className="logo">
+        <router-link :to="{ name: 'mainlisting' }">
+          <img id = "foodimage" src="@/assets/FoodHuntLogo.png" alt = "">
+        </router-link>
+      </div>
+      <div class="search-bar">
+        <input type="text" v-model="search" placeholder="Search" /> <br> <br>
+      </div> 
+      <div class="filter button">
+        <img id = "filterbutton" src="@/assets/filter.png" alt = "">
+      </div>  
+      <div className="myReservations">
+        <router-link :to="{ name: 'myreservation' }">
+          My Reservations
+        </router-link>
+      </div>
+      <div className="profile">
+        <router-link :to="{ name: 'myreservation' }">
+          My Reservations
+        </router-link>
+      </div>
+     
+    </div> -->
+
+
+
     <div class = "BreadCrumbs">
       <v-breadcrumbs id = "logo">
       <v-breadcrumbs-item :to="{ name: 'mainlisting'}">
         <img id = "foodimage" src="@/assets/FoodHuntLogo.png" alt = "">
       </v-breadcrumbs-item>
       </v-breadcrumbs>
-  
+      <!-- <v-breadcrumbs id = "search">
+        <input type="text" v-model="search" placeholder="Search" /> <br> <br>
+      </v-breadcrumbs> -->
+      
       <v-breadcrumbs id= "lpbreadcrumbs">
         <v-breadcrumbs-item :to="{ name: 'myreservation'}">
           <v-icon icon="mdi-shopping"></v-icon>
@@ -65,6 +95,10 @@
     height: 100%;
   }
   */
+
+  .navbar {
+    display: block;
+  }
 
   #logo {
       height: 5.5vh;
