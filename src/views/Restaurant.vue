@@ -85,8 +85,7 @@
           <div className="addedQty"> 
             <label for="quantity">Select Quantity: </label>
               <select v-model="prod.selectedQty">
-              <!-- to fix: why the value moves together... -->
-              <option v-for="i in prod.AvailableQty" :key="i" :value="i">{{ i }}</option>
+                <option v-for="i in prod.AvailableQty" :key="i" :value="i">{{ i }}</option>
               </select>          
           </div>
           <div className="price"> 
