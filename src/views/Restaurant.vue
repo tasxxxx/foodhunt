@@ -71,30 +71,34 @@
           </div>
       </div> 
 
-  <h2 class="text" style="font-family:Nunito">Available Products</h2>
-  <div class="product-card-info">
-      <div v-for="prod in products" :key="prod.name" className="product">
-          <img src="@/assets/mcdonalds.jpg" alt="Restaurant Image" className="product-img">
-          <!-- {{ f.id }} -->
-          <div className="product-name">
-            {{ prod.Name }}
-          </div>
-          <div className="description"> 
-            {{ prod.Description }}
-          </div>
-          <div className="addedQty"> 
-            <label for="quantity">Select Quantity: </label>
-              <select v-model="prod.selectedQty">
-                <option v-for="i in prod.AvailableQty" :key="i" :value="i">{{ i }}</option>
-              </select>          
-          </div>
-          <div className="price"> 
-            Price: ${{ prod.Price }}
-          </div>
-          <add-to-cart id="ATC" :quantity = "prod.selectedQty" :prodID= "prod"></add-to-cart>
+    <h1 class="text" style="font-family:Nunito">Available Products</h1>
+    <div class="category-wrapper">
+      <div v-for="(products, category) in categorizedProducts" :key="category" class="category">
+    <h2 id="cat">{{ category }}</h2>
+    <div class="product-wrapper">
+      <div v-for="prod in products" :key="prod.name" class="product">
+        <img src="@/assets/mcdonalds.jpg" alt="Restaurant Image" class="product-img">
+        <div class="product-name">
+          {{ prod.Name }}
+        </div>
+        <div class="description"> 
+          {{ prod.Description }}
+        </div>
+        <div class="addedQty"> 
+          <label for="quantity">Select Quantity: </label>
+          <select v-model="prod.selectedQty">
+            <option v-for="i in prod.AvailableQty" :key="i" :value="i">{{ i }}</option>
+          </select>          
+        </div>
+        <div class="price"> 
+          Price: ${{ prod.Price }}
+        </div>
+        <add-to-cart id="ATC" :quantity = "prod.selectedQty" :prodID= "prod"></add-to-cart>
       </div>
-      
-    </div> 
+    </div>
+  </div>
+  <div class="clear"></div>
+</div>
 </template>
 
 <script> 
@@ -158,16 +162,31 @@ export default {
       console.log('No such document!');
     }
 
-    const productRef = await getDocs(collection(db, "food_listings"))
+    const productRef = await getDocs(collection(db, "food_listings"));
     productRef.forEach((doc) => {
-      if ('McDonalds' === doc.data().Vendor) {
-              this.products.push(doc.data()); 
-            }
-      });
-    } 
-  };  
+      if (doc.data().Vendor === 'McDonalds') {
+        const product = doc.data();
+        product.category = doc.data().Category;
+        this.products.push(product);
+      }
+    });
+    }, 
+    computed: {
+    categorizedProducts() {
+      return this.products.reduce((acc, prod) => {
+        if (!acc[prod.category]) {
+          acc[prod.category] = [prod]
+        } else {
+          acc[prod.category].push(prod)
+        }
+        return acc
+      }, {})
+    }
+  }, 
+}
 </script>
 <style scoped>
+
 #restaurantimg {
   width: 100vw;
   height: 35vh;
@@ -175,6 +194,10 @@ export default {
 #restaurantname {
   margin-left:5vw;
   font-family:"Nunito";
+}
+
+.category-wrapper {
+  margin-left:75px;
 }
 
 #restauranttag {
@@ -186,16 +209,22 @@ export default {
   margin-right:5vw;
 }
 
-.product-card-info {
-  display:flex;
-  flex-wrap: wrap;
-  margin-left:4vw;
-  margin-top: 10px;
-
+.category:nth-child(3n+1) {
+  clear: both;
 }
+
+#cat {
+  padding-left:20px;
+  font-family:Nunito;
+}
+
 .text { 
   margin-left:5vw;
   margin-top: 50px;
+}
+.product-wrapper {
+  display: flex;
+  flex-wrap: wrap;
 }
 .product{
   border: 2px solid #d3cdcd;
@@ -248,6 +277,8 @@ export default {
 select {
   -webkit-appearance: listbox !important;
 }
-
+.clear {
+  clear: both;
+}
 </style>
 
