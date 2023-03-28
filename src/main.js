@@ -14,6 +14,8 @@ import * as directives from 'vuetify/directives'
 import router from './router'
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
+import VueSweetalert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 
 
@@ -50,4 +52,4 @@ const vuetify = createVuetify({
   // },
 })
 
-createApp(App).use(vuetify).use(router).use(Toast).mount('#app')
+createApp(App).use(vuetify).use(router).use(Toast).use(VueSweetalert2).mount('#app')
