@@ -1,43 +1,50 @@
 <template>
   <NavigationBar1/>
-  <div>
     <div class="empty-cart-container" v-if="cart.length === 0">
       <img id ="emptycart" src="@/assets/preview.png" alt = "">
-      <h1 id="message">Oops! It seems like your cart is feeling a bit empty. Time to add some items and fill it up!</h1>
+      <h1 id="message">Oops! It seems like your cart is feeling a bit lonely. Time to add some items and fill it up!</h1>
       <v-breadcrumbs-item :to="{ name: 'mainlisting'}">
         <v-btn rounded="lg" color="primary"> Start Hunting!</v-btn>
       </v-breadcrumbs-item>
       <img id ="emojisad" src="@/assets/emoji.webp" alt = "">
-
     </div>
     <div v-else>
-      <h1>What's in your cart...</h1>
-      <table id="table" class="auto-index">
-        <tr>
-          <th>S.No</th>
-          <th>Restaurant</th>
-          <th>Item</th>
-          <th>Price</th>
-          <th>Quantity</th>
-          <th>Actions</th>
-        </tr>
-        <tr v-for="(item, index) in cart" :key="index">
-          <td>{{ index + 1 }}</td>
-          <td>{{ item.restaurant }}</td>
-          <td>{{ item.item }}</td>
-          <td>{{ item.price }}</td>
-          <td>
-            <button @click="minusItem(item.item, item.restaurant, item.price)" class="bwtminus">-</button>
+      <div class="shopping-cart">
+        <!-- Title -->
+        <div class="title">
+          <h1>What's in your cart...</h1>
+        </div>
+        <!-- Item iteration -->
+        <div class="item" v-for="(item, index) in cart" :key="index">
+          <div class="buttons">
+            <span class="delete-btn">
+              <button @click="deleteItem(item.item, item.restaurant, item.price)" class="delete-btn">X</button>
+            </span>
+          </div>
+          <div class="image">
+            <img id="imageIter" src="@/assets/macs.jpg" alt="" />
+          </div>
+          <div class="description">
+            <span>{{ item.restaurant }}</span>
+            <span>{{ item.item }}</span>
+            <span>${{ item.price }}</span>
+          </div>
+          <div class="quantity">
+            <button class="minus-btn" @click="minusItem(item.item, item.restaurant, item.price)">
+              -
+            </button>
             {{ item.quantity }}
-            <button @click="addItem(item.item, item.restaurant, item.price)" class="bwtplus">+</button>
-          </td>
-          <td>
-            <button @click="deleteItem(item.item, item.restaurant, item.price)" class="bwt">X</button>
-          </td>
-        </tr>
-      </table>
-      <h2 id="totalProfit"> Total Profit is : {{totalCost}} USD</h2>
-  </div>
+            <button class="plus-btn" @click="addItem(item.item, item.restaurant, item.price)">
+              +             
+            </button>
+          </div>
+          <div class="total-price">${{ item.subtotal }}</div>
+        </div>   
+        <div class="total">
+          <h2 id="totalProfit"> Total: ${{totalCost}}</h2>
+          <v-btn rounded="lg" color="orange" @click="deleteItem(item.item, item.restaurant, item.price)" class="checkout-btn"> Checkout</v-btn>
+          </div>
+    </div>
   </div>
 </template>
 
@@ -91,7 +98,15 @@ export default {
         }
       }
     });
-},    
+  },
+  computed: {
+    subtotal() {
+      return this.cart.reduce((sum, item) => sum + item.subtotal, 0);
+    },
+    totalCost() {
+      return this.subtotal;
+    },
+  },    
   methods: {
     async retrieveCart() {
       const toast = useToast();
@@ -102,42 +117,13 @@ export default {
       
       this.cart = Object.entries(products).map(([key, value]) => {
       const [restaurant, item, price] = key.split(",");
-      return { restaurant, item, price, quantity: value, id: `${restaurant}-${item}-${price}` };
-      });
+      const quantity = value;
+      const subtotal = price * quantity;
+      return { restaurant, item, price, quantity, subtotal, id: `${restaurant}-${item}-${price}` };
+    });
       
       // sort the cart by id
       this.cart.sort((a, b) => a.id.localeCompare(b.id));
-      }, 
-
-      async minusItem(item, restaurant, price) {
-        const cartRef = doc(db, "shopping_carts", this.useremail);
-        const cartData = await getDoc(cartRef);
-        const products = cartData.data().products
-        const productKey = `${restaurant},${item},${price}`;
-        const productQuantity = products[productKey];
-        if(productQuantity > 1) {
-          products[productKey]--
-          toast.success("Quantity is deducted successfully!", {
-              position: "top-right",
-              timeout: 2019,
-              closeOnClick: true,
-              pauseOnFocusLoss: false,
-              pauseOnHover: false,
-              draggable: true,
-              draggablePercent: 2,
-              showCloseButtonOnHover: false,
-              hideProgressBar: false,
-              closeButton: "button",
-              icon: true,
-              rtl: false
-              }); 
-        } else if (productQuantity === 0) {
-          deleteItem(item, restaurant, price)
-        }
-        console.log(products[productKey])
-        // update the cart data
-        await setDoc(cartRef, { products }, { merge: true });
-        await this.retrieveCart();
       }, 
 
       async addItem(item, restaurant, price) {
@@ -190,6 +176,41 @@ export default {
         await this.retrieveCart();
       },
 
+
+      async minusItem(item, restaurant, price) {
+        const cartRef = doc(db, "shopping_carts", this.useremail);
+        const cartData = await getDoc(cartRef);
+        const products = cartData.data().products
+        const productKey = `${restaurant},${item},${price}`;
+        const productQuantity = products[productKey];
+        if (productQuantity === 1) {
+          await this.deleteItem(item, restaurant, price);
+        } else {
+          // Otherwise, decrease the quantity by 1
+          products[productKey]--;
+          // Update the cart data
+          await setDoc(cartRef, { products }, { merge: true });
+          await this.retrieveCart();
+          toast.success("Quantity is deducted successfully!", {
+            position: "top-right",
+            timeout: 2019,
+            closeOnClick: true,
+            pauseOnFocusLoss: false,
+            pauseOnHover: false,
+            draggable: true,
+            draggablePercent: 2,
+            showCloseButtonOnHover: false,
+            hideProgressBar: false,
+            closeButton: "button",
+            icon: true,
+            rtl: false
+          });
+        }
+        // update the cart data
+        await setDoc(cartRef, { products }, { merge: true });
+        await this.retrieveCart();
+      },
+
       deleteItem(item, restaurant, price) {
          this.$swal.fire({
           title: 'Are you sure?',
@@ -208,9 +229,9 @@ export default {
             // remove the product from the products object
             delete products[productKey];      
             // update the cart data in Firestore
-            updateDoc(cartRef, { products });
+            await updateDoc(cartRef, { products });
             // refresh the cart data
-            this.retrieveCart();
+            await this.retrieveCart();
             toast.success("Item is removed successfully!", {
               position: "top-right",
               timeout: 2019,
@@ -233,65 +254,6 @@ export default {
 </script>
 
 <style scoped>
-/* Set the font size for the table headers */
-#table th {
-  font-size: 1.2em;
-  font-weight: bold;
-}
-
-/* Set the font size for the table cells */
-#table td {
-  font-size: 1.1em;
-}
-
-/* Set the width of the first column */
-#table td:first-child {
-  width: 5%;
-}
-
-/* Add a background color to the table headers */
-#table th {
-  background-color: #f7f7f7;
-}
-
-/* Add a border to the table */
-#table {
-  border-collapse: collapse;
-  border: 1px solid #ddd;
-  width: 100%;
-  margin-top: 20px;
-}
-
-/* Add a border to the table cells and alternate background colors */
-#table tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
-#table tr:hover {
-  background-color: #f5f5f5;
-}
-
-#table td, #table th {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-/* Style the delete button */
-.bwt {
-  background-color: red;
-  border: none;
-  color: black;
-  padding: 5px 10px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
-  margin: 4px 2px;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
 .empty-cart-container {
   display: flex;
   flex-direction: column;
@@ -312,28 +274,174 @@ export default {
   margin-bottom: 25px;
 }
 
-.bwtminus,
-.bwtplus {
-  font-size: 1.2rem;
-  width: 30px;
-  height: 30px;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  color: #333;
+* {
+box-sizing: border-box;
+}
+
+.shopping-cart {
+width: 50vw;
+margin: 5vh auto;
+background: #FFFFFF;
+box-shadow: 1px 2px 3px 0px rgba(0,0,0,0.10);
+border-radius: 6px;
+display: flex;
+flex-direction: column;
+}
+.title {
+  height: 10vh;
+  border-bottom: 1px solid #E1E8EE;
+  padding: 20px;
+  color: black;
+  font-family: Nunito; 
+}
+
+.total {
+  height: 14vh;
+  border-bottom: 1px solid #E1E8EE;
+  padding: 20px;
+  color: black;
+  font-family: Nunito; 
+  text-align: right;
+}
+
+.item {
+padding: 20px;
+height: 15vh;
+width: 50vw;
+display: flex;
+font-family: Lato; 
+}
+
+.item:nth-child(2) {
+border-top:  1px solid #E1E8EE;
+border-bottom:  1px solid #E1E8EE;
+}
+
+.buttons {
+position: relative;
+padding-top: 30px;
+margin-right: 30px;
+}
+
+.checkout-btn {
+  background-color: #E1E8EE;
+  border-radius: 6px;
+  border: none;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  border-radius: 5px;
-  text-align:center;
+}
+.delete-btn {
+width: 18px;
+height: 17px;
+background: no-repeat center;
+display: inline-block;
+Cursor: pointer;
+background-color: #E1E8EE;
+border-radius: 6px;
+border: none;
+cursor: pointer;
 }
 
-.bwtminus:hover,
-.bwtplus:hover {
-  background-color: #ccc;
-  color: #fff;
+.image {
+margin-right: 30px;
 }
 
-.bwt:hover {
+#imageIter{
+width: 150px;
+}
+
+.description {
+width: 460px;
+}
+
+.description span {
+display: block;
+font-size: 16px;
+color: #43484D;
+font-weight: 400;
+}
+
+.description span:first-child {
+margin-bottom: 5px;
+}
+
+.description span:last-child {
+margin-top: 5px;
+}
+
+.quantity {
+padding-top: 25px;
+margin-right: 50px;
+}
+
+.delete-btn, 
+.minus-btn,
+.plus-btn  {
+width: 30px;
+height: 30px;
+background-color: #E1E8EE;
+border-radius: 6px;
+border: none;
+cursor: pointer;
+}
+
+.minus-btn img {
+margin-bottom: 3px;
+}
+.plus-btn img {
+margin-top: 2px;
+}
+
+button:focus,
+input:focus {
+outline:0;
+}
+
+.total-price {
+width: 83px;
+padding-top: 27px;
+padding-left: 10px;
+text-align: center;
+font-size: 16px;
+color: #43484D;
+font-weight: 300;
+}
+
+.plus-btn:hover {
+  background-color: green;
+  color: white;
+}
+
+.minus-btn:hover,
+.delete-btn:hover {
   background-color: #dc3545;
   color: white;
 }
+
+
+@media (max-width: 800px) {
+.shopping-cart {
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+}
+.item {
+  height: auto;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.image img {
+  width: 10%;
+}
+.image,
+.quantity,
+.description {
+  width: 100%;
+  text-align: center;
+  margin: 6px 0;
+}
+.buttons {
+  margin-right: 20px;
+}
+}
+
 </style>
