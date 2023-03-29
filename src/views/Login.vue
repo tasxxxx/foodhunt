@@ -59,9 +59,10 @@
   
 <script>
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, setPersistence, browserSessionPersistence } from "@firebase/auth";
-import firebaseApp from "../firebase";
+//import firebaseApp from "../firebase";
 import { useToast } from 'vue-toastification'
 //import firebase from 'firebase/compat/app';
+import { collection, getDocs, getFirestore } from 'firebase/firestore';
 //import { firebase } from 'firebase/app';
 const auth = getAuth();
 
@@ -102,21 +103,36 @@ export default {
           console.log("remember me: " + this.form.rememberMe)
           //await setPersistence(auth, firebase.auth.Auth.Persistence.SESSION);
           const user = await signInWithEmailAndPassword(auth, this.form.email, this.form.password);
-          
+          //const user = getAuth().currentUser;
+
           if (this.form.rememberMe) {
             console.log("remembering you")
             setPersistence(auth, browserSessionPersistence)
             //return setPersistence(auth, firebase.auth.Auth.Persistence.LOCAL);
           }
-          this.$router.push('/mainlisting')
+
+          // User is signed in
+          if (getAuth().currentUser !== null) {
+            console.log("user id: " + getAuth().currentUser.uid)
+            const db = getFirestore();
+            const userRef = await getDocs(collection(db, "Users"))
+            userRef.forEach((doc) => {
+              console.log("doc id" + doc.data().UserID)
+              if (getAuth().currentUser.uid === doc.data().UserID && doc.data().UserType === 'Customer') {
+                this.$router.push('/mainlisting');
+              } else if (doc.data().UserType === 'Vendor') {
+                this.$router.push('/vendor-dashboard');
+              }
+              
+            });
+          }
+
+          setTimeout(() => {
+            this.isLoading = false;
+          }, 2000)
         } catch (error) {
           this.formErrors.password = [error.message];
         }
-        setTimeout(() => {
-          this.isLoading = false;
-        }, 2000);
-
-        
       }
     },
     validEmail(email) {
