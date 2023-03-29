@@ -175,15 +175,13 @@ export default {
     async updateUser() {
       getAuth().onAuthStateChanged(user => {
         if (user) {
-          const uid = user.uid;
-          console.log("User ID: " + uid);
-          setDoc(doc(db, "Users", user.uid), {
+          const cusRegRef = doc(db, "Users", this.form.email); 
+          setDoc(cusRegRef, {
             UserID: user.uid,
             UserType: "Customer",
             Email: this.form.email,
             PhoneNo: this.form.phoneNo,
-            // Phone: this.form.phoneNo
-          })
+      });
         } else {
           console.log('No user signed in');
         }
