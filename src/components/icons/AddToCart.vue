@@ -1,12 +1,13 @@
 <template>
-    <v-btn class="add-to-cart" rounded="lg" color="primary" @click="addToCart"> Add to Cart</v-btn>  </template>
+    <v-btn class="add-to-cart" rounded="lg" color="primary" @click="addToCart"> Add to Cart</v-btn>  
+</template>
   
   <script>
   import {getAuth, onAuthStateChanged} from "firebase/auth";
   import { useToast } from 'vue-toastification'
   import firebaseApp from "../../firebase";
   import { getFirestore } from 'firebase/firestore';
-  import { getDoc, doc, setDoc} from 'firebase/firestore';
+  import { getDoc, getDocs, collection, doc, setDoc} from 'firebase/firestore';
   const db = getFirestore(firebaseApp);
   
   export default {
@@ -14,6 +15,8 @@
     data() {
           return {
               user: false,
+              maxQuantity: 0, 
+              currentCartQty: 0
           }
     },
 
@@ -40,6 +43,11 @@
               // Retrieve the user's shopping cart
               const cartRef = doc(db, "shopping_carts", this.user.email);
               const cartData = await getDoc(cartRef);
+
+              if (!cartData.exists()) {
+                // If the document does not exist, create it
+                await setDoc(cartRef, { products: {}});
+              }
                 
               // Get the current list of products in the cart, or create an empty list if none exists
               const products = cartData.exists() ? cartData.data().products : {};
@@ -61,28 +69,55 @@
                 rtl: false
                 }); 
                  
-              } else {
-                if (products.hasOwnProperty([this.prodID.Vendor, this.prodID.Name, this.prodID.Price])) {
-                  products[[this.prodID.Vendor, this.prodID.Name, this.prodID.Price]] += this.quantity;
+              } else {                
+                const cartRef = doc(db, "shopping_carts", this.user.email)
+                const cartData = await getDoc(cartRef)
+                const products = cartData.data().products
+                const productKey = `${this.prodID.Vendor},${this.prodID.Name},${this.prodID.Price}`
+                // get maxQuantity 
+                const productRef = await getDocs(collection(db, "food_listings"));
+                productRef.forEach((doc) => {
+                if (this.prodID.Vendor === doc.data().Vendor && this.prodID.Name === doc.data().Name) {
+                  this.maxQuantity = doc.data().AvailableQty
+                }})
+
+                if(this.maxQuantity < (products[productKey] + this.quantity)) {
+                  toast.error("Unsuccessful execution! Please reduce quantity!", {
+                  position: "top-right",
+                  timeout: 2019,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: false,
+                  pauseOnHover: false,
+                  draggable: true,
+                  draggablePercent: 2,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: false,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                  });   
                 } else {
+                  if (products.hasOwnProperty([this.prodID.Vendor, this.prodID.Name, this.prodID.Price])) {
+                  products[[this.prodID.Vendor, this.prodID.Name, this.prodID.Price]] += this.quantity;
+                  } else {
                   products[[this.prodID.Vendor, this.prodID.Name, this.prodID.Price]] = this.quantity;
-              }
-              // Update the cart document in Firestore with the updated product list
-              await setDoc(cartRef, { products: products });
-              toast.success("Product is successfully added to the cart!", {
-              position: "top-right",
-              timeout: 2019,
-              closeOnClick: true,
-              pauseOnFocusLoss: false,
-              pauseOnHover: false,
-              draggable: true,
-              draggablePercent: 2,
-              showCloseButtonOnHover: false,
-              hideProgressBar: false,
-              closeButton: "button",
-              icon: true,
-              rtl: false
-              }); 
+                  }
+                  await setDoc(cartRef, { products: products });
+                  toast.success("Product is successfully added to the cart!", {
+                  position: "top-right",
+                  timeout: 2019,
+                  closeOnClick: true,
+                  pauseOnFocusLoss: false,
+                  pauseOnHover: false,
+                  draggable: true,
+                  draggablePercent: 2,
+                  showCloseButtonOnHover: false,
+                  hideProgressBar: false,
+                  closeButton: "button",
+                  icon: true,
+                  rtl: false
+                  }); 
+                }
             }
             } 
         else { 
@@ -110,6 +145,5 @@
   </script>
   
   <style scoped>
-  /* Add styles for the AddToCart button here */
   </style>
 

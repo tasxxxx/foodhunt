@@ -42,7 +42,7 @@
         </div>   
         <div class="total">
           <h2 id="totalProfit"> Total: ${{totalCost}}</h2>
-          <v-btn rounded="lg" color="orange" @click="deleteItem(item.item, item.restaurant, item.price)" class="checkout-btn"> Checkout</v-btn>
+          <v-btn rounded="lg" color="green" @click="addToReservation(this.cart)" class="checkout-btn"> Add to Reservations</v-btn>
           </div>
     </div>
   </div>
@@ -52,7 +52,7 @@
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useToast } from 'vue-toastification'
 import firebaseApp from "../firebase";
-import { getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, collection} from 'firebase/firestore';
+import { getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, collection, deleteDoc, serverTimestamp} from 'firebase/firestore';
 import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
 const toast = useToast();
 const db = getFirestore(firebaseApp);
@@ -104,10 +104,31 @@ export default {
       return this.cart.reduce((sum, item) => sum + item.subtotal, 0);
     },
     totalCost() {
-      return this.subtotal;
+      return this.totalCost = this.subtotal; 
     },
   },    
   methods: {
+    async addToReservation(cart) {
+      const randNum = Math.floor(Math.random() * 876543);
+      const thisUsername = this.useremail;
+      const thisCart = cart; 
+      const reservationNo = `FH-${randNum}`;
+      const reservationRef = doc(db, "reservation_orders", reservationNo); 
+      await setDoc(reservationRef, {
+        reservationNo: reservationNo,
+        user: thisUsername,
+        createdAt: serverTimestamp(),
+        cart: thisCart,
+        total: this.totalCost,
+        confirmed: false,
+      });
+      this.cart = [];
+      const cartRef = doc(db, "shopping_carts", this.useremail);
+      await deleteDoc(cartRef);
+      const orderNumberWithPrefix = `FH-${randNum}`;
+      this.$router.push({ name: 'Confirmation', params: { reservationNumber: orderNumberWithPrefix }});
+    }, 
+
     async retrieveCart() {
       const toast = useToast();
       const cartRef = doc(db, "shopping_carts", this.useremail);
@@ -211,7 +232,7 @@ export default {
         await this.retrieveCart();
       },
 
-      deleteItem(item, restaurant, price) {
+      async deleteItem(item, restaurant, price) {
          this.$swal.fire({
           title: 'Are you sure?',
           text: "Please confirm that you are removing the item from the cart?",
