@@ -1,6 +1,6 @@
 <template>
   <!-- <h1>Email: {{ email }}</h1> -->
-
+  <NavigationBar1/>
   <div class="container">
   <div>
     <v-app>
@@ -60,12 +60,17 @@
 
   <script>
   import firebaseApp from "../firebase";
+  import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
   import { collection, getFirestore, updateDoc } from "firebase/firestore"
   import { doc, setDoc, getDoc } from "firebase/firestore";
   import { getAuth, onAuthStateChanged, sendPasswordResetEmail } from "firebase/auth";
   const db = getFirestore(firebaseApp);
   
   export default {
+    name: 'CustProfile',
+    components:{
+    NavigationBar1
+  }, 
     data() {
       return {
         form: {
