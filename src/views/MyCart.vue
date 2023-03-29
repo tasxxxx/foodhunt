@@ -109,25 +109,69 @@ export default {
   },    
   methods: {
     async addToReservation(cart) {
-      const randNum = Math.floor(Math.random() * 876543);
-      const thisUsername = this.useremail;
-      const thisCart = cart; 
-      const reservationNo = `FH-${randNum}`;
-      const reservationRef = doc(db, "reservation_orders", reservationNo); 
-      await setDoc(reservationRef, {
-        reservationNo: reservationNo,
-        user: thisUsername,
-        createdAt: serverTimestamp(),
-        cart: thisCart,
-        total: this.totalCost,
-        confirmed: false,
-      });
-      this.cart = [];
       const cartRef = doc(db, "shopping_carts", this.useremail);
-      await deleteDoc(cartRef);
-      const orderNumberWithPrefix = `FH-${randNum}`;
-      this.$router.push({ name: 'Confirmation', params: { reservationNumber: orderNumberWithPrefix }});
-    }, 
+      const cartData = await getDoc(cartRef);
+      const items = cartData.data().products;
+      let tempArray = []
+      tempArray = Object.entries(items).map(([key, value]) => {
+      const [restaurant, item, price] = key.split(",");
+      const quantity = value;
+      const subtotal = price * quantity;
+      return { restaurant, item, price, quantity, subtotal, id: `${restaurant}-${item}-${price}` };
+    })
+      let canAddReservation = true;
+      const productRef = await getDocs(collection(db, "food_listings"));
+      const products = productRef.docs;
+
+      for (const item of tempArray) {
+        for (const prod of products) {
+          if (item.restaurant === prod.data().Vendor && item.item === prod.data().Name) {
+            if (prod.data().AvailableQty < item.quantity) {
+              canAddReservation = false;
+              break;
+            } 
+          }
+        }
+
+      if (canAddReservation) {
+        const randNum = Math.floor(Math.random() * 876543);
+        const thisUsername = this.useremail;
+        const thisCart = cart;
+        const reservationNo = `FH-${randNum}`;
+        const reservationRef = doc(db, "reservation_orders", reservationNo);
+        await setDoc(reservationRef, {
+          reservationNo: reservationNo,
+          user: thisUsername,
+          createdAt: serverTimestamp(),
+          cart: thisCart,
+          total: this.totalCost,
+          confirmed: false,
+        });
+        this.cart = [];
+        await deleteDoc(cartRef);
+        const orderNumberWithPrefix = `FH-${randNum}`;
+        this.$router.push({ name: 'Confirmation', params: { reservationNumber: orderNumberWithPrefix }});
+      } else {
+        this.cart = [];
+        await deleteDoc(cartRef);
+        toast.error("Product quantity is not available, please try again!", {
+          position: "top-right",
+          timeout: 2019,
+          closeOnClick: true,
+          pauseOnFocusLoss: false,
+          pauseOnHover: false,
+          draggable: true,
+          draggablePercent: 2,
+          showCloseButtonOnHover: false,
+          hideProgressBar: false,
+          closeButton: "button",
+          icon: true,
+          rtl: false
+        });
+        this.$router.push('/mainlisting');
+      }
+    }
+  },
 
     async retrieveCart() {
       const toast = useToast();

@@ -22,11 +22,11 @@ Payment by: In store payment
 import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
 import firebaseApp from "../firebase";
 import { getFirestore } from 'firebase/firestore';
-import { getDoc, doc, updateDoc} from 'firebase/firestore';
+import { getDoc, getDocs, collection, doc, updateDoc} from 'firebase/firestore';
 import { useToast } from 'vue-toastification'
+import { getAuth} from "@firebase/auth";
 const db = getFirestore(firebaseApp);
 const toast = useToast();
-
 
 export default {
 name: "Confirmation",
@@ -43,7 +43,7 @@ data() {
   return {
     details: [],
   }
-},  
+},    
 async mounted() {
     const reserveRef = doc(db, "reservation_orders", this.reservationNumber);
     const docSnap = await getDoc(reserveRef); 
@@ -53,7 +53,7 @@ async mounted() {
         const cart = documentData.cart;
         const timestamp = documentData.createdAt;
         const date = timestamp.toDate();
-        const dateString = date.toLocaleDateString();
+        const dateString = date.toDateString();
         const timeString = date.toLocaleTimeString();
         const dateTimeString = dateString + ' ' + timeString;
         const total = documentData.total;
@@ -69,8 +69,19 @@ async mounted() {
 },
 methods: {
     async confirm() {
+        const productRef = await getDocs(collection(db, "food_listings"));
+        const products = productRef.docs;
+        for (const item of this.details.cart) {
+          for (const prod of products) {
+            if (item.restaurant === prod.data().Vendor && item.item === prod.data().Name) {
+              const targetProd = doc(db, "food_listings", prod.id);
+                await updateDoc(targetProd, {
+                  AvailableQty: prod.data().AvailableQty - item.quantity
+                });
+            }
+          }
+        }
         const reserveRef = doc(db, "reservation_orders", this.reservationNumber);
-        // Use updateDoc to update the field "myField" to "true"
         updateDoc(reserveRef, {
         confirmed: true
         })
@@ -89,9 +100,8 @@ methods: {
                   rtl: false
                   }); 
         this.$router.push('/mainlisting') 
-
     }
-}
+  }
 }
 </script>
 

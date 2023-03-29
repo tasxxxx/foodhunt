@@ -191,7 +191,7 @@ async mounted() {
 
   const productRef = await getDocs(collection(db, "food_listings"));
   productRef.forEach((doc) => {
-    if (doc.data().Vendor === 'McDonalds') {
+    if (doc.data().Vendor === 'McDonalds' && doc.data().AvailableQty > 0) {
       const product = doc.data();
       product.category = doc.data().Category;
       this.products.push(product);

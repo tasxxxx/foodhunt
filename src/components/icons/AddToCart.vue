@@ -40,18 +40,6 @@
           // Can access the details here. 
           const productData = this.prodID;
           if(this.user) {
-              // Retrieve the user's shopping cart
-              const cartRef = doc(db, "shopping_carts", this.user.email);
-              const cartData = await getDoc(cartRef);
-
-              if (!cartData.exists()) {
-                // If the document does not exist, create it
-                await setDoc(cartRef, { products: {}});
-              }
-                
-              // Get the current list of products in the cart, or create an empty list if none exists
-              const products = cartData.exists() ? cartData.data().products : {};
-
               // Add the desired quantity of the product to the cart
               if (this.quantity === undefined) { 
                 toast.error("Error in adding to cart!", {
@@ -70,9 +58,18 @@
                 }); 
                  
               } else {                
-                const cartRef = doc(db, "shopping_carts", this.user.email)
-                const cartData = await getDoc(cartRef)
-                const products = cartData.data().products
+              // Retrieve the user's shopping cart
+              const cartRef = doc(db, "shopping_carts", this.user.email);
+              const cartData = await getDoc(cartRef);
+
+              if (!cartData.exists()) {
+                // If the document does not exist, create it
+                await setDoc(cartRef, { products: {}});
+              }
+                
+              // Get the current list of products in the cart, or create an empty list if none exists
+              const products = cartData.exists() ? cartData.data().products : {};
+              // const products = cartData.data().products
                 const productKey = `${this.prodID.Vendor},${this.prodID.Name},${this.prodID.Price}`
                 // get maxQuantity 
                 const productRef = await getDocs(collection(db, "food_listings"));
