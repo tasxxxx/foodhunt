@@ -71,7 +71,6 @@
         </div>
     </div> 
 
-<h1 class="text" style="font-family:Nunito">Available Products</h1>  
 <v-card id="finally">
   <v-tabs
     v-model="tab"
@@ -127,10 +126,13 @@
 <script> 
 import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
 import AddToCart from '@/components/icons/AddToCart.vue';
+import { useToast } from 'vue-toastification'
 import firebaseApp from "../firebase";
 import { getFirestore } from 'firebase/firestore';
 import { getDoc, doc, getDocs, collection} from 'firebase/firestore';
 const db = getFirestore(firebaseApp);
+const toast = useToast();
+
 
 export default {
 name: "Restaurant",
@@ -146,7 +148,6 @@ data() {
     products: [],
     uniqueCategories: [], 
     imageurl: "",
-
     tab: ""
   }
 },  
@@ -276,6 +277,7 @@ margin: 20px;
 
 #finally {
 width:90vw;
+margin-top:55px;
 margin-left: 5vw;
 }
 
