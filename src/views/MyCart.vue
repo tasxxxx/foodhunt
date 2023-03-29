@@ -376,11 +376,11 @@ width: 50vw;
 display: flex;
 font-family: Lato; 
 }
-
+/* 
 .item:nth-child(2) {
 border-top:  1px solid #E1E8EE;
 border-bottom:  1px solid #E1E8EE;
-}
+} */
 
 .buttons {
 position: relative;

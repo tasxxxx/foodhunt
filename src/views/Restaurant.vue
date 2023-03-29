@@ -216,7 +216,7 @@ async created() {
   const uniqueCategories = [];
   
   productRef.forEach((doc) => {
-    if (doc.data().Vendor === 'McDonalds') {
+    if (doc.data().Vendor === 'McDonalds' && doc.data().AvailableQty > 0) {
       const product = doc.data();
       product.category = doc.data().Category;
       if (!uniqueCategories.includes(product.category)) {
