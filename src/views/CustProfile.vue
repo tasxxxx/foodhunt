@@ -7,11 +7,10 @@
 import firebaseApp from "../firebase";
 import { collection, getFirestore } from "firebase/firestore";
 import { doc, setDoc, getDoc } from "firebase/firestore";
-import { getAuth, signOut } from "@firebase/auth";
+import { getAuth, signOut, onAuthStateChanged} from "firebase/auth";
 import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
  
 const db = getFirestore(firebaseApp);
-
 export default {
   components:{
     NavigationBar1
@@ -22,30 +21,27 @@ export default {
     };
   },
   async mounted() {
-    const user = getAuth().currentUser;
-    if (user) {
-      // User is signed in
-    } else {
-      console.log("No user is currently signed in");
-      return;
-    }
-
-    const userID = user.uid;
-    console.log("User ID: " + userID);
-
-  //   try {
-      const docRef = doc(db, "Users", userID);
-      const userDocument = await getDoc(docRef);
-      console.log(userDocument.data().Email);
-      this.email = userDocument.data().Email;
-  //   } catch (error) {
-  //     console.error("Error retrieving user document:", error);
-  //   }
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if(user) {
+        this.email = auth.currentUser.email; 
+      }
+    })
   },
   methods: {
+    async fetchEmail(userID) {
+      try {
+        const docRef = doc(db, "Users", userID);
+        const userDocument = await getDoc(docRef);
+        console.log(userDocument.data().Email);
+        this.email = userDocument.data().Email;
+      } catch (error) {
+        console.error("Error retrieving user document:", error);
+      }
+    },
     async signOut() {
-      const user = await signOut(getAuth());
-      this.$router.push('/')
+      await signOut(getAuth());
+      this.$router.push('/');
     }
   },
 };

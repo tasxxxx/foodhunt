@@ -8,6 +8,7 @@
         <v-breadcrumbs-item :to="{ name: 'landing'}"><img id = "backgroundimg1" src="@/assets/foodhuntlogo.png" alt = "">
         </v-breadcrumbs-item>
         <h2 class="text-center mb-7" style="font-family:Nunito">Create an Account</h2>
+
         <v-form ref="form" @submit.prevent="signup">
           <v-text-field
             v-model="form.email"
@@ -16,6 +17,7 @@
             required
             :error-messages="formErrors.email"
           ></v-text-field>
+
           <v-text-field
             v-model="form.password"
             label="Password"
@@ -23,12 +25,14 @@
             required
             :error-messages="formErrors.password"
           ></v-text-field>
+
           <v-text-field
             v-model="form.phoneNo"
             label="Phone Number"
             required
             :error-messages="formErrors.phoneNo"
           ></v-text-field> 
+          
           <!-- <v-text-field
             v-model="form.firstName"
             label="First Name"
