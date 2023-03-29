@@ -16,14 +16,20 @@
             type="email"
             required
             :error-messages="formErrors.email"
+            style="font-family:Nunito"
           ></v-text-field>
 
           <v-text-field
             v-model="form.password"
             label="Password"
-            type="password"
             required
             :error-messages="formErrors.password"
+            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="show1 ? 'text' : 'password'"
+            hint="Minimum 6 characters"
+            @click:append="show1 = !show1"
+            counter
+            style="font-family:Nunito"
           ></v-text-field>
 
           <v-text-field
@@ -31,6 +37,7 @@
             label="Phone Number"
             required
             :error-messages="formErrors.phoneNo"
+            style="font-family:Nunito"
           ></v-text-field> 
           
           <!-- <v-text-field
@@ -91,6 +98,7 @@ export default {
         confirmPassword: '',
       },
       formErrors: {},
+      show1: false,
     };
   },
   methods: {
@@ -122,6 +130,8 @@ export default {
 
       if (!this.form.phoneNo) {
         this.formErrors.phoneNo = ['Phone number is required'];
+      } else if (!this.validPhoneNo(this.form.phoneNo)) {
+        this.formErrors.phoneNo = ['Please enter a valid SG number']
       }
 
       // Submit form if no errors
@@ -151,6 +161,16 @@ export default {
       // Email validation code
       const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(?!.*\.\w{2,})(?:[a-zA-Z]{2,}|xn--[a-zA-Z0-9]+)/;
       return regex.test(email.trim());
+    },
+    validPhoneNo(phoneNo) {
+      const SGNo = ["6", "8", "9"];
+      if (phoneNo.length != 8) {
+        return false;
+      }
+      if (! SGNo.includes(phoneNo.substring(0, 1))) {
+        return false;
+      }
+      return true;
     },
     async updateUser() {
       getAuth().onAuthStateChanged(user => {

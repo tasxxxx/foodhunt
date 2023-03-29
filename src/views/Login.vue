@@ -19,10 +19,14 @@
         <v-text-field
           v-model="form.password"
           label="Password"
-          type="password"
           required
           :error-messages="formErrors.password"
           style="font-family:Nunito"
+          :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+          :type="show1 ? 'text' : 'password'"
+          hint="Minimum 6 characters"
+          @click:append="show1 = !show1"
+          counter
         ></v-text-field>
         <v-checkbox
           v-model="form.rememberMe"
@@ -76,6 +80,7 @@ export default {
       },
       formErrors: {},
       isLoading: false,
+      show1: false,
     };
   },
   methods: {
