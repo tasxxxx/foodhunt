@@ -1,11 +1,8 @@
 <template>
-  <!-- <h1>Email: {{ email }}</h1> -->
   <NavigationBar1/>
   <div class="container">
   <div>
     <v-app>
-      <v-breadcrumbs-item :to="{ name: 'landing'}"><img id = "backgrounding1" src="@/assets/foodhuntlogo.png" alt = "">
-      </v-breadcrumbs-item>
       <v-container>
       <div class="pa-7-wrapper">
       <h2 style="font-family:Nunito;" class="text-left mb-7">Your Profile</h2>
@@ -26,6 +23,7 @@
             type="text"
             hint="Enter your new phone number"
             style="font-family:Nunito"
+            :error-messages="formErrors.phoneNo"
           ></v-text-field>
           <v-alert
             type="success"
@@ -105,11 +103,11 @@
         if (!this.validEmail(this.form.email)) {
           this.formErrors.email = ['Please enter a valid email address'];
         }
+        if (!this.validPhoneNo(this.form.phoneNo)) {
+          this.formErrors.phoneNo = ['Please enter a valid SG number']
+        }
         if (Object.keys(this.formErrors).length === 0) {
           await this.updatePIfirebase()
-        } else {
-          console.log(error.message);
-          this.formErrors.email = [error.message];
         }
       },
 
@@ -117,6 +115,17 @@
       // Email validation code
       const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(?!.*\.\w{2,})(?:[a-zA-Z]{2,}|xn--[a-zA-Z0-9]+)/;
       return regex.test(email.trim());
+      },
+
+      validPhoneNo(phoneNo) {
+        const SGNo = ["6", "8", "9"];
+        if (phoneNo.length != 8) {
+          return false;
+        }
+        if (! SGNo.includes(phoneNo.substring(0, 1))) {
+          return false;
+        }
+        return true;
       },
 
       async updatePW() {
