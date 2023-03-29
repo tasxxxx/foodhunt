@@ -69,6 +69,7 @@ import { useToast } from 'vue-toastification'
 import { collection, getDocs, getFirestore } from 'firebase/firestore';
 //import { firebase } from 'firebase/app';
 const auth = getAuth();
+const db = getFirestore();
 
 export default {
   data() {
@@ -117,21 +118,29 @@ export default {
           }
 
           // User is signed in
-          if (getAuth().currentUser !== null) {
-            console.log("user id: " + getAuth().currentUser.uid)
-            const db = getFirestore();
+          if(getAuth().currentUser !== null) {
             const userRef = await getDocs(collection(db, "Users"))
-            userRef.forEach((doc) => {
-              console.log("doc id" + doc.data().UserID)
-              if (getAuth().currentUser.uid === doc.data().UserID && doc.data().UserType === 'Customer') {
-                this.$router.push('/mainlisting');
-              } else if (doc.data().UserType === 'Vendor') {
-                this.$router.push('/vendor-dashboard');
+            userRef.forEach((user) => {
+              if(getAuth().currentUser.email === user.data().Email) {
+                if("Customer" === user.data().UserType) {
+                  this.$router.push('/mainlisting');
+                } else {
+                  this.$router.push('/vendor-dashboard');
+                }
               }
-              
-            });
+            })
           }
-
+          // if (getAuth().currentUser !== null) {
+          //   console.log("user id: " + getAuth().currentUser.uid)
+          //   const userRef = await getDocs(collection(db, "Users"))
+          //   userRef.forEach((doc) => {
+          //     console.log("doc id" + doc.data().UserID)
+          //     if (getAuth().currentUser.uid === doc.data().UserID && doc.data().UserType === 'Customer') {
+          //     } else if (doc.data().UserType === 'Vendor') {
+          //     }
+              
+          //   });
+          // }
           setTimeout(() => {
             this.isLoading = false;
           }, 2000)
