@@ -4,8 +4,6 @@
   <div class="container">
   <div>
     <v-app>
-      <v-breadcrumbs-item :to="{ name: 'landing'}"><img id = "backgrounding1" src="@/assets/foodhuntlogo.png" alt = "">
-      </v-breadcrumbs-item>
       <v-container>
       <div class="pa-7-wrapper">
       <h2 style="font-family:Nunito;" class="text-left mb-7">Your Profile</h2>
@@ -73,6 +71,7 @@
   }, 
     data() {
       return {
+        user: false, 
         form: {
           email: '',
           phoneNo: '',
@@ -83,18 +82,21 @@
       }
     },
     async mounted() {
-      const auth = getAuth();
+      const auth = getAuth()
       onAuthStateChanged(auth, async (user) => {
-        if (!user) {
-          console.log("No user is currently signed in");
-          return;
+        if (user) {
+          this.user = user
+          console.log(this.user.email)
+          const docRef = doc(db, "Users", this.user.email)
+          const userDocument = await getDoc(docRef);
+          if (userDocument.exists()) {
+            const userData = userDocument.data();
+            this.form.email = userData.Email;
+            this.form.phoneNo = userData.PhoneNo;
+          } else {
+            console.log("User document not found");
+          }
         }
-        const userID = user.uid;
-        console.log("User ID: " + userID);
-        const docRef = doc(db, "Users", userID)
-        const userDocument = await getDoc(docRef);
-        this.form.email = userDocument.data().Email;
-        this.form.phoneNo = userDocument.data().PhoneNo;
       })
     },
     methods : {
@@ -156,10 +158,6 @@
 </script>
 
 <style scoped>
-  #backgrounding1{
-    width:10vw;
-  }
-
   .pa-7-wrapper {
     padding:15vh;
     padding-left: 30vw;

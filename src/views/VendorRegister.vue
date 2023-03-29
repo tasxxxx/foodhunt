@@ -174,15 +174,14 @@
         async updateVendor() {
           getAuth().onAuthStateChanged(vendor => {
             if (vendor) {
-              const uid = vendor.uid;
-              console.log("Vendor ID: " + uid);
-              setDoc(doc(db, "Users", vendor.uid), {
+              const vendorRegRef = doc(db, "Users", this.form.companyemail);
+              setDoc(vendorRegRef, {
                 VendorID: vendor.uid,
                 UserType: "Vendor",
                 Email: this.form.companyemail,
                 RegistrationNo: this.form.companyregnum,
                 Name: this.form.companyname
-              })
+              });
             } else {
               console.log('No user signed in');
             }
