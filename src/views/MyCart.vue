@@ -3,18 +3,16 @@
     <div class="empty-cart-container" v-if="cart.length === 0">
       <img id ="emptycart" src="@/assets/preview.png" alt = "">
       <h1 id="message">Oops! It seems like your cart is feeling a bit lonely. Time to add some items and fill it up!</h1>
-      <v-breadcrumbs-item :to="{ name: 'mainlisting'}">
+      <v-breadcrumbs-item :to="{ name: 'restaurantlisting'}">
         <v-btn rounded="lg" color="primary"> Start Hunting!</v-btn>
       </v-breadcrumbs-item>
       <img id ="emojisad" src="@/assets/emoji.webp" alt = "">
     </div>
     <div v-else>
       <div class="shopping-cart">
-        <!-- Title -->
         <div class="title">
           <h1>What's in your cart...</h1>
         </div>
-        <!-- Item iteration -->
         <div class="item" v-for="(item, index) in cart" :key="index">
           <div class="buttons">
             <span class="delete-btn">
@@ -77,7 +75,7 @@ export default {
         this.useremail = auth.currentUser.email;
         this.retrieveCart();
       } else {
-        if (this.$route.path.split('/').pop() !== "mainlisting") {
+        if (this.$route.path.split('/').pop() !== "restaurantlisting") {
           toast.error("Access denied! Please sign in!", {
             position: "top-right",
             timeout: 2019,
@@ -168,7 +166,7 @@ export default {
           icon: true,
           rtl: false
         });
-        this.$router.push('/mainlisting');
+        this.$router.push('/restaurantlisting');
       }
     }
   },
@@ -332,11 +330,11 @@ export default {
 }
 
 #emojisad {
-  width: 310px;
+  width: 320px;
 }
 
 #message {
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 * {
@@ -344,7 +342,8 @@ box-sizing: border-box;
 }
 
 .shopping-cart {
-width: 50vw;
+width: 720px;
+height: auto;
 margin: 5vh auto;
 background: #FFFFFF;
 box-shadow: 1px 2px 3px 0px rgba(0,0,0,0.10);
@@ -353,7 +352,7 @@ display: flex;
 flex-direction: column;
 }
 .title {
-  height: 10vh;
+  height: 80px;
   border-bottom: 1px solid #E1E8EE;
   padding: 20px;
   color: black;
@@ -361,7 +360,7 @@ flex-direction: column;
 }
 
 .total {
-  height: 14vh;
+  height: 110px;
   border-bottom: 1px solid #E1E8EE;
   padding: 20px;
   color: black;
@@ -371,7 +370,6 @@ flex-direction: column;
 
 .item {
 padding: 20px;
-height: 15vh;
 width: 50vw;
 display: flex;
 font-family: Lato; 
@@ -415,13 +413,12 @@ width: 150px;
 }
 
 .description {
-width: 460px;
+width: 260px;
 }
 
 .description span {
 display: block;
 font-size: 16px;
-color: #43484D;
 font-weight: 400;
 }
 
@@ -435,7 +432,7 @@ margin-top: 5px;
 
 .quantity {
 padding-top: 25px;
-margin-right: 50px;
+margin-right: 12px;
 }
 
 .delete-btn, 
@@ -464,10 +461,9 @@ outline:0;
 .total-price {
 width: 83px;
 padding-top: 27px;
-padding-left: 10px;
+padding-left: 50px;
 text-align: center;
 font-size: 16px;
-color: #43484D;
 font-weight: 300;
 }
 
@@ -480,6 +476,9 @@ font-weight: 300;
 .delete-btn:hover {
   background-color: #dc3545;
   color: white;
+}
+.swal2-popup {
+  font-family:Nunito;
 }
 
 

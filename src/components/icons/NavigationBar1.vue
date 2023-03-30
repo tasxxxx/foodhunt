@@ -28,7 +28,7 @@
 
     <div class = "BreadCrumbs">
       <v-breadcrumbs id = "logo">
-      <v-breadcrumbs-item :to="{ name: 'mainlisting'}">
+      <v-breadcrumbs-item :to="{ name: 'restaurantlisting'}">
         <img id = "foodimage" src="@/assets/FoodHuntLogo.png" alt = "">
       </v-breadcrumbs-item>
       </v-breadcrumbs>

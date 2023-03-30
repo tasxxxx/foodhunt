@@ -2,17 +2,22 @@
   <NavigationBar1/>
   <div class="shopping-cart">
     <div class="title">
-      <h1>Confirm your reservation for {{ this.reservationNumber }}!</h1>
+      <h2>Confirm your reservation for {{ this.reservationNumber }}!</h2>
+      <h4 id="time">{{ details.dateTimeString }}</h4>
     </div>
-    <h2 id="time">{{ details.dateTimeString }}</h2>
     <!-- Item iteration -->
     <div class="item" v-for="prod in details.cart" :key="index">
+      <div class="image">
+            <img id="imageIter" src="@/assets/macs.jpg" alt="" />
+      </div>
       <div class="description">
         <span>{{ prod.restaurant }}</span>
         <span>{{ prod.item }}</span>
+        <span>${{ prod.price }}</span>
+
       </div>
       <div class="quantity">
-        {{ prod.quantity }}
+        {{ prod.quantity }} x
       </div>
       <div class="total-price">${{ prod.subtotal }}</div>
     </div>
@@ -105,7 +110,7 @@ methods: {
                   icon: true,
                   rtl: false
                   }); 
-        this.$router.push('/mainlisting') 
+        this.$router.push('/restaurantlisting') 
     }
   }
 }
@@ -114,7 +119,8 @@ methods: {
 <style scoped>
 
 .shopping-cart {
-width: 50vw;
+width: 720px;
+height: auto;
 margin: 5vh auto;
 background: #FFFFFF;
 box-shadow: 1px 2px 3px 0px rgba(0,0,0,0.10);
@@ -123,83 +129,64 @@ display: flex;
 flex-direction: column;
 }
 .title {
-  height: 10vh;
+  height: 100px;
   border-bottom: 1px solid #E1E8EE;
   padding: 20px;
   color: black;
   font-family: Nunito; 
 }
 
+
 .total {
-  height: 14vh;
+  height: 140px;
   border-bottom: 1px solid #E1E8EE;
   padding: 20px;
-  color: black;
   font-family: Nunito; 
   text-align: right;
 }
 
 .item {
 padding: 20px;
-height: 15vh;
-width: 50vw;
+width: 100%;
 display: flex;
 font-family: Lato; 
 }
-
-/* 
-.item:nth-child(2) {
-border-top:  1px solid #E1E8EE;
-border-bottom:  1px solid #E1E8EE;
-} */
-
-.buttons {
-position: relative;
-padding-top: 30px;
-margin-right: 30px;
+.image {
+margin-right: 50px;
 }
 
-.confirmreservationbtn {
-  background-color: #E1E8EE;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
+#imageIter{
+width: 150px;
 }
 
 .description {
-width: 460px;
+width: 350px;
 }
 
 .description span {
 display: block;
 font-size: 16px;
-color: #43484D;
 font-weight: 400;
-}
-
-.description span:first-child {
-margin-bottom: 5px;
-}
-
-.description span:last-child {
-margin-top: 5px;
 }
 
 .quantity {
 padding-top: 25px;
-margin-right: 50px;
+margin-right: 12px;
 }
 
 .total-price {
 width: 83px;
 padding-top: 27px;
-padding-left: 10px;
+padding-left: 50px;
 text-align: center;
 font-size: 16px;
-color: #43484D;
 font-weight: 300;
 }
 
+.confirmreservationbtn {
+  margin-top:8px;
+
+}
 @media (max-width: 800px) {
 .shopping-cart {
   width: 100%;
@@ -211,12 +198,18 @@ font-weight: 300;
   flex-wrap: wrap;
   justify-content: center;
 }
+.image img {
+  width: 10%;
+}
 .image,
 .quantity,
 .description {
   width: 100%;
   text-align: center;
   margin: 6px 0;
+}
+.buttons {
+  margin-right: 20px;
 }
 
 }

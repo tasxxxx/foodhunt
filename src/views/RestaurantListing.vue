@@ -6,6 +6,11 @@
     <div className="text">
       Around the island.. 
     </div>
+    <v-breadcrumbs-item :to="{ name: 'restaurant'}">
+          <v-icon icon="mdi-shopping"></v-icon>
+            My restaurant |
+        </v-breadcrumbs-item>
+        
     <div className="restaurants">
       <div v-for="f in restaurants" :key="f" className="restaurant" :data-location="f.location">
        
