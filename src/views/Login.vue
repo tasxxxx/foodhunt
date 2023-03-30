@@ -108,6 +108,7 @@ export default {
             setPersistence(auth, browserSessionPersistence)
             //return setPersistence(auth, firebase.auth.Auth.Persistence.LOCAL);
           }
+          
           this.$router.push('/mainlisting')
         } catch (error) {
           this.formErrors.password = [error.message];

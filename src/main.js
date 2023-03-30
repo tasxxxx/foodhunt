@@ -19,27 +19,34 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 
 
 
-// const customDarkTheme = {
-//   dark: true,
-//   colors: {
-//     background: "#15202b",
-//     surface: "#15202b",
-//     primary: "#3f51b5",
-//     secondary: "#03dac6",
-//     error: "#f44336",
-//     info: "#2196F3",
-//     success: "#4caf50",
-//     warning: "#fb8c00",
-//   },
-// };
 
-
+const myCustomLightTheme = {
+  dark: false,
+  colors: {
+    background: '#FFFFFF',
+    surface: '#FFFFFF',
+    primary: '#FFDA55',
+    'primary-darken-1': '#3700B3',
+    secondary: '#EDEEF2',
+    'secondary-darken-1': '#018786',
+    error: '#B00020',
+    info: '#2196F3',
+    success: '#4CAF50',
+    warning: '#FB8C00',
+  }
+}
 
 const vuetify = createVuetify({
   components,
   directives,
   icons: {
     defaultSet: 'mdi', // This is already the default value - only for display purposes
+  },
+  theme: {
+    defaultTheme: 'myCustomLightTheme',
+    themes: {
+      myCustomLightTheme,
+    }
   },
   // theme: {
   //   defaultTheme: "customDarkTheme",

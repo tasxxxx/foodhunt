@@ -17,6 +17,7 @@ import VendorRegister from '../views/VendorRegister.vue'
 import VendorProfileEditOne from '../views/VendorProfileEditOne.vue'
 import VendorProfileEditTwo from '../views/VendorProfileEditTwo.vue'
 import RestaurantListing from '../views/RestaurantListing.vue';
+import VendorListing from '../views/VendorListing.vue';
 
 const routes = [
   {
@@ -110,6 +111,11 @@ const routes = [
     path: '/vendor-profileedittwo',
     name: 'vendor-profileedittwo',
     component: VendorProfileEditTwo
+  },
+  {
+    path: '/vendor-listing',
+    name: 'vendor-listing',
+    component: VendorListing
   },
 ]
 
