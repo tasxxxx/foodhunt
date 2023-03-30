@@ -1,5 +1,6 @@
 <template  v-if="user">
-    <NavigationBar1/>
+    <!-- <NavigationBar1/> -->
+    <VendorBreadCrumbs/>
     <v-layout>
         <v-main>
             <v-row>
@@ -65,6 +66,7 @@
   
 <script>
 import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
+import VendorBreadCrumbs from '@/components/icons/VendorBreadCrumbs.vue';
 import firebaseApp from "../firebase";
 import { collection, getFirestore } from "firebase/firestore";
 import { doc, setDoc, getDoc } from "firebase/firestore";
@@ -79,7 +81,8 @@ export default {
       }
     },
     components:{
-        NavigationBar1,
+        //NavigationBar1,
+        VendorBreadCrumbs
     },
     methods: {
         goCreateListing() {
