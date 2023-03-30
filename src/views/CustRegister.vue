@@ -80,7 +80,7 @@
 
 import firebaseApp from "../firebase";
 import { getFirestore } from "firebase/firestore";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDocs, collection} from "firebase/firestore";
 import firebase from 'firebase/compat/app';
 //import 'firebase/compat/auth';
 import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "@firebase/auth";
@@ -99,6 +99,7 @@ export default {
       },
       formErrors: {},
       show1: false,
+      allphoneNo: []
     };
   },
   methods: {
@@ -117,7 +118,10 @@ export default {
         this.formErrors.email = ['Email is required'];
       } else if (!this.validEmail(this.form.email)) {
         this.formErrors.email = ['Please enter a valid email address'];
-      }
+      } 
+      // else if (this.EmailUsed(this.form.email)) {
+      //   this.formErrors.phoneNo = ['Email in used, please sign in']
+      // }
 
       if (!this.form.password) {
         this.formErrors.password = ['Password is required'];
@@ -132,6 +136,8 @@ export default {
         this.formErrors.phoneNo = ['Phone number is required'];
       } else if (!this.validPhoneNo(this.form.phoneNo)) {
         this.formErrors.phoneNo = ['Please enter a valid SG number']
+      } else if (await this.PhoneNoUsed(this.form.phoneNo)) {
+        this.formErrors.phoneNo = ['Phone number in used']
       }
 
       // Submit form if no errors
@@ -149,7 +155,7 @@ export default {
           //const docRef = await frebaseApp.createUserWithEmailAndPassword(this.email, this.password);
           //console.log(user.uid);
           await this.updateUser();
-          this.$router.push('/mainlisting')
+          this.$router.push('/restaurantlisting')
           // You can use your backend API to handle the signup process here
         } catch(error) {
           console.log(error.message);
@@ -162,6 +168,17 @@ export default {
       const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(?!.*\.\w{2,})(?:[a-zA-Z]{2,}|xn--[a-zA-Z0-9]+)/;
       return regex.test(email.trim());
     },
+    
+    async PhoneNoUsed(phoneNo) {
+      this.allphoneNo = []; // Reset the array at the beginning
+      const userRef = await getDocs(collection(db, "Users"));
+      userRef.forEach((doc) => {
+        this.allphoneNo.push(doc.data().PhoneNo)
+      });
+      return this.allphoneNo.includes(phoneNo); 
+    },
+
+
     validPhoneNo(phoneNo) {
       const SGNo = ["6", "8", "9"];
       if (phoneNo.length != 8) {
@@ -172,6 +189,7 @@ export default {
       }
       return true;
     },
+
     async updateUser() {
       getAuth().onAuthStateChanged(user => {
         if (user) {

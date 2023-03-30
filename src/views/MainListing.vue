@@ -2,10 +2,7 @@
     <!-- <router-view/> -->
     <NavigationBar1/>
 <div class = "main">
-  <v-breadcrumbs-item :to="{ name: 'restaurant'}">
-          <v-icon icon="mdi-shopping"></v-icon>
-            My restaurant |
-        </v-breadcrumbs-item>
+
         <add-to-cart></add-to-cart>
       
   <v-container>

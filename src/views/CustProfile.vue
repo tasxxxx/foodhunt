@@ -150,7 +150,7 @@
           if (user) {
             const userID = user.uid;
             console.log("User ID: " + userID);
-            const docRef = doc(db, "Users", userID)
+            const docRef = doc(db, "Users", this.user.email)
             setDoc(docRef, {
             UserID: userID,
             UserType: "Customer",

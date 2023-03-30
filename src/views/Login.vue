@@ -45,7 +45,7 @@
         >
           Log In
         </v-btn>
-        <router-link to="/mainlisting"  style= "font-family:Nunito"> Bypass Login </router-link> <br>
+        <router-link to="/restaurantlisting"  style= "font-family:Nunito"> Bypass Login </router-link> <br>
         <router-link to="/vendor-dashboard"  style= "font-family:Nunito"> Bypass Login to vendor</router-link>
       </v-form>
       <div class="text-center mt-6" style="font-family:Nunito">
@@ -123,7 +123,7 @@ export default {
             userRef.forEach((user) => {
               if(getAuth().currentUser.email === user.data().Email) {
                 if("Customer" === user.data().UserType) {
-                  this.$router.push('/mainlisting');
+                  this.$router.push('/restaurantlisting');
                 } else {
                   this.$router.push('/vendor-dashboard');
                 }
