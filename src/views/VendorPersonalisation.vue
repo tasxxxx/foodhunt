@@ -40,10 +40,10 @@
                     </template>
 
                     <v-item-group mandatory v-model="selectedCuisines" selected-class="bg-grey">
-                        <v-item v-for="cuisine in cuisiness" :key="cuisine.type"
+                        <v-item v-for="cuisine in cuisines"
                             v-slot="{ selectedClass, toggle }">
 
-                            <v-chip :class="selectedClass" @click="toggle" v-text = "cuisine.type" style="font-family:Nunito"></v-chip>
+                            <v-chip :class="selectedClass" @click="toggle" v-text = "cuisine" style="font-family:Nunito"></v-chip>
                         </v-item>
                     </v-item-group>
                 </v-list-group>
@@ -59,10 +59,10 @@
                     </template>
 
                     <v-item-group mandatory v-model="selectedPriceRanges" selected-class="bg-grey">
-                        <v-item v-for="pr in pricerange" :key="pr.type"
+                        <v-item v-for="pr in priceranges" 
                             v-slot="{ selectedClass, toggle }">
 
-                            <v-chip :class="selectedClass" @click="toggle" v-text = "pr.type" style="font-family:Nunito"></v-chip>
+                            <v-chip :class="selectedClass" @click="toggle" v-text = "pr" style="font-family:Nunito"></v-chip>
                         </v-item>
                     </v-item-group>
                 </v-list-group>
@@ -77,10 +77,10 @@
                         ></v-list-item>
                     </template>
                     <v-item-group mandatory v-model="selectedTowns" selected-class="bg-grey">
-                        <v-item v-for="town in townss" :key="town.type"
+                        <v-item v-for="town in towns" 
                             v-slot="{ selectedClass, toggle }">
 
-                            <v-chip :class="selectedClass" @click="toggle" v-text = "town.type" style="font-family:Nunito"></v-chip>
+                            <v-chip :class="selectedClass" @click="toggle" v-text = "town" style="font-family:Nunito"></v-chip>
                         </v-item>
                     </v-item-group>
                 </v-list-group>
@@ -261,43 +261,12 @@
             remarks:''
           },
 
-          cuisiness: [
-            {
-                type: 'Chinese'
-            },
-            {
-                type: 'Indian'
-            },
-            {
-                type: 'Malay'
-            },
-            {
-                type: 'Café'
-            }
-          ],
+          cuisines: ['Chinese',  'Indian',  'Malay', 'Café'],
 
-          pricerange: [
-            {
-                type: '$'
-            },
-            {
-                type: '$$'
-            },
-            {
-                type: '$$$'
-            }
-          ],
-          townss: [
-            {
-                type: 'AMK'
-            },
-            {
-                type: 'Orchard'
-            },
-            {
-                type: 'Tampines'
-            }
-          ],
+
+          priceranges: ['$', '$$', '$$$'],
+
+          towns: ['AMK', 'Orchard','Tampines'],
 
           selectedCuisines: null,
           selectedPriceRanges: null,
@@ -389,9 +358,9 @@
                 
                 await setDoc(docRef2, {
                     Address: this.form.address,
-                    Cuisines: this.cuisiness[this.selectedCuisines],
-                    Price_Range: this.pricerange[this.selectedPriceRanges],
-                    Town: this.townss[this.selectedTowns],
+                    Cuisines: this.cuisines[this.selectedCuisines],
+                    Price_Range: this.priceranges[this.selectedPriceRanges],
+                    Town: this.towns[this.selectedTowns],
                     Monday: this.form.time1,
                     Tuesday: this.form.time2,
                     Wednesday: this.form.time3,
