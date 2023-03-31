@@ -27,14 +27,13 @@
           </div>
           <div className="description">
             <div className="cuisine"> 
-              {{ f.cuisine }}
+              <v-chip color="rgba(109,93,36,1)"> {{ f.cuisine }} </v-chip>
             </div>
             <div className="price">
-              {{ f.price }}
+              <v-chip color="rgba(109,93,36,1)"> {{ f.price }} </v-chip>
             </div>
             <div className="location">
               <!-- <div class="restaurant-location">{{ f.location }}</div> -->
-              
               <img src="../assets/location.png" :title="f.location">
               
             </div>
@@ -148,7 +147,6 @@
 }
 
 .price {
-  font-size: 20px;
   margin-top: 20px;
 }
 .restaurant-name {
@@ -171,12 +169,6 @@
 
 .cuisine {
   margin-top: 20px;
-  width: 100px;
-  
-  border-radius: 15px;
-  background-color: rgb(203, 202, 202);
-  /* color: white; */
-  font-size: 20px;
   text-align: center;
 }
 .restaurant{
