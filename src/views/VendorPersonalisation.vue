@@ -355,7 +355,10 @@
 
                 //Change for vendorid/ vendor name
                 const docRef2 = doc(db, "restaurant_personalisation", vendor_doc_id)
-                
+
+                //Change reservation status 
+                const reserveRef = doc(db, "Users", curr_email);
+
                 await setDoc(docRef2, {
                     Address: this.form.address,
                     Cuisines: this.cuisines[this.selectedCuisines],
@@ -369,9 +372,17 @@
                     Saturday: this.form.time6,
                     Sunday: this.form.time7,  
                     Remarks: this.form.remarks,
-                    Name: vendor_name
+                    Name: vendor_name,
+                    VendorID: vendor_id,
+                    Restaurant_PersonalisationId: vendor_doc_id
                 })
+
+                await updateDoc(reserveRef, {
+                Restaurant_PersonalisationId: vendor_doc_id
+                })
+
                 this.$router.push('/vendor-dashboard')
+                
             } catch(error) {
               console.log(error.message);
             }
