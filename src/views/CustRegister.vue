@@ -8,6 +8,7 @@
         <v-breadcrumbs-item :to="{ name: 'landing'}"><img id = "backgroundimg1" src="@/assets/foodhuntlogo.png" alt = "">
         </v-breadcrumbs-item>
         <h2 class="text-center mb-7" style="font-family:Nunito">Create an Account</h2>
+
         <v-form ref="form" @submit.prevent="signup">
           <v-text-field
             v-model="form.email"
@@ -15,20 +16,30 @@
             type="email"
             required
             :error-messages="formErrors.email"
+            style="font-family:Nunito"
           ></v-text-field>
+
           <v-text-field
             v-model="form.password"
             label="Password"
-            type="password"
             required
             :error-messages="formErrors.password"
+            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="show1 ? 'text' : 'password'"
+            hint="Minimum 6 characters"
+            @click:append="show1 = !show1"
+            counter
+            style="font-family:Nunito"
           ></v-text-field>
+
           <v-text-field
             v-model="form.phoneNo"
             label="Phone Number"
             required
             :error-messages="formErrors.phoneNo"
+            style="font-family:Nunito"
           ></v-text-field> 
+          
           <!-- <v-text-field
             v-model="form.firstName"
             label="First Name"
@@ -69,7 +80,7 @@
 
 import firebaseApp from "../firebase";
 import { getFirestore } from "firebase/firestore";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDocs, collection} from "firebase/firestore";
 import firebase from 'firebase/compat/app';
 //import 'firebase/compat/auth';
 import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "@firebase/auth";
@@ -87,6 +98,8 @@ export default {
         confirmPassword: '',
       },
       formErrors: {},
+      show1: false,
+      allphoneNo: []
     };
   },
   methods: {
@@ -105,7 +118,10 @@ export default {
         this.formErrors.email = ['Email is required'];
       } else if (!this.validEmail(this.form.email)) {
         this.formErrors.email = ['Please enter a valid email address'];
-      }
+      } 
+      // else if (this.EmailUsed(this.form.email)) {
+      //   this.formErrors.phoneNo = ['Email in used, please sign in']
+      // }
 
       if (!this.form.password) {
         this.formErrors.password = ['Password is required'];
@@ -118,6 +134,10 @@ export default {
 
       if (!this.form.phoneNo) {
         this.formErrors.phoneNo = ['Phone number is required'];
+      } else if (!this.validPhoneNo(this.form.phoneNo)) {
+        this.formErrors.phoneNo = ['Please enter a valid SG number']
+      } else if (await this.PhoneNoUsed(this.form.phoneNo)) {
+        this.formErrors.phoneNo = ['Phone number in used']
       }
 
       // Submit form if no errors
@@ -135,7 +155,7 @@ export default {
           //const docRef = await frebaseApp.createUserWithEmailAndPassword(this.email, this.password);
           //console.log(user.uid);
           await this.updateUser();
-          this.$router.push('/mainlisting')
+          this.$router.push('/restaurantlisting')
           // You can use your backend API to handle the signup process here
         } catch(error) {
           console.log(error.message);
@@ -148,18 +168,38 @@ export default {
       const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(?!.*\.\w{2,})(?:[a-zA-Z]{2,}|xn--[a-zA-Z0-9]+)/;
       return regex.test(email.trim());
     },
+    
+    async PhoneNoUsed(phoneNo) {
+      this.allphoneNo = []; // Reset the array at the beginning
+      const userRef = await getDocs(collection(db, "Users"));
+      userRef.forEach((doc) => {
+        this.allphoneNo.push(doc.data().PhoneNo)
+      });
+      return this.allphoneNo.includes(phoneNo); 
+    },
+
+
+    validPhoneNo(phoneNo) {
+      const SGNo = ["6", "8", "9"];
+      if (phoneNo.length != 8) {
+        return false;
+      }
+      if (! SGNo.includes(phoneNo.substring(0, 1))) {
+        return false;
+      }
+      return true;
+    },
+
     async updateUser() {
       getAuth().onAuthStateChanged(user => {
         if (user) {
-          const uid = user.uid;
-          console.log("User ID: " + uid);
-          setDoc(doc(db, "Users", user.uid), {
+          const cusRegRef = doc(db, "Users", this.form.email); 
+          setDoc(cusRegRef, {
             UserID: user.uid,
             UserType: "Customer",
             Email: this.form.email,
             PhoneNo: this.form.phoneNo,
-            // Phone: this.form.phoneNo
-          })
+      });
         } else {
           console.log('No user signed in');
         }

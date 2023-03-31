@@ -3,18 +3,16 @@
     <div class="empty-cart-container" v-if="cart.length === 0">
       <img id ="emptycart" src="@/assets/preview.png" alt = "">
       <h1 id="message">Oops! It seems like your cart is feeling a bit lonely. Time to add some items and fill it up!</h1>
-      <v-breadcrumbs-item :to="{ name: 'mainlisting'}">
+      <v-breadcrumbs-item :to="{ name: 'restaurantlisting'}">
         <v-btn rounded="lg" color="primary"> Start Hunting!</v-btn>
       </v-breadcrumbs-item>
       <img id ="emojisad" src="@/assets/emoji.webp" alt = "">
     </div>
     <div v-else>
       <div class="shopping-cart">
-        <!-- Title -->
         <div class="title">
           <h1>What's in your cart...</h1>
         </div>
-        <!-- Item iteration -->
         <div class="item" v-for="(item, index) in cart" :key="index">
           <div class="buttons">
             <span class="delete-btn">
@@ -42,7 +40,7 @@
         </div>   
         <div class="total">
           <h2 id="totalProfit"> Total: ${{totalCost}}</h2>
-          <v-btn rounded="lg" color="orange" @click="deleteItem(item.item, item.restaurant, item.price)" class="checkout-btn"> Checkout</v-btn>
+          <v-btn rounded="lg" color="green" @click="addToReservation(this.cart)" class="checkout-btn"> Add to Reservations</v-btn>
           </div>
     </div>
   </div>
@@ -52,7 +50,7 @@
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useToast } from 'vue-toastification'
 import firebaseApp from "../firebase";
-import { getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, collection} from 'firebase/firestore';
+import { getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, collection, deleteDoc, serverTimestamp} from 'firebase/firestore';
 import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
 const toast = useToast();
 const db = getFirestore(firebaseApp);
@@ -77,7 +75,7 @@ export default {
         this.useremail = auth.currentUser.email;
         this.retrieveCart();
       } else {
-        if (this.$route.path.split('/').pop() !== "mainlisting") {
+        if (this.$route.path.split('/').pop() !== "restaurantlisting") {
           toast.error("Access denied! Please sign in!", {
             position: "top-right",
             timeout: 2019,
@@ -104,10 +102,75 @@ export default {
       return this.cart.reduce((sum, item) => sum + item.subtotal, 0);
     },
     totalCost() {
-      return this.subtotal;
+      return this.totalCost = this.subtotal; 
     },
   },    
   methods: {
+    async addToReservation(cart) {
+      const cartRef = doc(db, "shopping_carts", this.useremail);
+      const cartData = await getDoc(cartRef);
+      const items = cartData.data().products;
+      let tempArray = []
+      tempArray = Object.entries(items).map(([key, value]) => {
+      const [restaurant, item, price] = key.split(",");
+      const quantity = value;
+      const subtotal = price * quantity;
+      return { restaurant, item, price, quantity, subtotal, id: `${restaurant}-${item}-${price}` };
+    })
+      let canAddReservation = true;
+      const productRef = await getDocs(collection(db, "food_listings"));
+      const products = productRef.docs;
+
+      for (const item of tempArray) {
+        for (const prod of products) {
+          if (item.restaurant === prod.data().Vendor && item.item === prod.data().Name) {
+            if (prod.data().AvailableQty < item.quantity) {
+              canAddReservation = false;
+              break;
+            } 
+          }
+        }
+
+      if (canAddReservation) {
+        const randNum = Math.floor(Math.random() * 876543);
+        const thisUsername = this.useremail;
+        const thisCart = cart;
+        const reservationNo = `FH-${randNum}`;
+        const reservationRef = doc(db, "reservation_orders", reservationNo);
+        await setDoc(reservationRef, {
+          reservationNo: reservationNo,
+          user: thisUsername,
+          createdAt: serverTimestamp(),
+          cart: thisCart,
+          total: this.totalCost,
+          confirmed: false,
+        });
+        this.cart = [];
+        await deleteDoc(cartRef);
+        const orderNumberWithPrefix = `FH-${randNum}`;
+        this.$router.push({ name: 'Confirmation', params: { reservationNumber: orderNumberWithPrefix }});
+      } else {
+        this.cart = [];
+        await deleteDoc(cartRef);
+        toast.error("Product quantity is not available, please try again!", {
+          position: "top-right",
+          timeout: 2019,
+          closeOnClick: true,
+          pauseOnFocusLoss: false,
+          pauseOnHover: false,
+          draggable: true,
+          draggablePercent: 2,
+          showCloseButtonOnHover: false,
+          hideProgressBar: false,
+          closeButton: "button",
+          icon: true,
+          rtl: false
+        });
+        this.$router.push('/restaurantlisting');
+      }
+    }
+  },
+
     async retrieveCart() {
       const toast = useToast();
       const cartRef = doc(db, "shopping_carts", this.useremail);
@@ -211,7 +274,7 @@ export default {
         await this.retrieveCart();
       },
 
-      deleteItem(item, restaurant, price) {
+      async deleteItem(item, restaurant, price) {
          this.$swal.fire({
           title: 'Are you sure?',
           text: "Please confirm that you are removing the item from the cart?",
@@ -267,11 +330,11 @@ export default {
 }
 
 #emojisad {
-  width: 310px;
+  width: 320px;
 }
 
 #message {
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 * {
@@ -279,7 +342,8 @@ box-sizing: border-box;
 }
 
 .shopping-cart {
-width: 50vw;
+width: 720px;
+height: auto;
 margin: 5vh auto;
 background: #FFFFFF;
 box-shadow: 1px 2px 3px 0px rgba(0,0,0,0.10);
@@ -288,7 +352,7 @@ display: flex;
 flex-direction: column;
 }
 .title {
-  height: 10vh;
+  height: 80px;
   border-bottom: 1px solid #E1E8EE;
   padding: 20px;
   color: black;
@@ -296,7 +360,7 @@ flex-direction: column;
 }
 
 .total {
-  height: 14vh;
+  height: 110px;
   border-bottom: 1px solid #E1E8EE;
   padding: 20px;
   color: black;
@@ -306,16 +370,15 @@ flex-direction: column;
 
 .item {
 padding: 20px;
-height: 15vh;
 width: 50vw;
 display: flex;
 font-family: Lato; 
 }
-
+/* 
 .item:nth-child(2) {
 border-top:  1px solid #E1E8EE;
 border-bottom:  1px solid #E1E8EE;
-}
+} */
 
 .buttons {
 position: relative;
@@ -350,13 +413,12 @@ width: 150px;
 }
 
 .description {
-width: 460px;
+width: 260px;
 }
 
 .description span {
 display: block;
 font-size: 16px;
-color: #43484D;
 font-weight: 400;
 }
 
@@ -370,7 +432,7 @@ margin-top: 5px;
 
 .quantity {
 padding-top: 25px;
-margin-right: 50px;
+margin-right: 12px;
 }
 
 .delete-btn, 
@@ -399,10 +461,9 @@ outline:0;
 .total-price {
 width: 83px;
 padding-top: 27px;
-padding-left: 10px;
+padding-left: 50px;
 text-align: center;
 font-size: 16px;
-color: #43484D;
 font-weight: 300;
 }
 
@@ -415,6 +476,9 @@ font-weight: 300;
 .delete-btn:hover {
   background-color: #dc3545;
   color: white;
+}
+.swal2-popup {
+  font-family:Nunito;
 }
 
 

@@ -1,4 +1,5 @@
 <template  v-if="user">
+    <!-- <NavigationBar1/> -->
     <VendorBreadCrumbs/>
     <v-layout>
         <v-main>
@@ -64,18 +65,23 @@
 
   
 <script>
-import BreadCrumbs from '@/components/icons/BreadCrumbs.vue'
-import VendorBreadCrumbs from '../components/icons/VendorBreadCrumbs.vue'
+import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
+import VendorBreadCrumbs from '@/components/icons/VendorBreadCrumbs.vue';
+import firebaseApp from "../firebase";
+import { collection, getFirestore } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { getAuth, signOut } from "@firebase/auth";
+const db = getFirestore(firebaseApp);
 
 export default {
-    name: "PartnerUs",
+    name: "VendorDashboard",
     data() {
       return {
         user: false,
       }
     },
     components:{
-        BreadCrumbs,
+        //NavigationBar1,
         VendorBreadCrumbs
     },
     methods: {

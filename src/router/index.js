@@ -18,6 +18,8 @@ import VendorProfileEditOne from '../views/VendorProfileEditOne.vue'
 import VendorProfileEditTwo from '../views/VendorProfileEditTwo.vue'
 import RestaurantListing from '../views/RestaurantListing.vue';
 import VendorListing from '../views/VendorListing.vue';
+import Confirmation from '../views/confirmation.vue';
+
 
 const routes = [
   {
@@ -117,6 +119,11 @@ const routes = [
     name: 'vendor-listing',
     component: VendorListing
   },
+    path: '/confirmation/:reservationNumber',
+    name: 'Confirmation',
+    component: Confirmation,
+    props: true
+  }
 ]
 
 const router = createRouter({

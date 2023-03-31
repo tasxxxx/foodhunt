@@ -1,9 +1,12 @@
 <template>  
   <NavigationBar1/>
   <div class="restaurant-info">
-    <img id = "restaurantimg" src="@/assets/mcdonalds.jpg" alt = "">
-    <img id="restaurantimg1" :src="restaurant.imageurl" alt="">
+    <img id = "restaurantimg" src="@/assets/macdonaldbanner.jpeg" alt = "">
     <h1 id="restaurantname">{{ restaurant.name }}</h1>       
+    <div class = "tags">
+      <v-chip color="rgba(109,93,36,1)"> {{ restaurant.cuisine }} </v-chip>
+      <v-chip color="rgba(109,93,36,1)"> {{ restaurant.pricerange }} </v-chip>
+    </div>
     <h3 id="restauranttag" v-html="restaurant.tags"></h3>
     <div class="text-right">
       <v-dialog v-model="dialog" width="auto"> 
@@ -71,7 +74,6 @@
         </div>
     </div> 
 
-<h1 class="text" style="font-family:Nunito">Available Products</h1>  
 <v-card id="finally">
   <v-tabs
     v-model="tab"
@@ -138,7 +140,7 @@ name: "Restaurant",
 components:{
   NavigationBar1,
   AddToCart
-}, 
+},
 data() {
   return {
     dialog: false, 
@@ -146,7 +148,6 @@ data() {
     products: [],
     uniqueCategories: [], 
     imageurl: "",
-
     tab: ""
   }
 },  
@@ -159,8 +160,6 @@ async mounted() {
     const documentData = docSnap.data();
 
     const name = documentData.Name;
-    // const image = documentData.imageID;
-    const tags = documentData.Tags.join(" / ");
     const address = documentData.Address;
     const monday = documentData.Monday; 
     const tuesday = documentData.Tuesday; 
@@ -169,10 +168,12 @@ async mounted() {
     const friday = documentData.Friday; 
     const saturday = documentData.Saturday; 
     const sunday = documentData.Sunday; 
-    const remarks = documentData.Remarks.join("<br>");
+    const remarks = documentData.Remarks.split(',').join("<br>");
+    const pricerange = documentData.Price_Range; 
+    const cuisine = documentData.Cuisines; 
+
     this.restaurant = {
       name,
-      tags,
       address,
       monday,
       tuesday, 
@@ -182,7 +183,10 @@ async mounted() {
       saturday, 
       sunday, 
       remarks,
+      pricerange, 
+      cuisine
     };
+
     this.imageurl = documentData.imageID;
   } else {
     console.log('No such document!');
@@ -190,7 +194,7 @@ async mounted() {
 
   const productRef = await getDocs(collection(db, "food_listings"));
   productRef.forEach((doc) => {
-    if (doc.data().Vendor === 'McDonalds') {
+    if (doc.data().Vendor === 'McDonalds' && doc.data().AvailableQty > 0) {
       const product = doc.data();
       product.category = doc.data().Category;
       this.products.push(product);
@@ -198,7 +202,7 @@ async mounted() {
   });
   },
   
-  computed: {
+computed: {
   categorizedProducts() {
     return this.products.reduce((acc, prod) => {
       if (!acc[prod.category]) {
@@ -208,14 +212,14 @@ async mounted() {
       }
       return acc
     }, {})
-  }
+  }, 
 }, 
 async created() {
   const productRef = await getDocs(collection(db, "food_listings"));
   const uniqueCategories = [];
   
   productRef.forEach((doc) => {
-    if (doc.data().Vendor === 'McDonalds') {
+    if (doc.data().Vendor === 'McDonalds' && doc.data().AvailableQty > 0) {
       const product = doc.data();
       product.category = doc.data().Category;
       if (!uniqueCategories.includes(product.category)) {
@@ -230,40 +234,30 @@ async created() {
 <style scoped>
 
 #restaurantimg {
-width: 100vw;
-height: 35vh;
+width: 100%;
+height: 400px;
 }
+
 #restaurantname {
 margin-left:5vw;
 font-family:"Nunito";
 }
 
-#restauranttag {
+.tags {
 margin-left:5vw;
 font-family:"Lato";
 }
+
 .text-right {
 margin-top:-65px;
 margin-right:5vw;
 }
 
-.category:nth-child(3n+1) {
-clear: both;
-}
-
-#cat {
-padding-left:20px;
-font-family:Nunito;
-}
-
-.text { 
-margin-left:5vw;
-margin-top: 35px;
-}
 .product-wrapper {
 display: flex;
 flex-wrap: wrap;
 }
+
 .product{
 border: 2px solid #d3cdcd;
 width: 300px;
@@ -276,6 +270,10 @@ margin: 20px;
 
 #finally {
 width:90vw;
+height:auto;
+padding-bottom:10px;
+margin-bottom:20px;
+margin-top:50px;
 margin-left: 5vw;
 }
 
@@ -299,6 +297,7 @@ margin-top: 2.5px;
 margin-left: 5px;
 font-family:"Lato";
 }
+
 .addedQty{
 width: 99999999999999px;
 font-size: 16px;

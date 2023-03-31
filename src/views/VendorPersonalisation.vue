@@ -7,12 +7,12 @@
     
         <v-container>
         <v-card class="pa-6">
-          <v-breadcrumbs-item :to="{ name: 'landing'}"><img id = "backgroundimg1" src="@/assets/foodhuntlogo.png" alt = "">
+          <v-breadcrumbs-item><img id = "backgroundimg1" src="@/assets/foodhuntlogo.png" alt = "">
           </v-breadcrumbs-item>
  
           <h2 class="text-center mb-6" style="font-family:Nunito">Personalisation</h2>
 
-            <v-form ref="form">
+            <v-form ref="form" @submit.prevent = "personalise">
 
             <!-- Address -->
             <v-text-field
@@ -34,15 +34,16 @@
                         <v-list-item
                         v-bind="props"
                         title="Cuisines"
-                        style="font-family:'Nunito"
+                        style="font-family:Nunito"
+                        required
                         ></v-list-item>
                     </template>
 
-                    <v-item-group multiple selected-class="bg-grey">
-                        <v-item v-for="cuisine in cuisiness" :key="cuisine.type"
+                    <v-item-group mandatory v-model="selectedCuisines" selected-class="bg-grey">
+                        <v-item v-for="cuisine in cuisines"
                             v-slot="{ selectedClass, toggle }">
 
-                            <v-chip :class="selectedClass" @click="toggle" v-text = "cuisine.type" style="font-family:Nunito"></v-chip>
+                            <v-chip :class="selectedClass" @click="toggle" v-text = "cuisine" style="font-family:Nunito"></v-chip>
                         </v-item>
                     </v-item-group>
                 </v-list-group>
@@ -53,13 +54,15 @@
                         v-bind="props"
                         title="Price Range"
                         style="font-family:Nunito"
+                        required
                         ></v-list-item>
                     </template>
-                    <v-item-group multiple selected-class="bg-grey">
-                        <v-item v-for="pr in pricerange" :key="pr.type"
+
+                    <v-item-group mandatory v-model="selectedPriceRanges" selected-class="bg-grey">
+                        <v-item v-for="pr in priceranges" 
                             v-slot="{ selectedClass, toggle }">
 
-                            <v-chip :class="selectedClass" @click="toggle" v-text = "pr.type" style="font-family:Nunito"></v-chip>
+                            <v-chip :class="selectedClass" @click="toggle" v-text = "pr" style="font-family:Nunito"></v-chip>
                         </v-item>
                     </v-item-group>
                 </v-list-group>
@@ -70,13 +73,14 @@
                         v-bind="props"
                         title="Town"
                         style="font-family:Nunito"
+                        required
                         ></v-list-item>
                     </template>
-                    <v-item-group multiple selected-class="bg-grey">
-                        <v-item v-for="town in townss" :key="town.type"
+                    <v-item-group mandatory v-model="selectedTowns" selected-class="bg-grey">
+                        <v-item v-for="town in towns" 
                             v-slot="{ selectedClass, toggle }">
 
-                            <v-chip :class="selectedClass" @click="toggle" v-text = "town.type" style="font-family:Nunito"></v-chip>
+                            <v-chip :class="selectedClass" @click="toggle" v-text = "town" style="font-family:Nunito"></v-chip>
                         </v-item>
                     </v-item-group>
                 </v-list-group>
@@ -99,6 +103,9 @@
                                 <v-text-field
                                     label="Start - End"
                                     style="font-family:Nunito"
+                                    :error-messages="formErrors.time1"
+                                    required
+                                    v-model="form.time1"
                                 ></v-text-field>
                                 </v-col>
                             </v-row>
@@ -112,6 +119,9 @@
                                 <v-text-field
                                     label="Start - End"
                                     style="font-family:Nunito"
+                                    :error-messages="formErrors.time2"
+                                    required
+                                    v-model="form.time2"
                                 ></v-text-field>
                                 </v-col>
                             </v-row>
@@ -125,6 +135,9 @@
                                 <v-text-field
                                     label="Start - End"
                                     style="font-family:Nunito"
+                                    :error-messages="formErrors.time3"
+                                    required
+                                    v-model="form.time3"
                                 ></v-text-field>
                                 </v-col>
                             </v-row>
@@ -138,6 +151,9 @@
                                 <v-text-field
                                     label="Start - End"
                                     style="font-family:Nunito"
+                                    :error-messages="formErrors.time4"
+                                    required
+                                    v-model="form.time4"
                                 ></v-text-field>
                                 </v-col>
                             </v-row>
@@ -151,6 +167,9 @@
                                 <v-text-field
                                     label="Start - End"
                                     style="font-family:Nunito"
+                                    :error-messages="formErrors.time5"
+                                    required
+                                    v-model="form.time5"
                                 ></v-text-field>
                                 </v-col>
                             </v-row>
@@ -164,6 +183,9 @@
                                 <v-text-field
                                     label="Start - End"
                                     style="font-family:Nunito"
+                                    :error-messages="formErrors.time6"
+                                    required
+                                    v-model="form.time6"
                                 ></v-text-field>
                                 </v-col>
                             </v-row>
@@ -177,6 +199,9 @@
                                 <v-text-field
                                     label="Start - End"
                                     style="font-family:Nunito"
+                                    :error-messages="formErrors.time7"
+                                    required
+                                    v-model="form.time7"
                                 ></v-text-field>
                                 </v-col>
                             </v-row>
@@ -188,10 +213,9 @@
             <!-- Remarks -->
             <v-list-item title="Remarks" style="font-family:Nunito"></v-list-item>
             <v-text-field
-              v-model="form.address"
-              label=""
+              v-model="form.remarks"
+              label="Separate remarks with a comma (,)"
               required
-              :error-messages="formErrors.address"
               style="font-family:Nunito"
             ></v-text-field>
 
@@ -199,12 +223,9 @@
             <v-btn
               type="submit"
               color="primary"
-              class="mt-6"
-              :loading="isLoading"
               block
               style="font-family:Nunito"
-              href="/vendor-dashboard"
-            >Register</v-btn>
+            >Complete Profile</v-btn>
 
           </v-form>
 
@@ -218,54 +239,38 @@
       
     <script>
     import firebaseApp from "../firebase";
-    //import firebase from 'firebase/compat/app';
-    //import { firebase } from 'firebase/app';
+    import { getDoc, getFirestore, setDoc } from "firebase/firestore";
+    import { doc, updateDoc} from "firebase/firestore";
+    import firebase from 'firebase/compat/app';
+    import 'firebase/compat/auth';
+    import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "@firebase/auth";
+    const db = getFirestore(firebaseApp); 
     
     export default {
       data() {
         return {
           form: {
             address: '',
-            tags: ''
+            time1:'',
+            time2:'',
+            time3:'',
+            time4:'',
+            time5:'',
+            time6:'',
+            time7:'',
+            remarks:''
           },
 
-          cuisiness: [
-            {
-                type: 'Chinese'
-            },
-            {
-                type: 'Indian'
-            },
-            {
-                type: 'Malay'
-            },
-            {
-                type: 'Café'
-            }
-          ],
+          cuisines: ['Chinese',  'Indian',  'Malay', 'Café'],
 
-          pricerange: [
-            {
-                type: '$'
-            },
-            {
-                type: '$$'
-            },
-            {
-                type: '$$$'
-            }
-          ],
-          townss: [
-            {
-                type: 'AMK'
-            },
-            {
-                type: 'Orchard'
-            },
-            {
-                type: 'Tampines'
-            }
-          ],
+
+          priceranges: ['$', '$$', '$$$'],
+
+          towns: ['AMK', 'Orchard','Tampines'],
+
+          selectedCuisines: null,
+          selectedPriceRanges: null,
+          selectedTowns: null,
 
           open: ['Cuisines'],
 
@@ -275,6 +280,106 @@
       },
       methods: {
 
+
+        async personalise() {
+          this.formErrors = {};
+
+          if (!this.form.address) {
+            this.formErrors.address = ['Please enter an address'];
+          } 
+
+          if (!this.form.time1) {
+            this.formErrors.time1 = ['Operating hours required'];
+          }
+
+          if (!this.form.time2) {
+            this.formErrors.time2 = ['Operating hours required'];
+          }
+
+          if (!this.form.time3) {
+            this.formErrors.time3 = ['Operating hours required'];
+          }
+
+          if (!this.form.time4) {
+            this.formErrors.time4 = ['Operating hours required'];
+          }
+
+          if (!this.form.time5) {
+            this.formErrors.time5 = ['Operating hours required'];
+          }
+
+          if (!this.form.time6) {
+            this.formErrors.time6 = ['Operating hours required'];
+          }
+
+          if (!this.form.time7) {
+            this.formErrors.time7 = ['Operating hours required'];
+          }
+
+          // Submit form if no errors
+          if (Object.keys(this.formErrors).length === 0) {
+            try {
+                // console.log('Form submitted:', this.form);
+                // const curr_email = getAuth().currentUser.email;
+
+
+                // const db = getFirestore();
+                // const docRef = doc(db, "Users", curr_email);
+
+                // await updateDoc(docRef, {
+                //     Address: this.form.address,
+                //     Cuisines: this.selectedCuisines,
+                //     Price_Range: this.selectedPriceRanges,
+                //     Town: this.selectedTowns,
+                //     Monday: this.form.time1,
+                //     Tuesday: this.form.time2,
+                //     Wednesday: this.form.time3,
+                //     Thursday: this.form.time4,
+                //     Friday: this.form.time5,
+                //     Saturday: this.form.time6,
+                //     Sunday: this.form.time7,  
+                //     Remarks: this.form.remarks            
+                // });
+                // this.$router.push('/vendor-dashboard')
+
+                const curr_email = getAuth().currentUser.email;
+                const db = getFirestore();
+                const docRef = doc(db, "Users", curr_email);
+
+                const docSnap = await getDoc(docRef)
+    
+                const Docdata = docSnap.data();
+                const vendor_id = Docdata.VendorID;
+                const vendor_name = Docdata.Name;
+                const vendor_doc_id = (vendor_name + vendor_id.substring(0,5)).replace(/\s+/g, '')
+
+                //Change for vendorid/ vendor name
+                const docRef2 = doc(db, "restaurant_personalisation", vendor_doc_id)
+                
+                await setDoc(docRef2, {
+                    Address: this.form.address,
+                    Cuisines: this.cuisines[this.selectedCuisines],
+                    Price_Range: this.priceranges[this.selectedPriceRanges],
+                    Town: this.towns[this.selectedTowns],
+                    Monday: this.form.time1,
+                    Tuesday: this.form.time2,
+                    Wednesday: this.form.time3,
+                    Thursday: this.form.time4,
+                    Friday: this.form.time5,
+                    Saturday: this.form.time6,
+                    Sunday: this.form.time7,  
+                    Remarks: this.form.remarks,
+                    Name: vendor_name
+                })
+                this.$router.push('/vendor-dashboard')
+            } catch(error) {
+              console.log(error.message);
+            }
+          }
+        },
+        handleClick() {
+          // do something when clicked
+        }
       },
     };
     </script>

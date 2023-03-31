@@ -19,10 +19,14 @@
         <v-text-field
           v-model="form.password"
           label="Password"
-          type="password"
           required
           :error-messages="formErrors.password"
           style="font-family:Nunito"
+          :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+          :type="show1 ? 'text' : 'password'"
+          hint="Minimum 6 characters"
+          @click:append="show1 = !show1"
+          counter
         ></v-text-field>
         <v-checkbox
           v-model="form.rememberMe"
@@ -41,7 +45,7 @@
         >
           Log In
         </v-btn>
-        <router-link to="/mainlisting"  style= "font-family:Nunito"> Bypass Login </router-link> <br>
+        <router-link to="/restaurantlisting"  style= "font-family:Nunito"> Bypass Login </router-link> <br>
         <router-link to="/vendor-dashboard"  style= "font-family:Nunito"> Bypass Login to vendor</router-link>
       </v-form>
       <div class="text-center mt-6" style="font-family:Nunito">
@@ -59,11 +63,13 @@
   
 <script>
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, setPersistence, browserSessionPersistence } from "@firebase/auth";
-import firebaseApp from "../firebase";
+//import firebaseApp from "../firebase";
 import { useToast } from 'vue-toastification'
 //import firebase from 'firebase/compat/app';
+import { collection, getDocs, getFirestore } from 'firebase/firestore';
 //import { firebase } from 'firebase/app';
 const auth = getAuth();
+const db = getFirestore();
 
 export default {
   data() {
@@ -75,6 +81,7 @@ export default {
       },
       formErrors: {},
       isLoading: false,
+      show1: false,
     };
   },
   methods: {
@@ -102,22 +109,44 @@ export default {
           console.log("remember me: " + this.form.rememberMe)
           //await setPersistence(auth, firebase.auth.Auth.Persistence.SESSION);
           const user = await signInWithEmailAndPassword(auth, this.form.email, this.form.password);
-          
+          //const user = getAuth().currentUser;
+
           if (this.form.rememberMe) {
             console.log("remembering you")
             setPersistence(auth, browserSessionPersistence)
             //return setPersistence(auth, firebase.auth.Auth.Persistence.LOCAL);
           }
-          
-          this.$router.push('/mainlisting')
+
+          // User is signed in
+          if(getAuth().currentUser !== null) {
+            const userRef = await getDocs(collection(db, "Users"))
+            userRef.forEach((user) => {
+              if(getAuth().currentUser.email === user.data().Email) {
+                if("Customer" === user.data().UserType) {
+                  this.$router.push('/restaurantlisting');
+                } else {
+                  this.$router.push('/vendor-dashboard');
+                }
+              }
+            })
+          }
+          // if (getAuth().currentUser !== null) {
+          //   console.log("user id: " + getAuth().currentUser.uid)
+          //   const userRef = await getDocs(collection(db, "Users"))
+          //   userRef.forEach((doc) => {
+          //     console.log("doc id" + doc.data().UserID)
+          //     if (getAuth().currentUser.uid === doc.data().UserID && doc.data().UserType === 'Customer') {
+          //     } else if (doc.data().UserType === 'Vendor') {
+          //     }
+              
+          //   });
+          // }
+          setTimeout(() => {
+            this.isLoading = false;
+          }, 2000)
         } catch (error) {
           this.formErrors.password = [error.message];
         }
-        setTimeout(() => {
-          this.isLoading = false;
-        }, 2000);
-
-        
       }
     },
     validEmail(email) {
