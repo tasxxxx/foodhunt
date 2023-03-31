@@ -33,7 +33,7 @@
                     <br>
                     <v-row>
                     <v-col>
-                    <v-btn variant="outlined">View My Listing</v-btn>
+                    <v-btn @click="goVendorListing" variant="outlined">View My Listing</v-btn>
                      </v-col>
 
                     <v-col>
@@ -87,6 +87,9 @@ export default {
     methods: {
         goCreateListing() {
             this.$router.push('/create-listing')
+        },
+        goVendorListing() {
+            this.$router.push('/vendor-listing')
         },
     }
 }

@@ -1,61 +1,102 @@
 <template>
-  <v-card class="mx-auto" max-width="600">
+  <v-card 
+    class="mx-auto" 
+    max-width=1000
+  >
     
     <v-card-text>
       <v-form @submit.prevent="submitForm">
-        <h2>Food Name</h2> <br>
+        <h3>Food Name</h3> <br>
         <v-text-field 
             v-model="name" 
             label="Food Name" 
             :error-messages="formErrors.name"
             required>
         </v-text-field>
+        <v-row
+          width="100%"
+        >
+          <v-col
+            cols="6"
+          >
+            <h3>Image</h3>
+            <v-img 
+                :src="imageUrl" 
+                v-if="imageUrl"
+                :width="150" 
+                :height="150" 
+                contain class="ma-4"
+                accept="image/*"
+            ></v-img>
 
-        <h2>Image</h2> <br>
-        <v-img 
-            :src="image" 
-            :width="500" 
-            :height="500" 
-            contain class="ma-4"
-            accept="image/png, image/gif, image/jpeg"
-        ></v-img>
 
-        <v-file-input 
-          prepend-icon="mdi-camera" 
-          v-model="file" 
-          label="Upload Image"
-        ></v-file-input>
-        <v-textarea
-            v-model="description"
-            auto-grow
-            variant="filled"
-            color="deep-purple"
-            label="Description"
-            rows="5"
-            :error-messages="formErrors.description"
-        ></v-textarea>
+            <v-file-input 
+            v-model="image"
+              prepend-icon="mdi-camera" 
+              label="Upload Image"
+              @change="onFileSelected"
+              accept="image/*"
+            ></v-file-input>
+          </v-col>
+
+          <v-col
+            cols="6"
+          >
+            <h3>Description</h3> <br>
+            <v-textarea
+                v-model="description"
+                auto-grow
+                variant="filled"
+                color="deep-purple"
+                label="Description"
+                rows="8"
+                :error-messages="formErrors.description"
+            ></v-textarea>
+          </v-col>
+        </v-row>
+
+        <h3>Food Name</h3> <br>
         <v-text-field 
             v-model="category" 
             label="Food Category" 
             required
             :error-messages="formErrors.category"
         ></v-text-field>
-        <v-text-field 
-          v-model.number="price" 
-          type="number" 
-          label="Price" 
-          step="0.1"
-          :error-messages="formErrors.price"
-        ></v-text-field>
-        <v-text-field 
-          v-model.number="quantity" 
-          type="number" 
-          label="Quantity" 
-          step="1"
-          :error-messages="formErrors.quantity"
-        ></v-text-field>
+        <v-row>
+          <v-col
+            cols="6"
+          >
+            <h3>Price</h3> <br>
+            <v-text-field 
+              v-model.number="price" 
+              type="number" 
+              label="Price" 
+              step="0.1"
+              :error-messages="formErrors.price"
+            ></v-text-field>
+          </v-col>
+          <v-col
+            cols="6"
+          >
+            <h3>Quantity</h3> <br>
+            <v-text-field 
+              v-model.number="quantity" 
+              type="number" 
+              label="Quantity" 
+              step="1"
+              :error-messages="formErrors.quantity"
+            ></v-text-field>
+          </v-col>
+        </v-row>
 
-        <v-btn type="submit" color="primary" class="ml-auto mt-4">Confirm</v-btn>
+        <v-btn 
+          type="submit" 
+          color="primary" 
+          class="ml-auto mt-6 mr-0"
+          width="250"
+        >
+          Confirm
+        </v-btn>
       </v-form>
     </v-card-text>
   </v-card>
@@ -63,10 +104,13 @@
 
 <script>
 import firebase from 'firebase/compat/app';
+import { getStorage, uploadBytes, getDownloadURL, ref } from "firebase/storage";
 import firebaseApp from "../firebase";
-import 'firebase/storage'
+import { getAuth, signOut } from "@firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, collection } from "firebase/firestore";
+ 
+const db = getFirestore(firebaseApp);
 
 export default {
   data() {
@@ -76,25 +120,36 @@ export default {
         category: '',
         price: '',
         quantity: '',
-        file: null,
-        
+        imageUrl: 'https://via.placeholder.com/500',
+        image: null,
+        imageFirebase: null,
+ 
         formErrors: {},
     }
   },
   computed: {
-    image() {
-      if (this.file) {
-        console.log("Got image");
-        return URL.createObjectURL(this.file); 
-      }  else {
-        console.log("NOO image");
-        return 'https://via.placeholder.com/500';
-      }
-    }
+    // image() {
+    //   if (this.file) {
+    //     console.log("Got image");
+    //     //return URL.createObjectURL(this.file); 
+    //     return this.file
+    //   }  else {
+    //     console.log("NOO image");
+    //     return '@/assets/FoodHuntLogo.png';
+    //   }
+    // }
   },
   methods: {
+    onFileSelected(event) {
+      const file = event.target.files[0];
+      this.imageUrl = URL.createObjectURL(file);
+      this.image = file;
+    },
+
     async submitForm() {
+        
         this.formErrors = {};
+        /*
         if (!this.name) {
             this.formErrors.name = ['Name is required'];
         }
@@ -110,26 +165,47 @@ export default {
         if (!this.quantity) {
             this.formErrors.quantity = ['Quantity is required'];
         }
+        */
+        
 
         // Submit form if no errors
         if (Object.keys(this.formErrors).length === 0) {
-            this.updateListing();
-            const storageRef = firebase.storage().ref()
-            const fileRef = storageRef.child(this.file.name)
-            await fileRef.put(this.file)
-            const downloadURL = await fileRef.getDownloadURL()
+          let fileName = this.name;
+          const path = "images/Listings/" + fileName
+          console.log(path)
+          const storage = getStorage(firebaseApp)
+          const storageRef = ref(storage, path);
+          await uploadBytes(storageRef, this.image);
+
+          // Get the download URL of the uploaded image
+          const downloadUrl = await getDownloadURL(storageRef);
+          this.imageFirebase = downloadUrl;
+          console.log(downloadUrl)
+
+          this.updateListing();
+          this.$router.push('/vendor-dashboard')
         }
+        
+
+      
       
       // save the form data and image download URL to Firebase database
     },
     async updateListing() {
+        //const user = getAuth().currentUser;
+        // Still need to get vendor name
+
         const db = getFirestore(firebaseApp); 
-        setDoc(doc(db, "Food Listings", "test"), {
+        const collectionRef = collection(db, "food_listings");
+        const newDocRef = doc(collectionRef);
+        setDoc(newDocRef, {
             Name: this.name,
+            ImageURL: this.imageFirebase,
             Description: this.description,
             Category: this.category,
             Price: this.price,
-            Quantity: this.quantity,
+            AvailableQty: this.quantity,
+            Vendor: "TBC",
         })
     },
   }
