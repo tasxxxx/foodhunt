@@ -137,7 +137,7 @@ export default {
       } else if (!this.validPhoneNo(this.form.phoneNo)) {
         this.formErrors.phoneNo = ['Please enter a valid SG number']
       } else if (await this.PhoneNoUsed(this.form.phoneNo)) {
-        this.formErrors.phoneNo = ['Phone number in used']
+        this.formErrors.phoneNo = ['Phone number in use']
       }
 
       // Submit form if no errors

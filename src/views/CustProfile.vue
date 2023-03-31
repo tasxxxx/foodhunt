@@ -13,15 +13,15 @@
           <v-text-field
             v-model="form.email"
             type="email"
-            hint="Enter your new email"
-            :error-messages="formErrors.email"
             style="font-family:Nunito"
+            variant="solo"
+            :readonly="isReadOnly"
           ></v-text-field>
           <h3 style="font-family:Nunito;" class="text-left mb-7">Phone number</h3>
            <v-text-field
             v-model="form.phoneNo"
             type="text"
-            hint="Enter your new phone number"
+            hint="Enter your new SG phone number"
             style="font-family:Nunito"
             :error-messages="formErrors.phoneNo"
           ></v-text-field>
@@ -60,7 +60,7 @@
   import firebaseApp from "../firebase";
   import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
   import { collection, getFirestore, updateDoc } from "firebase/firestore"
-  import { doc, setDoc, getDoc } from "firebase/firestore";
+  import { doc, setDoc, getDoc, getDocs } from "firebase/firestore";
   import { getAuth, onAuthStateChanged, sendPasswordResetEmail } from "firebase/auth";
   const db = getFirestore(firebaseApp);
   
@@ -79,6 +79,7 @@
         formErrors: {},
         showPISuccess: false,
         showPWSuccess: false,
+        isReadOnly: true,
       }
     },
     async mounted() {
@@ -104,22 +105,34 @@
         this.formErrors = {};
         this.showPISuccess = false;
 
-        if (!this.validEmail(this.form.email)) {
-          this.formErrors.email = ['Please enter a valid email address'];
-        }
+        // if (!this.validEmail(this.form.email)) {
+        //   this.formErrors.email = ['Please enter a valid email address'];
+        // }
+
         if (!this.validPhoneNo(this.form.phoneNo)) {
           this.formErrors.phoneNo = ['Please enter a valid SG number']
+        } else if (await this.PhoneNoUsed(this.form.phoneNo)) {
+        this.formErrors.phoneNo = ['Phone number in use']
         }
+
+        console.log(this.formErrors);
+
         if (Object.keys(this.formErrors).length === 0) {
-          await this.updatePIfirebase()
+          try {
+            console.log('Form submitted:', this.form);
+            await this.updatePIfirebase()
+          } catch(error) {
+            console.log(error.message);
+          }
         }
+          
       },
 
-      validEmail(email) {
-      // Email validation code
-      const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(?!.*\.\w{2,})(?:[a-zA-Z]{2,}|xn--[a-zA-Z0-9]+)/;
-      return regex.test(email.trim());
-      },
+      // validEmail(email) {
+      // // Email validation code
+      // const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(?!.*\.\w{2,})(?:[a-zA-Z]{2,}|xn--[a-zA-Z0-9]+)/;
+      // return regex.test(email.trim());
+      // },
 
       validPhoneNo(phoneNo) {
         const SGNo = ["6", "8", "9"];
@@ -130,6 +143,15 @@
           return false;
         }
         return true;
+      },
+
+      async PhoneNoUsed(phoneNo) {
+      this.allphoneNo = []; // Reset the array at the beginning
+      const userRef = await getDocs(collection(db, "Users"));
+      userRef.forEach((doc) => {
+        this.allphoneNo.push(doc.data().PhoneNo)
+      });
+      return this.allphoneNo.includes(phoneNo); 
       },
 
       async updatePW() {
