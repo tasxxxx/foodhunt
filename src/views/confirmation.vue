@@ -39,6 +39,7 @@ import { getAuth} from "@firebase/auth";
 const db = getFirestore(firebaseApp);
 const toast = useToast();
 
+
 export default {
 name: "Confirmation",
 props: {

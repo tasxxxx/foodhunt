@@ -1,53 +1,20 @@
 <template>
-  <VendorBreadCrumbs/>
-  
-  <v-card
-    class="mx-auto" 
-    max-width=1230
-    max-height="640"
-  >
-  <div class="text-h5 pa-5"> All listings at a glance...</div>
-  <v-divider></v-divider>
   <v-row>
     <v-col cols="4">
       <div class="list-container">
-        <v-card 
-          v-for="(item, index) in items" 
-          :key="index" 
-          @click="selectedItem = index" 
-          :class="{'selected': selectedItem === index}"
-          min-height="150"
-        >
-          <br>
+        <v-card v-for="(item, index) in items" :key="index" @click="selectedItem = index" :class="{'selected': selectedItem === index}">
           <v-row>
             <v-col cols="4">
-              <v-avatar class="mx-auto d-flex" size="100">
+              <v-avatar class="mx-auto" size="70">
                 <v-img :src="item.ImageURL" contain class="white--text"></v-img>
               </v-avatar>
             </v-col>
             <v-col cols="8">
-              <!-- <div class="d-flex justify-space-between">
+              <div class="d-flex justify-space-between">
                 <div class="text-h5 mb-2">{{ item.Name }}</div>
-                <v-chip>{{ item.Category }}</v-chip>
                 <div class="text-h6 mb-2">{{ item.Price }}</div>
-              </div> -->
-              
-              <v-row>
-                <div class="text-h6 mb-1">{{ item.Name }}</div>
-              </v-row>
-              <v-row>
-                <v-col cols="5">
-                <div class="text-subtitle-2 mb-1">Qty: {{ item.AvailableQty }}</div>
-                </v-col>
-                <v-col cols="5">
-                  <div class="text-h6 mb-1">${{ item.Price }}</div>
-                </v-col>
-              </v-row>
-              <v-row>
-                  <v-chip>{{ item.Category }}</v-chip>  
-              </v-row>
-
-              <!-- <div class="text-body-1">{{ item.Category }}</div> -->
+              </div>
+              <div class="text-body-1">{{ item.Description }}</div>
             </v-col>
           </v-row>
         </v-card>
@@ -69,15 +36,15 @@
               indeterminate
             ></v-progress-linear>
           </template>
-          
-          <!-- <v-img
+
+          <v-img
             cover
             height="300"
-            :src= "items[selectedItem].ImageURL"
-          ></v-img> -->
+            :src= items[selectedItem].ImageURL
+          ></v-img>
 
           <v-card-item>
-            <!-- <v-card-title>{{ items[selectedItem].Name }}</v-card-title> -->
+            <v-card-title>{{ items[selectedItem].Name }}</v-card-title>
 
             <v-card-subtitle>
               <span class="me-1">Local Favorite</span>
@@ -113,7 +80,7 @@
               $ • Italian, Cafe
             </div>
 
-            <!-- <div>{{ items[selectedItem].Description }}</div> -->
+            <div>{{ items[selectedItem].Description }}</div>
           </v-card-text>
 
           <v-divider class="mx-4 mb-1"></v-divider>
@@ -136,6 +103,7 @@
             <v-btn
               color="deep-purple-lighten-2"
               variant="text"
+              @click="reserve"
             >
               Reserve
             </v-btn>
@@ -143,11 +111,9 @@
         </v-card>
     </v-col>
   </v-row>
-</v-card>
 </template>
 
 <script>
-import VendorBreadCrumbs from '@/components/icons/VendorBreadCrumbs.vue';
 import firebaseApp from "../firebase";
 import { getDoc, getDocs, collection, doc, updateDoc} from 'firebase/firestore';
 import { getFirestore } from 'firebase/firestore';
@@ -156,17 +122,11 @@ const db = getFirestore(firebaseApp);
 const auth = getAuth()
 
 export default {
-  components:{
-        //NavigationBar1,
-        VendorBreadCrumbs
-  },
   data() {
     return {
       selectedItem: 0,
       items: [],
       user: false,
-      loading: true,
-      selection: "",
       /*
       items: [
         {
@@ -187,37 +147,107 @@ export default {
           number: 3,
           image: "https://picsum.photos/id/239/200/300"
         },
+        {
+          title: "Item 2",
+          description: "This is item 2",
+          number: 2,
+          image: "https://picsum.photos/id/238/200/300"
+        },
+        {
+          title: "Item 2",
+          description: "This is item 2",
+          number: 2,
+          image: "https://picsum.photos/id/238/200/300"
+        },
+        {
+          title: "Item 2",
+          description: "This is item 2",
+          number: 2,
+          image: "https://picsum.photos/id/238/200/300"
+        },
+        {
+          title: "Item 2",
+          description: "This is item 2",
+          number: 2,
+          image: "https://picsum.photos/id/238/200/300"
+        },
+        {
+          title: "Item 2",
+          description: "This is item 2",
+          number: 2,
+          image: "https://picsum.photos/id/238/200/300"
+        },
+        {
+          title: "Item 2",
+          description: "This is item 2",
+          number: 2,
+          image: "https://picsum.photos/id/238/200/300"
+        },
+        {
+          title: "Item 2",
+          description: "This is item 2",
+          number: 2,
+          image: "https://picsum.photos/id/238/200/300"
+        },
+        {
+          title: "Item 2",
+          description: "This is item 2",
+          number: 2,
+          image: "https://picsum.photos/id/238/200/300"
+        },
+        {
+          title: "Item 2",
+          description: "This is item 2",
+          number: 2,
+          image: "https://picsum.photos/id/238/200/300"
+        },
+        {
+          title: "Item 2",
+          description: "This is item 2",
+          number: 2,
+          image: "https://picsum.photos/id/238/200/300"
+        },
+        {
+          title: "Item 2",
+          description: "This is item 2",
+          number: 2,
+          image: "https://picsum.photos/id/238/200/300"
+        },
+        {
+          title: "Item 2",
+          description: "This is item 2",
+          number: 2,
+          image: "https://picsum.photos/id/238/200/300"
+        },
+
+      ]
       */
+
     };
   },
   async mounted() {
-    console.log("Mounted is run")
+    
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        //const vendorID = getAuth().currentUser.uid;
-        //console.log(user);
+        console.log(user);
         const vendorID = user.uid;
-
+        // User logged in already or has just logged in.
         const productRef = await getDocs(collection(db, "food_listings"));
         const products = productRef.docs;
-        const items = [];
         for (const prod of products) {
           console.log(vendorID + " - " + prod.data().VendorID)
           if (vendorID == prod.data().VendorID) { //This listing is by the current vendor
             //const userDocument = await getDoc(doc(db, "food_listings", prod.id));
             const userDocument = prod.data();
-            items.push(userDocument);
+            this.items.push(userDocument);
+            //console.log(this.items[0].VendorID)
 
             //console.log(userDocument);
           }
         }   
-        this.items = items;
-        this.loading = false;
-        // this.selectedItem = this.items[0];
-        // console.log(this.selectedCard)
-        console.log(this.items[this.selectedItem].ImageURL)
       } else {
         console.log("No user")
+        // User not logged in or has just logged out.
       }
     });
       

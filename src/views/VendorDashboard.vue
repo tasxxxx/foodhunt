@@ -53,7 +53,7 @@
                         "number"
                     </h4>
                     <br>
-                    <v-btn variant="outlined">View My Reservations</v-btn>
+                    <v-btn @click = "goVendorReservation" variant="outlined">View My Reservations</v-btn>
 
                     </div>
                 </v-col>
@@ -90,6 +90,9 @@ export default {
         },
         goVendorListing() {
             this.$router.push('/vendor-listing')
+        },
+        goVendorReservation() {
+            this.$router.push('/vendor-reservation')
         },
     }
 }
