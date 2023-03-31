@@ -91,7 +91,7 @@
     <script>
     import firebaseApp from "../firebase";
     import { getFirestore } from "firebase/firestore";
-    import { doc, setDoc } from "firebase/firestore";
+    import { doc, setDoc, getDocs, collection } from "firebase/firestore";
     import firebase from 'firebase/compat/app';
     import 'firebase/compat/auth';
     import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "@firebase/auth";
@@ -144,8 +144,14 @@
 
           if (!this.form.companyregnum) {
             this.formErrors.companyregnum = ['Company registration number is required'];
-          } else if (this.form.companyregnum.length < 10 || this.form.companyregnum.length > 10) {
+          } else if (this.form.companyregnum.length != 10) {
             this.formErrors.companyregnum = ['Company registration number must be valid'];
+          } else if(this.checkRegFirst9(this.form.companyregnum)) { 
+            this.formErrors.companyregnum = ['First 9 characters of company registration number must be numerical'];
+          } else if(this.checkRegLast(this.form.companyregnum)) {
+            this.formErrors.companyregnum = ['Last character of company registration number must be an alphabet'];
+          } else if(await this.checkRegExist(this.form.companyregnum)) {
+            this.formErrors.companyregnum = ['Company registration number exist'];
           }
 
           // Submit form if no errors
@@ -171,11 +177,30 @@
             }
           }
         },
+
         validEmail(companyemail) {
           // Email validation code
           const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(?!.*\.\w{2,})(?:[a-zA-Z]{2,}|xn--[a-zA-Z0-9]+)/;
           return regex.test(companyemail.trim());
         },
+        
+        checkRegFirst9(coyregno) {
+          return !/^\d{9}$/.test(coyregno.slice(0, 9));
+        },
+
+        checkRegLast(coyregno) {
+          return !/[A-Z]/.test(coyregno.slice(-1));
+        },
+
+        async checkRegExist(regNo) {
+          this.allCoyReg = []; // Reset the array at the beginning
+          const userRef = await getDocs(collection(db, "Users"));
+          userRef.forEach((doc) => {
+            this.allCoyReg.push(doc.data().RegistrationNo)
+          });
+          return this.allCoyReg.includes(regNo); 
+        },
+       
         async updateVendor() {
           getAuth().onAuthStateChanged(vendor => {
             if (vendor) {
