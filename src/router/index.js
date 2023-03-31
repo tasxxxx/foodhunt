@@ -119,11 +119,12 @@ const routes = [
     name: 'vendor-listing',
     component: VendorListing
   },
+  {
     path: '/confirmation/:reservationNumber',
     name: 'Confirmation',
     component: Confirmation,
     props: true
-  }
+  },
 ]
 
 const router = createRouter({
