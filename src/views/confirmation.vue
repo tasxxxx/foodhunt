@@ -77,23 +77,17 @@ async mounted() {
     } else {
         console.log('No such document!');
     }
-    console.log(this.details)
 },
 methods: {
     async confirm() {
-        const productRef = await getDocs(collection(db, "food_listings"));
-        const products = productRef.docs;
-        for (const item of this.details.cart) {
-          for (const prod of products) {
-            if (item.restaurant === prod.data().Vendor && item.item === prod.data().Name) {
-              const targetProd = doc(db, "food_listings", prod.id);
-                await updateDoc(targetProd, {
-                  AvailableQty: prod.data().AvailableQty - item.quantity
-                });
-            }
-          }
-        }
-        const reserveRef = doc(db, "reservation_orders", this.reservationNumber);
+      for (const item of this.details.cart) {
+        const productRef = doc(db, "food_listings", item.key);
+        const thisproductData = await getDoc(productRef);
+        await updateDoc(productRef, {
+          AvailableQty: thisproductData.data().AvailableQty - item.quantity
+        })
+      }
+      const reserveRef = doc(db, "reservation_orders", this.reservationNumber);
         updateDoc(reserveRef, {
         confirmed: true
         })

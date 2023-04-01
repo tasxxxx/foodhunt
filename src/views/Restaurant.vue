@@ -153,7 +153,7 @@ data() {
 },  
 async mounted() {
   // for the time being it is hardcoded, but i will need to wait for the router to be ready before I can... 
-  const restaurantRef = doc(db, 'restaurant_personalisation', 'McDonalds');
+  const restaurantRef = doc(db, 'restaurant_personalisation', 'MOSBurgerCompassOnelG2PF');
   const docSnap = await getDoc(restaurantRef);
 
   if (docSnap.exists()) {
@@ -194,7 +194,7 @@ async mounted() {
 
   const productRef = await getDocs(collection(db, "food_listings"));
   productRef.forEach((doc) => {
-    if (doc.data().Vendor === 'McDonalds' && doc.data().AvailableQty > 0) {
+    if (doc.data().Restaurant_PersonalisationId === 'MOSBurgerCompassOnelG2PF' && doc.data().AvailableQty > 0) {
       const product = doc.data();
       product.category = doc.data().Category;
       this.products.push(product);
@@ -219,7 +219,7 @@ async created() {
   const uniqueCategories = [];
   
   productRef.forEach((doc) => {
-    if (doc.data().Vendor === 'McDonalds' && doc.data().AvailableQty > 0) {
+    if (doc.data().Restaurant_PersonalisationId === 'MOSBurgerCompassOnelG2PF' && doc.data().AvailableQty > 0) {
       const product = doc.data();
       product.category = doc.data().Category;
       if (!uniqueCategories.includes(product.category)) {
@@ -278,11 +278,14 @@ margin-left: 5vw;
 }
 
 .product-name {
-font-size: 22px;
-margin-left: 5px;
-font-family:"Lato";
-
+  font-size: 22px;
+  margin-left: 5px;
+  font-family: "Lato";
+  white-space: nowrap; 
+  text-overflow: ellipsis; 
+  overflow: hidden; 
 }
+
 .product-img {
 width: 100%;
 height: 150px;
@@ -291,15 +294,18 @@ font-family:"Lato";
 }
 
 .description{
-width: 99999999999999px;
+width: 290px;
 font-size: 16px;
 margin-top: 2.5px;
 margin-left: 5px;
 font-family:"Lato";
+white-space: nowrap; 
+text-overflow: ellipsis; 
+overflow: hidden; 
 }
 
 .addedQty{
-width: 99999999999999px;
+width: 290px;
 font-size: 16px;
 margin-top: 2.5px;
 margin-left: 5px;
@@ -307,7 +313,7 @@ font-family:"Lato";
 }
 
 .price{
-width: 99999999999999px;
+width: 290px;
 font-size: 16px;
 margin-top: 2.5px;
 margin-left: 5px;
