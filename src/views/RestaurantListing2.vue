@@ -1,52 +1,53 @@
 <template>  
     <NavigationBar1/>
-    <div>
-        <div className="banner">
-            <img src="../assets/bg1.png">
-        </div>
-        <!-- <img id = "restaurantimg" src="@/assets/macdonaldbanner.jpeg" alt = ""> -->
 
-        <div className="text">
-          <h2 style="font-family:Nunito; margin-left: 5vw;">Around the island..</h2>
-        </div>
+    <div>
+
+      <div className="banner">
+        <img src="../assets/bg1.png">
+      </div>
+
+        <!-- <img id = "restaurantimg" src="@/assets/macdonaldbanner.jpeg" alt = ""> -->
+      <div className="text">
+        <h2 style="font-family:Nunito; margin-left: 5vw;">Around the island..</h2>
+      </div>
 
       <SearchBar @search="handleSearch"/>
 
-        <!-- <v-breadcrumbs-item :to="{ name: 'restaurant'}">
-          <v-icon icon="mdi-shopping"></v-icon>
-            My restaurant |
-        </v-breadcrumbs-item> -->
+      <!-- <v-breadcrumbs-item :to="{ name: 'restaurant'}">
+        <v-icon icon="mdi-shopping"></v-icon>
+          My restaurant |
+      </v-breadcrumbs-item> -->
 
-        <div className="restaurants">
-            
-            <div v-for="restaurant in searchRestaurant" :key="restaurant.id" className="restaurant" >
-                <router-link :to="{ name: 'restaurant', params: { id: restaurant.Restaurant_PersonalisationId }}">
-                    <div>
-                        <!-- <img :src="restaurant.img" alt="Restaurant Image" className="restaurant-img"> -->
-                        <img src="../assets/macs.jpg" alt="Restaurant Image" className="restaurant-img">
-                    </div>
-                    
-                    <div className="restaurant-name">
-                        {{ restaurant.Name }}
-                    </div>
-                    <div className="description">
-                        <div className="cuisine"> 
-                            <v-chip color="rgba(109,93,36,1)"> {{ restaurant.Cuisines }} </v-chip>
-                        </div>
-                        <div className="price">
-                            <v-chip color="rgba(109,93,36,1)"> {{ restaurant.Price_Range }} </v-chip>
-                        </div>
-                        <div className="location">
-                            <img src="../assets/location.png" :title="restaurant.Address">
-                        </div>
-                        <div className="closingTime">
-                            {{ closingTimes(restaurant) }}
-                        </div>
-                    </div>
-                </router-link>
+      <div className="restaurants">       
+        <div v-for="restaurant in searchRestaurant" :key="restaurant.id" className="restaurant" >
+          <router-link :to="{ name: 'restaurant', params: { id: restaurant.Restaurant_PersonalisationId }}">
+            <div>
+                <!-- <img :src="restaurant.img" alt="Restaurant Image" className="restaurant-img"> -->
+                <img src="../assets/macs.jpg" alt="Restaurant Image" className="restaurant-img">
             </div>
+            <div className="restaurant-name">
+              {{ restaurant.Name }}
+            </div>
+            <div className="description">
+              <div className="cuisine"> 
+                <v-chip color="rgba(109,93,36,1)"> {{ restaurant.Cuisines }} </v-chip>
+              </div>
+              <div className="price">
+                <v-chip color="rgba(109,93,36,1)"> {{ restaurant.Price_Range }} </v-chip>
+              </div>
+              <div className="location">
+                <img src="../assets/location.png" :title="restaurant.Address">
+              </div>
+              <div className="closingTime">
+                {{ closingTimes(restaurant) }}
+              </div>
+            </div>
+         </router-link>
         </div>
-  </div>
+      </div>
+      <h3 v-if="searchOn" class="searchtagline" >The end... Happy hunting!</h3>
+ `` </div>
   </template>
   
   <script> 
@@ -68,8 +69,9 @@ export default {
 
   data() {
     return {
-    restaurants: [],
-    searchRestaurant: [],
+      restaurants: [],
+      searchRestaurant: [],
+      searchOn: false,
     }
   },
 
@@ -118,19 +120,22 @@ export default {
 
   methods: {
     handleSearch(value) {
-      console.log(value);
       if (value && value.length > 0) {
+        this.searchOn = true;
         this.searchRestaurant = this.restaurants.filter(r => {
           const val = value.toLowerCase()
           const restaurantName = r.Name.toString().toLowerCase().split(" ")
           for (let i = 0; i < restaurantName.length; i++) {
             if (restaurantName[i].indexOf(val) !== -1) {
+              this.searchOn = true;
               return true;
             }
           }
-          return false;
         })
+        return false;
       } else {
+        this.searchOn = false;
+        console.log(this.searchOn)
         this.searchRestaurant = this.restaurants
       }
     }
@@ -301,14 +306,10 @@ export default {
   text-align: center;
 }
 
-#searchbutton {
-  border-radius: 10px;
-  top: 30vh;
-  left: 39vw;
-  height: 7.0%;
-  font-size: 1.0vw;
-  position: relative;
-  color: black;
+.searchtagline {
+  text-align: center;
+  font-family:Nunito; 
+  color: rgb(128,128,128);
 }
 
 .text-field-wrapper {
