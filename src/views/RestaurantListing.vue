@@ -4,12 +4,25 @@
       <img src="../assets/banner1.jpg">
     </div>
     <div className="text">
-      Around the island.. 
+      <h2 style="font-family:Nunito; margin-left: 5vw;">Around the island..</h2>
     </div>
-    <v-breadcrumbs-item :to="{ name: 'restaurant'}">
-          <v-icon icon="mdi-shopping"></v-icon>
-            My restaurant |
-        </v-breadcrumbs-item>
+    <v-breadcrumbs-item :to="{ name: 'restaurant'}" style="font-family:Nunito; margin-left: 5vw;">
+      <v-icon icon="mdi-shopping"></v-icon>
+        My restaurant |
+    </v-breadcrumbs-item>
+
+    <br><br>
+
+    <v-text-field
+      label="Search"
+      variant="outlined"
+      append-inner-icon="mdi-magnify"
+      @click:append-inner="onClick"
+      single-line
+      style="font-family:Nunito"
+      density="compact"
+      class="search"
+    ></v-text-field>
         
     <div className="restaurants">
       <div v-for="f in restaurants" :key="f" className="restaurant" :data-location="f.location">
@@ -40,17 +53,9 @@
             <div className="closingTime">
               {{ closingTime(f) }}
             </div>
-          </div>
-          
-
-        
-          
-        
+          </div> 
       </div>
     </div>
-    
-    
-  
   </template>
   
   <script>
@@ -71,7 +76,7 @@
         {id: 2, name: "kfc", cuisine:"western", price: "$$", img: image, location: "blk 123 bishan street", closingTime: "23:00"},
         {id: 3, name: "subway", cuisine:"western", price: "$", img: subway, location: "blk 123 serangoon road (s)123123", closingTime: "21:00"},
         {id: 4, name: "subways", cuisine:"western", price: "$", img: image, location: "paya lebar", closingTime: "21:30"},
-      ]
+      ],
     }
   },
   computed: {
@@ -92,12 +97,27 @@
           return " Closing at " + restaurant.closingTime
         }
       }
+    },
+  },
+
+    methods: {
+    onClick() {
+      console.log("search clicked");
     }
   }
   }
   </script>
   
 <style scoped>
+  
+  .search {
+   padding-top: 0;
+   padding-bottom: 0;
+   padding-left:30vw;
+   padding-right: 30vw;
+
+  }
+  
 .closingTime {
   margin-top:20px;
   float:right;
@@ -245,7 +265,7 @@
   opacity: 1;
   text-align: center;
 }
-
+/*
 #searchbutton {
   border-radius: 10px;
   top: 30vh;
@@ -255,7 +275,7 @@
   position: relative;
   color: black;
 }
-
+*/
 .text-field-wrapper {
   margin-top: 23.1vh; 
   margin-left: 3vw; 
