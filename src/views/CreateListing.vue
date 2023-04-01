@@ -1,11 +1,11 @@
 <template>
   <VendorBreadCrumbs/>
-  <h1 class="text-h4">All listings at a glance...</h1> <br>
+
   <v-card 
     class="mx-auto" 
-    max-width=1000
+    max-width=1230
   >
-    
+    <div class="text-h5 pa-5"> Create your next listing! </div>
     <v-card-text>
       <v-form @submit.prevent="submitForm">
         <h3>Food Name</h3> <br>
@@ -90,7 +90,7 @@
             ></v-text-field>
           </v-col>
         </v-row>
-
+        <br>
         <v-btn 
           type="submit" 
           color="primary" 
@@ -99,6 +99,8 @@
         >
           Confirm
         </v-btn>
+        <br>
+        <br><br>
       </v-form>
     </v-card-text>
   </v-card>

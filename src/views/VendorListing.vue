@@ -14,9 +14,10 @@
         <v-card 
           v-for="(item, index) in items" 
           :key="index" 
-          @click="selectedItem = index" 
-          :class="{'selected': selectedItem === index}"
+          @click="selectedIndex = index" 
+          :class="{'selected': selectedIndex === index} "
           min-height="150"
+          
         >
           <br>
           <v-row>
@@ -162,11 +163,12 @@ export default {
   },
   data() {
     return {
-      selectedItem: 0,
+      selectedIndex: 0,
       items: [],
       user: false,
       loading: true,
       selection: "",
+      selectedItem: null,
       /*
       items: [
         {
@@ -202,20 +204,23 @@ export default {
         const products = productRef.docs;
         const items = [];
         for (const prod of products) {
-          console.log(vendorID + " - " + prod.data().VendorID)
+          //console.log(vendorID + " - " + prod.data().VendorID)
           if (vendorID == prod.data().VendorID) { //This listing is by the current vendor
             //const userDocument = await getDoc(doc(db, "food_listings", prod.id));
             const userDocument = prod.data();
             items.push(userDocument);
 
-            //console.log(userDocument);
+            console.log(userDocument.Name);
           }
         }   
         this.items = items;
+
+        this.selectedItem = this.items[this.selectedIndex];
+
         this.loading = false;
         // this.selectedItem = this.items[0];
         // console.log(this.selectedCard)
-        console.log(this.items[this.selectedItem].ImageURL)
+        console.log(this.items[this.selectedIndex].ImageURL)
       } else {
         console.log("No user")
       }
@@ -224,7 +229,7 @@ export default {
   },
   computed: {
     selectedCard() {
-      return this.items[this.selectedItem];
+      return this.items[this.selectedIndex];
     }
   }
 };
