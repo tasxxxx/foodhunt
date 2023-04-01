@@ -136,7 +136,7 @@ const db = getFirestore(firebaseApp);
 
 export default {
 name: "Restaurant",
-// props: ['id'],
+props: ['id'],
 components:{
   NavigationBar1,
   AddToCart
@@ -153,7 +153,10 @@ data() {
 },  
 async mounted() {
   // for the time being it is hardcoded, but i will need to wait for the router to be ready before I can... 
-  const restaurantRef = doc(db, 'restaurant_personalisation', 'McDonalds');
+  console.log("route params")
+  console.log(this.$route.params.id)
+  const selectedRestaurant = this.$route.params.id
+  const restaurantRef = doc(db, 'restaurant_personalisation', this.id);
   const docSnap = await getDoc(restaurantRef);
 
   if (docSnap.exists()) {
@@ -191,10 +194,11 @@ async mounted() {
   } else {
     console.log('No such document!');
   }
+  
 
   const productRef = await getDocs(collection(db, "food_listings"));
   productRef.forEach((doc) => {
-    if (doc.data().Vendor === 'McDonalds' && doc.data().AvailableQty > 0) {
+    if (doc.data().Restaurant_PersonalisationId === this.id && doc.data().AvailableQty > 0) {
       const product = doc.data();
       product.category = doc.data().Category;
       this.products.push(product);
@@ -202,24 +206,31 @@ async mounted() {
   });
   },
   
-computed: {
+  computed: {
   categorizedProducts() {
-    return this.products.reduce((acc, prod) => {
+    const sortedCategories = Object.keys(this.products.reduce((acc, prod) => {
       if (!acc[prod.category]) {
         acc[prod.category] = [prod]
       } else {
         acc[prod.category].push(prod)
       }
       return acc
+    }, {})).sort(); // sort the category keys in ascending order
+
+    return sortedCategories.reduce((acc, category) => {
+      acc[category] = this.products.filter(prod => prod.category === category)
+      return acc
     }, {})
-  }, 
-}, 
+  },
+},
+
 async created() {
   const productRef = await getDocs(collection(db, "food_listings"));
+ 
   const uniqueCategories = [];
   
   productRef.forEach((doc) => {
-    if (doc.data().Vendor === 'McDonalds' && doc.data().AvailableQty > 0) {
+    if (doc.data().Restaurant_PersonalisationId === 'PizzaHutuHBzi' && doc.data().AvailableQty > 0) {
       const product = doc.data();
       product.category = doc.data().Category;
       if (!uniqueCategories.includes(product.category)) {
@@ -227,6 +238,8 @@ async created() {
       }
     }
   });  
+
+  uniqueCategories.sort((a, b) => a.localeCompare(b));
   this.tab = uniqueCategories[0]; // set default tab selected to first category
 }
 }
@@ -278,11 +291,14 @@ margin-left: 5vw;
 }
 
 .product-name {
-font-size: 22px;
-margin-left: 5px;
-font-family:"Lato";
-
+  font-size: 22px;
+  margin-left: 5px;
+  font-family: "Lato";
+  white-space: nowrap; 
+  text-overflow: ellipsis; 
+  overflow: hidden; 
 }
+
 .product-img {
 width: 100%;
 height: 150px;
@@ -291,15 +307,18 @@ font-family:"Lato";
 }
 
 .description{
-width: 99999999999999px;
+width: 290px;
 font-size: 16px;
 margin-top: 2.5px;
 margin-left: 5px;
 font-family:"Lato";
+white-space: nowrap; 
+text-overflow: ellipsis; 
+overflow: hidden; 
 }
 
 .addedQty{
-width: 99999999999999px;
+width: 290px;
 font-size: 16px;
 margin-top: 2.5px;
 margin-left: 5px;
@@ -307,7 +326,7 @@ font-family:"Lato";
 }
 
 .price{
-width: 99999999999999px;
+width: 290px;
 font-size: 16px;
 margin-top: 2.5px;
 margin-left: 5px;
