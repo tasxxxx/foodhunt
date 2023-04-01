@@ -7,8 +7,19 @@
         <!-- <img id = "restaurantimg" src="@/assets/macdonaldbanner.jpeg" alt = ""> -->
 
         <div className="text">
-            Around the island.. 
+          <h2 style="font-family:Nunito; margin-left: 5vw;">Around the island..</h2>
         </div>
+
+        <v-text-field
+          label="Search"
+          variant="outlined"
+          append-inner-icon="mdi-magnify"
+          @click:append-inner="onClick"
+          single-line
+          style="font-family:Nunito"
+          density="compact"
+          class="search"
+        ></v-text-field>
 
         <!-- <v-breadcrumbs-item :to="{ name: 'restaurant'}">
           <v-icon icon="mdi-shopping"></v-icon>
@@ -105,6 +116,11 @@
     }
     },
   },
+      methods: {
+    onClick() {
+      console.log("search clicked");
+    }
+  }
 }
 </script>
 
@@ -114,6 +130,14 @@
 
 
 <style scoped>
+
+.search {
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left:30vw;
+  padding-right: 30vw;
+
+}
 
 .main-page {
   /* display: flex; */
