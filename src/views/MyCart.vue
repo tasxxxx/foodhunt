@@ -16,7 +16,7 @@
         <div class="item" v-for="(item, index) in cart" :key="index">
           <div class="buttons">
             <span class="delete-btn">
-              <button @click="deleteItem(item.item, item.restaurant, item.price)" class="delete-btn">X</button>
+              <button @click="deleteItem(item.key)" class="delete-btn">X</button>
             </span>
           </div>
           <div class="image">
@@ -28,11 +28,11 @@
             <span>${{ item.price }}</span>
           </div>
           <div class="quantity">
-            <button class="minus-btn" @click="minusItem(item.item, item.restaurant, item.price)">
+            <button class="minus-btn" @click="minusItem(item.key)">
               -
             </button>
             {{ item.quantity }}
-            <button class="plus-btn" @click="addItem(item.item, item.restaurant, item.price)">
+            <button class="plus-btn" @click="addItem(item.key)">
               +             
             </button>
           </div>
@@ -70,7 +70,7 @@ export default {
   },
   created() {
     const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
+     onAuthStateChanged(auth, (user) => {
       if (user) {
         this.useremail = auth.currentUser.email;
         this.retrieveCart();
@@ -111,25 +111,30 @@ export default {
       const cartData = await getDoc(cartRef);
       const items = cartData.data().products;
       let tempArray = []
-      tempArray = Object.entries(items).map(([key, value]) => {
-      const [restaurant, item, price] = key.split(",");
-      const quantity = value;
-      const subtotal = price * quantity;
-      return { restaurant, item, price, quantity, subtotal, id: `${restaurant}-${item}-${price}` };
-    })
-      let canAddReservation = true;
-      const productRef = await getDocs(collection(db, "food_listings"));
-      const products = productRef.docs;
+      tempArray = Object.entries(items).map(async ([key, value]) => {
+        const thisFood = doc(db, "food_listings", key); 
+        const thisFoodData = await getDoc(thisFood);
+        const item = thisFoodData.data().Name;
+        const thisRestaurant = doc(db, "restaurant_personalisation", thisFoodData.data().Restaurant_PersonalisationId); 
+        const thisRestaurantData = await getDoc(thisRestaurant);
+        const restaurant = thisRestaurantData.data().Name;
+        const price = thisFoodData.data().Price;
+        const quantity = value;
+        const subtotal = price * quantity;
+        return { key, restaurant, item, price, quantity, subtotal };
+    });
 
-      for (const item of tempArray) {
-        for (const prod of products) {
-          if (item.restaurant === prod.data().Vendor && item.item === prod.data().Name) {
-            if (prod.data().AvailableQty < item.quantity) {
-              canAddReservation = false;
-              break;
-            } 
-          }
-        }
+      let tempResult = await Promise.all(tempArray);
+      let canAddReservation = true;
+
+      for (const item of tempResult) {
+        const productRef = doc(db, "food_listings", item.key);
+        const thisproductData = await getDoc(productRef);
+        if (thisproductData.data().AvailableQty < item.quantity) {
+          canAddReservation = false;
+          break;
+        } 
+      }
 
       if (canAddReservation) {
         const randNum = Math.floor(Math.random() * 876543);
@@ -144,14 +149,15 @@ export default {
           cart: thisCart,
           total: this.totalCost,
           confirmed: false,
+          isPickedUp: false,
         });
-        this.cart = [];
         await deleteDoc(cartRef);
         const orderNumberWithPrefix = `FH-${randNum}`;
         this.$router.push({ name: 'Confirmation', params: { reservationNumber: orderNumberWithPrefix }});
-      } else {
         this.cart = [];
+      } else {
         await deleteDoc(cartRef);
+        this.cart = [];
         toast.error("Product quantity is not available, please try again!", {
           position: "top-right",
           timeout: 2019,
@@ -168,41 +174,43 @@ export default {
         });
         this.$router.push('/restaurantlisting');
       }
-    }
-  },
+    },
 
     async retrieveCart() {
-      const toast = useToast();
       const cartRef = doc(db, "shopping_carts", this.useremail);
       const cartData = await getDoc(cartRef);
       const products = cartData.data().products || {};
       this.cart = [];
-      
-      this.cart = Object.entries(products).map(([key, value]) => {
-      const [restaurant, item, price] = key.split(",");
-      const quantity = value;
-      const subtotal = price * quantity;
-      return { restaurant, item, price, quantity, subtotal, id: `${restaurant}-${item}-${price}` };
+
+      this.cart = Object.entries(products).map(async ([key, value]) => {
+        const thisFood = doc(db, "food_listings", key); 
+        const thisFoodData = await getDoc(thisFood);
+        const item = thisFoodData.data().Name;
+        const thisRestaurant = doc(db, "restaurant_personalisation", thisFoodData.data().Restaurant_PersonalisationId); 
+        const thisRestaurantData = await getDoc(thisRestaurant);
+        const restaurant = thisRestaurantData.data().Name;
+        const price = thisFoodData.data().Price;
+        const quantity = value;
+        const subtotal = price * quantity;
+        return { key, restaurant, item, price, quantity, subtotal };
     });
+
+      // Wait for all promises to resolve before setting the cart
+      this.cart = await Promise.all(this.cart);
       
       // sort the cart by id
-      this.cart.sort((a, b) => a.id.localeCompare(b.id));
-      }, 
+      this.cart.sort((a, b) => a.key.localeCompare(b.key));
+    }, 
 
-      async addItem(item, restaurant, price) {
+      async addItem(productKey) {
         const cartRef = doc(db, "shopping_carts", this.useremail);
         const cartData = await getDoc(cartRef);
-        const products = cartData.data().products
-        const productKey = `${restaurant},${item},${price}`;
-        
-        const productRef = await getDocs(collection(db, "food_listings"));
-        productRef.forEach((doc) => {
-        if (restaurant === doc.data().Vendor && item === doc.data().Name) {
-          this.availableQty = doc.data().AvailableQty
-          console.log(this.availableQty)
-        }
-        });
-
+        // products refer to the product inside the cart.
+        const products = cartData.data().products       
+        const thisProduct = await doc(db, "food_listings",productKey); 
+        const thisProductData = await getDoc(thisProduct);
+        // this.availableQty refers to the product itself.
+        this.availableQty = thisProductData.data().AvailableQty
         if(this.availableQty >= products[productKey] + 1) {
           products[productKey]++
           toast.success("Quantity is added successfully!", {
@@ -236,24 +244,39 @@ export default {
           });
         }// update the cart data
         await setDoc(cartRef, { products }, { merge: true });
-        await this.retrieveCart();
+        // update the cart array in place
+        const itemIndex = this.cart.findIndex((item) => item.key === productKey);
+        if (itemIndex >= 0) {
+          this.cart[itemIndex].quantity += 1;
+          this.cart[itemIndex].subtotal += this.cart[itemIndex].price;
+        } else {
+          const thisProduct = await doc(db, "food_listings", productKey);
+          const thisProductData = await getDoc(thisProduct);
+          const restaurant = thisProductData.data().Vendor;
+          const item = thisProductData.data().Name;
+          const price = thisProductData.data().Price;
+          const quantity = 1;
+          const subtotal = price;
+          const newItem = { key: productKey, restaurant, item, price, quantity, subtotal };
+          this.cart.push(newItem);
+        }
       },
 
-
-      async minusItem(item, restaurant, price) {
+      async minusItem(productKey) {
         const cartRef = doc(db, "shopping_carts", this.useremail);
         const cartData = await getDoc(cartRef);
-        const products = cartData.data().products
-        const productKey = `${restaurant},${item},${price}`;
+        // products refer to the product inside the cart.
+        const products = cartData.data().products       
+        const thisProduct = await doc(db, "food_listings",productKey); 
+        const thisProductData = await getDoc(thisProduct);
+        // this.availableQty refers to the product itself.
+        this.availableQty = thisProductData.data().AvailableQty
         const productQuantity = products[productKey];
         if (productQuantity === 1) {
           await this.deleteItem(item, restaurant, price);
         } else {
           // Otherwise, decrease the quantity by 1
           products[productKey]--;
-          // Update the cart data
-          await setDoc(cartRef, { products }, { merge: true });
-          await this.retrieveCart();
           toast.success("Quantity is deducted successfully!", {
             position: "top-right",
             timeout: 2019,
@@ -271,10 +294,20 @@ export default {
         }
         // update the cart data
         await setDoc(cartRef, { products }, { merge: true });
-        await this.retrieveCart();
+        // update the cart array in place
+        const itemIndex = this.cart.findIndex((item) => item.key === productKey);
+        if (itemIndex >= 0) {
+          const item = this.cart[itemIndex];
+          if (item.quantity === 1) {
+            this.cart.splice(itemIndex, 1);
+          } else {
+            item.quantity -= 1;
+            item.subtotal -= item.price;
+          }
+        }
       },
 
-      async deleteItem(item, restaurant, price) {
+      async deleteItem(productKey) {
          this.$swal.fire({
           title: 'Are you sure?',
           text: "Please confirm that you are removing the item from the cart?",
@@ -288,7 +321,6 @@ export default {
             const cartRef = doc(db, "shopping_carts", this.useremail);
             const cartData = await getDoc(cartRef);
             const products = cartData.data().products
-            const productKey = `${restaurant},${item},${price}`;
             // remove the product from the products object
             delete products[productKey];      
             // update the cart data in Firestore
@@ -311,9 +343,10 @@ export default {
               }); 
           }
         })
-      }
-      }, 
+      } 
     }
+  }
+    
 </script>
 
 <style scoped>

@@ -111,13 +111,13 @@ import { getStorage, uploadBytes, getDownloadURL, ref } from "firebase/storage";
 import firebaseApp from "../firebase";
 import { getAuth } from "@firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { doc, setDoc, collection, getDoc } from "firebase/firestore";
- 
+import { doc, setDoc, collection, getDoc, getDocs} from "firebase/firestore";
+import { useToast } from 'vue-toastification';
+const toast = useToast(); 
 const db = getFirestore(firebaseApp);
 
 export default {
   components:{
-        //NavigationBar1,
         VendorBreadCrumbs
   },
   data() {
@@ -155,7 +155,6 @@ export default {
     },
 
     async submitForm() {
-        
         this.formErrors = {};
         /*
         if (!this.name) {
@@ -200,10 +199,23 @@ export default {
           
 
           this.updateListing();
+          // eh why this is not working ah? 
+          toast.success("Listing is added successfully!", {
+              position: "top-right",
+              timeout: 2019,
+              closeOnClick: true,
+              pauseOnFocusLoss: false,
+              pauseOnHover: false,
+              draggable: true,
+              draggablePercent: 2,
+              showCloseButtonOnHover: false,
+              hideProgressBar: false,
+              closeButton: "button",
+              icon: true,
+              rtl: false
+        }); 
           this.$router.push('/vendor-dashboard')
         }
-        
-
       
       
       // save the form data and image download URL to Firebase database
@@ -211,7 +223,6 @@ export default {
     async updateListing() {
         //const user = getAuth().currentUser;
         // Still need to get vendor name
-        
         const curr_email = getAuth().currentUser.email;
         const docRef = doc(db, "Users", curr_email);
         const docSnap = await getDoc(docRef);
@@ -219,9 +230,9 @@ export default {
         const Docdata = docSnap.data();
         const vendor_id = Docdata.VendorID;
         const vendor_name = Docdata.Name;
-        const food_listing_id = (vendor_name + vendor_id.substring(0,5) + this.name).replace(/\s+/g, '')
+        const food_listing_id = (vendor_name + "_" + vendor_id.substring(0,5) + "prod" + this.name).replace(/\s+/g, '')
+        const vendor_doc_id = (vendor_name + vendor_id.substring(0,5)).replace(/\s+/g, '')
         console.log(food_listing_id)
-        
         
         // const collectionRef = collection(db, "food_listings");
         // const foodListingRef = doc(collectionRef);
@@ -236,8 +247,9 @@ export default {
             AvailableQty: this.quantity,
             VendorID: Docdata.VendorID,
             Food_listingID: food_listing_id,
+            Restaurant_PersonalisationId: vendor_doc_id
         })
-      
+
     },
   }
 }

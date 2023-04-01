@@ -69,12 +69,12 @@
                 
               // Get the current list of products in the cart, or create an empty list if none exists
               const products = cartData.exists() ? cartData.data().products : {};
-              // const products = cartData.data().products
-                const productKey = `${this.prodID.Vendor},${this.prodID.Name},${this.prodID.Price}`
-                // get maxQuantity 
+              
+              const productKey = this.prodID.Food_listingID
+              // get maxQuantity 
                 const productRef = await getDocs(collection(db, "food_listings"));
                 productRef.forEach((doc) => {
-                if (this.prodID.Vendor === doc.data().Vendor && this.prodID.Name === doc.data().Name) {
+                if (productKey === doc.data().Food_listingID) {
                   this.maxQuantity = doc.data().AvailableQty
                 }})
 
@@ -94,10 +94,10 @@
                   rtl: false
                   });   
                 } else {
-                  if (products.hasOwnProperty([this.prodID.Vendor, this.prodID.Name, this.prodID.Price])) {
-                  products[[this.prodID.Vendor, this.prodID.Name, this.prodID.Price]] += this.quantity;
+                  if (products.hasOwnProperty(productKey)) {
+                  products[productKey] += this.quantity;
                   } else {
-                  products[[this.prodID.Vendor, this.prodID.Name, this.prodID.Price]] = this.quantity;
+                  products[productKey] = this.quantity;
                   }
                   await setDoc(cartRef, { products: products });
                   toast.success("Product is successfully added to the cart!", {
