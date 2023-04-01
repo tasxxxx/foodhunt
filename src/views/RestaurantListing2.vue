@@ -10,16 +10,7 @@
           <h2 style="font-family:Nunito; margin-left: 5vw;">Around the island..</h2>
         </div>
 
-        <v-text-field
-          label="Search"
-          variant="outlined"
-          append-inner-icon="mdi-magnify"
-          @click:append-inner="onClick"
-          single-line
-          style="font-family:Nunito"
-          density="compact"
-          class="search"
-        ></v-text-field>
+      <SearchBar @search="handleSearch"/>
 
         <!-- <v-breadcrumbs-item :to="{ name: 'restaurant'}">
           <v-icon icon="mdi-shopping"></v-icon>
@@ -28,7 +19,7 @@
 
         <div className="restaurants">
             
-            <div v-for="restaurant in restaurants" :key="restaurant.id" className="restaurant" >
+            <div v-for="restaurant in searchRestaurant" :key="restaurant.id" className="restaurant" >
                 <router-link :to="{ name: 'restaurant', params: { id: restaurant.Restaurant_PersonalisationId }}">
                     <div>
                         <!-- <img :src="restaurant.img" alt="Restaurant Image" className="restaurant-img"> -->
@@ -59,94 +50,108 @@
   </template>
   
   <script> 
-  import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
-  import AddToCart from '@/components/icons/AddToCart.vue';
-  import firebaseApp from "../firebase";
-  import { getFirestore } from 'firebase/firestore';
-  import { getDoc, doc, getDocs, collection} from 'firebase/firestore';
-  const db = getFirestore(firebaseApp);
+import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
+import SearchBar from '@/components/icons/SearchBar.vue'
+import AddToCart from '@/components/icons/AddToCart.vue';
+import firebaseApp from "../firebase";
+import { getFirestore } from 'firebase/firestore';
+import { getDoc, doc, getDocs, collection} from 'firebase/firestore';
+const db = getFirestore(firebaseApp);
   
-  export default {
-    name: "RestaurantListing",
-    // props: ['id'],
-    components:{
-        NavigationBar1,
-    },
-    data() {
-        return {
-        restaurants: [],
-        }
-    },  
-    async mounted() {
-        try {
-        const querySnapshot = await getDocs(collection(db, "restaurant_personalisation"))
-        this.restaurants = querySnapshot.docs.map(doc => doc.data())
-        } catch (error) {
-        console.log(error)
-        }
-    },
-    computed: {
-    closingTimes() {
-        return restaurant => {
-            console.log("friday time")
-            console.log(restaurant.Friday);
-            const now = new Date()
-            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-            const currentDay = days[now.getDay()]
-            const closingTime = restaurant[currentDay].split(' - ')[1]
+export default {
+  name: "RestaurantListing",
+  // props: ['id'],
+  components:{
+    NavigationBar1,
+    SearchBar
+  },
 
-            const closing = new Date(now)
-            const [hours, minutes] = closingTime.split(':')
-            closing.setHours(hours)
-            closing.setMinutes(minutes)
-
-            if (now > closing) {
-            return "Closed" 
-            }
-
-            const timeDiff = closing - now
-            if (timeDiff <= 60 * 60 * 1000 && timeDiff > 0) {
-            return `Closing in ${Math.floor(timeDiff / 1000 / 60)} minutes`
-            } else {
-            return " Closing at " + closingTime
-            }
-
-      // Do your computations and return the closing time as a string
-      // ...
+  data() {
+    return {
+    restaurants: [],
+    searchRestaurant: [],
     }
+  },
+
+  async mounted() {
+    try {
+      const querySnapshot = await getDocs(collection(db, "restaurant_personalisation"))
+      this.restaurants = querySnapshot.docs.map(doc => doc.data())
+      this.searchRestaurant = querySnapshot.docs.map(doc => doc.data())
+      console.log(this.restaurants)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+
+  computed: {
+    closingTimes() {
+      return restaurant => {
+        console.log("friday time")
+        console.log(restaurant.Friday);
+        const now = new Date()
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        const currentDay = days[now.getDay()]
+        const closingTime = restaurant[currentDay].split(' - ')[1]
+
+        const closing = new Date(now)
+        const [hours, minutes] = closingTime.split(':')
+        closing.setHours(hours)
+        closing.setMinutes(minutes)
+
+        if (now > closing) {
+        return "Closed" 
+        }
+
+        const timeDiff = closing - now
+        if (timeDiff <= 60 * 60 * 1000 && timeDiff > 0) {
+        return `Closing in ${Math.floor(timeDiff / 1000 / 60)} minutes`
+        } else {
+        return " Closing at " + closingTime
+        }
+
+        // Do your computations and return the closing time as a string
+        // ...
+      }
     },
   },
-      methods: {
-    onClick() {
-      console.log("search clicked");
+
+  methods: {
+    handleSearch(value) {
+      console.log(value);
+      if (value && value.length > 0) {
+        this.searchRestaurant = this.restaurants.filter(r => {
+          const val = value.toLowerCase()
+          const restaurantName = r.Name.toString().toLowerCase().split(" ")
+          for (let i = 0; i < restaurantName.length; i++) {
+            if (restaurantName[i].indexOf(val) !== -1) {
+              return true;
+            }
+          }
+          return false;
+        })
+      } else {
+        this.searchRestaurant = this.restaurants
+      }
     }
   }
+
 }
 </script>
 
-
-
-
-
-
 <style scoped>
 
-.search {
-  padding-top: 0;
-  padding-bottom: 0;
-  padding-left:30vw;
-  padding-right: 30vw;
-
-}
-
+/*
 .main-page {
-  /* display: flex; */
-  /* align-items: center; */
+  display: flex;
+  align-items: center;
 }
 .text {
-  /* width: 10%; */
-  /* text-align: left; */
+  width: 10%;
+  text-align: left;
 }
+*/
+
 .closingTime {
   margin-top:20px;
   float:right;
