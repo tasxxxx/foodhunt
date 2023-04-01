@@ -19,6 +19,7 @@ import VendorProfileEditTwo from '../views/VendorProfileEditTwo.vue'
 import RestaurantListing from '../views/RestaurantListing.vue';
 import VendorListing from '../views/VendorListing.vue';
 import Confirmation from '../views/confirmation.vue';
+import VendorReservation from '../views/VendorReservation.vue';
 
 
 const routes = [
@@ -124,6 +125,11 @@ const routes = [
     name: 'Confirmation',
     component: Confirmation,
     props: true
+  },
+  {
+    path: '/vendor-reservation',
+    name: 'vendor-reservation',
+    component: VendorReservation,
   },
 ]
 

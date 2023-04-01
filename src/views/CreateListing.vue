@@ -1,4 +1,6 @@
 <template>
+  <VendorBreadCrumbs/>
+  <h1 class="text-h4">All listings at a glance...</h1> <br>
   <v-card 
     class="mx-auto" 
     max-width=1000
@@ -31,7 +33,7 @@
 
 
             <v-file-input 
-            v-model="image"
+            v-model="file"
               prepend-icon="mdi-camera" 
               label="Upload Image"
               @change="onFileSelected"
@@ -92,7 +94,7 @@
         <v-btn 
           type="submit" 
           color="primary" 
-          class="ml-auto mt-6 mr-0"
+          class="ml-auto mt-6 mr-0 d-flex"
           width="250"
         >
           Confirm
@@ -103,16 +105,21 @@
 </template>
 
 <script>
+import VendorBreadCrumbs from '@/components/icons/VendorBreadCrumbs.vue';
 import firebase from 'firebase/compat/app';
 import { getStorage, uploadBytes, getDownloadURL, ref } from "firebase/storage";
 import firebaseApp from "../firebase";
-import { getAuth, signOut } from "@firebase/auth";
+import { getAuth } from "@firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { doc, setDoc, collection } from "firebase/firestore";
+import { doc, setDoc, collection, getDoc } from "firebase/firestore";
  
 const db = getFirestore(firebaseApp);
 
 export default {
+  components:{
+        //NavigationBar1,
+        VendorBreadCrumbs
+  },
   data() {
     return {
         name: '',
@@ -120,6 +127,7 @@ export default {
         category: '',
         price: '',
         quantity: '',
+        file: null,
         imageUrl: 'https://via.placeholder.com/500',
         image: null,
         imageFirebase: null,
@@ -170,17 +178,26 @@ export default {
 
         // Submit form if no errors
         if (Object.keys(this.formErrors).length === 0) {
-          let fileName = this.name;
-          const path = "images/Listings/" + fileName
-          console.log(path)
-          const storage = getStorage(firebaseApp)
-          const storageRef = ref(storage, path);
-          await uploadBytes(storageRef, this.image);
-
-          // Get the download URL of the uploaded image
-          const downloadUrl = await getDownloadURL(storageRef);
-          this.imageFirebase = downloadUrl;
-          console.log(downloadUrl)
+          /*
+          if (this.image === null) {
+            this.imageFirebase = this.imageUrl;
+          } else {
+            
+            let fileName = this.name;
+            const path = "images/Listings/" + fileName;
+            console.log(path)           
+            const storage = getStorage(firebaseApp);
+            const storageRef = ref(storage, path);
+            await uploadBytes(storageRef, this.image);
+            // Get the download URL of the uploaded image
+            const downloadUrl = await getDownloadURL(storageRef);
+            this.imageFirebase = downloadUrl;   
+            this.image = null;
+          }
+          */
+          this.imageFirebase = this.imageUrl;
+          console.log(this.imageFirebase)
+          
 
           this.updateListing();
           this.$router.push('/vendor-dashboard')
@@ -194,24 +211,35 @@ export default {
     async updateListing() {
         //const user = getAuth().currentUser;
         // Still need to get vendor name
+        
+        const curr_email = getAuth().currentUser.email;
+        const docRef = doc(db, "Users", curr_email);
+        const docSnap = await getDoc(docRef);
 
-        const db = getFirestore(firebaseApp); 
-        const collectionRef = collection(db, "food_listings");
-        const newDocRef = doc(collectionRef);
-        setDoc(newDocRef, {
+        const Docdata = docSnap.data();
+        const vendor_id = Docdata.VendorID;
+        const vendor_name = Docdata.Name;
+        const food_listing_id = (vendor_name + vendor_id.substring(0,5) + this.name).replace(/\s+/g, '')
+        console.log(food_listing_id)
+        
+        
+        // const collectionRef = collection(db, "food_listings");
+        // const foodListingRef = doc(collectionRef);
+        const foodListingRef = doc(db, "food_listings", food_listing_id);
+
+        await setDoc(foodListingRef, {
             Name: this.name,
             ImageURL: this.imageFirebase,
             Description: this.description,
             Category: this.category,
             Price: this.price,
             AvailableQty: this.quantity,
-            Vendor: "TBC",
+            VendorID: Docdata.VendorID,
+            Food_listingID: food_listing_id,
         })
+      
     },
   }
 }
 </script>
 
-<style scoped>
-/* add custom CSS styles here */
-</style>
