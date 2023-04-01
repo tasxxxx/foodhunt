@@ -136,7 +136,7 @@ const db = getFirestore(firebaseApp);
 
 export default {
 name: "Restaurant",
-// props: ['id'],
+props: ['id'],
 components:{
   NavigationBar1,
   AddToCart
@@ -153,7 +153,10 @@ data() {
 },  
 async mounted() {
   // for the time being it is hardcoded, but i will need to wait for the router to be ready before I can... 
-  const restaurantRef = doc(db, 'restaurant_personalisation', 'MOSBurgerCompassOnelG2PF');
+  console.log("route params")
+  console.log(this.$route.params.id)
+  const selectedRestaurant = this.$route.params.id
+  const restaurantRef = doc(db, 'restaurant_personalisation', this.id);
   const docSnap = await getDoc(restaurantRef);
 
   if (docSnap.exists()) {
@@ -191,10 +194,11 @@ async mounted() {
   } else {
     console.log('No such document!');
   }
+  
 
   const productRef = await getDocs(collection(db, "food_listings"));
   productRef.forEach((doc) => {
-    if (doc.data().Restaurant_PersonalisationId === 'MOSBurgerCompassOnelG2PF' && doc.data().AvailableQty > 0) {
+    if (doc.data().Restaurant_PersonalisationId === this.id && doc.data().AvailableQty > 0) {
       const product = doc.data();
       product.category = doc.data().Category;
       this.products.push(product);
@@ -226,7 +230,7 @@ async created() {
   const uniqueCategories = [];
   
   productRef.forEach((doc) => {
-    if (doc.data().Restaurant_PersonalisationId === 'MOSBurgerCompassOnelG2PF' && doc.data().AvailableQty > 0) {
+    if (doc.data().Restaurant_PersonalisationId === 'PizzaHutuHBzi' && doc.data().AvailableQty > 0) {
       const product = doc.data();
       product.category = doc.data().Category;
       if (!uniqueCategories.includes(product.category)) {
