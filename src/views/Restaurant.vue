@@ -202,20 +202,27 @@ async mounted() {
   });
   },
   
-computed: {
+  computed: {
   categorizedProducts() {
-    return this.products.reduce((acc, prod) => {
+    const sortedCategories = Object.keys(this.products.reduce((acc, prod) => {
       if (!acc[prod.category]) {
         acc[prod.category] = [prod]
       } else {
         acc[prod.category].push(prod)
       }
       return acc
+    }, {})).sort(); // sort the category keys in ascending order
+
+    return sortedCategories.reduce((acc, category) => {
+      acc[category] = this.products.filter(prod => prod.category === category)
+      return acc
     }, {})
-  }, 
-}, 
+  },
+},
+
 async created() {
   const productRef = await getDocs(collection(db, "food_listings"));
+ 
   const uniqueCategories = [];
   
   productRef.forEach((doc) => {
@@ -227,6 +234,8 @@ async created() {
       }
     }
   });  
+
+  uniqueCategories.sort((a, b) => a.localeCompare(b));
   this.tab = uniqueCategories[0]; // set default tab selected to first category
 }
 }
