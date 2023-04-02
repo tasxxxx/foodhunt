@@ -1,112 +1,161 @@
 <template>  
     <NavigationBar1/>
+
     <div>
-        <div className="banner">
-            <img src="../assets/bg1.png">
-        </div>
+
+      <div className="banner">
+        <img src="../assets/bg1.png">
+      </div>
+
         <!-- <img id = "restaurantimg" src="@/assets/macdonaldbanner.jpeg" alt = ""> -->
+      <div className="text">
+        <h2 style="font-family:Nunito; margin-left: 5vw;">Around the island..</h2>
+      </div>
 
-        <div className="text">
-            Around the island.. 
-        </div>
+      <SearchBar @search="handleSearch"/>
 
-        <!-- <v-breadcrumbs-item :to="{ name: 'restaurant'}">
-          <v-icon icon="mdi-shopping"></v-icon>
-            My restaurant |
-        </v-breadcrumbs-item> -->
+      <!-- <v-breadcrumbs-item :to="{ name: 'restaurant'}">
+        <v-icon icon="mdi-shopping"></v-icon>
+          My restaurant |
+      </v-breadcrumbs-item> -->
 
-        <div className="restaurants">
-          <div v-for="restaurant in restaurants.filter(restaurant => closingTimes(restaurant) !== 'Closed')" :key="restaurant.id" className="restaurant">
-                <router-link :to="{ name: 'restaurant', params: { id: restaurant.Restaurant_PersonalisationId }}">
-                    <div>
-                        <!-- <img :src="restaurant.img" alt="Restaurant Image" className="restaurant-img"> -->
-                        <img src="../assets/macs.jpg" alt="Restaurant Image" className="restaurant-img">
-                    </div>
-                    
-                    <div className="restaurant-name">
-                        {{ restaurant.Name }}
-                    </div>
-                    <div className="description">
-                        <div className="cuisine"> 
-                            <v-chip color="rgba(109,93,36,1)"> {{ restaurant.Cuisines }} </v-chip>
-                        </div>
-                        <div className="price">
-                            <v-chip color="rgba(109,93,36,1)"> {{ restaurant.Price_Range }} </v-chip>
-                        </div>
-                        <div className="location">
-                            <img src="../assets/location.png" :title="restaurant.Address">
-                        </div>
-                        <div className="closingTime">
-                            {{ closingTimes(restaurant) }}
-                        </div>
-                    </div>
-                </router-link>
+      <div className="restaurants">       
+        <div v-for="restaurant in searchRestaurant" :key="restaurant.id" className="restaurant" >
+          <router-link :to="{ name: 'restaurant', params: { id: restaurant.Restaurant_PersonalisationId }}">
+            <div>
+                <!-- <img :src="restaurant.img" alt="Restaurant Image" className="restaurant-img"> -->
+                <img src="../assets/macs.jpg" alt="Restaurant Image" className="restaurant-img">
             </div>
+            <div className="restaurant-name">
+              {{ restaurant.Name }}
+            </div>
+            <div className="description">
+              <div className="cuisine"> 
+                <v-chip color="rgba(109,93,36,1)"> {{ restaurant.Cuisines }} </v-chip>
+              </div>
+              <div className="price">
+                <v-chip color="rgba(109,93,36,1)"> {{ restaurant.Price_Range }} </v-chip>
+              </div>
+              <div className="location">
+                <img src="../assets/location.png" :title="restaurant.Address">
+              </div>
+              <div className="closingTime">
+                {{ closingTimes(restaurant) }}
+              </div>
+            </div>
+         </router-link>
         </div>
-  </div>
+      </div>
+      <h3 v-if="searchOn" class="searchtagline" >The end... Happy hunting!</h3>
+   </div>
   </template>
   
   <script> 
-  import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
-  import firebaseApp from "../firebase";
-  import { getFirestore } from 'firebase/firestore';
-  import { getDoc, doc, getDocs, collection} from 'firebase/firestore';
-  const db = getFirestore(firebaseApp);
+import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
+import SearchBar from '@/components/icons/SearchBar.vue'
+import AddToCart from '@/components/icons/AddToCart.vue';
+import firebaseApp from "../firebase";
+import { getFirestore } from 'firebase/firestore';
+import { getDoc, doc, getDocs, collection} from 'firebase/firestore';
+const db = getFirestore(firebaseApp);
   
-  export default {
-    name: "RestaurantListing",
-    props: ['id'],
-    components:{
-        NavigationBar1,
-    },
-    data() {
-        return {
-        restaurants: [],
-        }
-    },  
-    async mounted() {
-        try {
-        const querySnapshot = await getDocs(collection(db, "restaurant_personalisation"))
-        this.restaurants = querySnapshot.docs.map(doc => doc.data())
-        } catch (error) {
-        console.log(error)
-        }
-    },
-    computed: {
-    closingTimes() {
-        return restaurant => {
-            const now = new Date()
-            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-            const currentDay = days[now.getDay()]
-            const closingTime = restaurant[currentDay] 
-            const regex = /^(?!(\d{2}:\d{2} - \d{2}:\d{2})$).*/;
-            const isMatch = regex.test(closingTime); 
-            console.log(closingTime + isMatch)
-            if (isMatch) {
-              return "Closed" 
-            } else { 
-              const closingTime = restaurant[currentDay].split(' - ')[1]
-              const closing = new Date(now)
-              const [hours, minutes] = closingTime.split(':')
-              closing.setHours(hours)
-              closing.setMinutes(minutes)
-              if (now > closing) {
-              return "Closed" 
-              }
-              const timeDiff = closing - now
-              if (timeDiff <= 60 * 60 * 1000 && timeDiff > 0) {
-              return `Closing in ${Math.floor(timeDiff / 1000 / 60)} minutes`
-              } else {
-              return " Closing at " + closingTime
-              }
-            }
+export default {
+  name: "RestaurantListing",
+  // props: ['id'],
+  components:{
+    NavigationBar1,
+    SearchBar
+  },
+
+  data() {
+    return {
+      restaurants: [],
+      searchRestaurant: [],
+      searchOn: false,
     }
+  },
+
+  async mounted() {
+    try {
+      const querySnapshot = await getDocs(collection(db, "restaurant_personalisation"))
+      this.restaurants = querySnapshot.docs.map(doc => doc.data())
+      this.searchRestaurant = querySnapshot.docs.map(doc => doc.data())
+      console.log(this.restaurants)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+
+  computed: {
+    closingTimes() {
+      return restaurant => {
+        console.log("friday time")
+        console.log(restaurant.Friday);
+        const now = new Date()
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        const currentDay = days[now.getDay()]
+        const closingTime = restaurant[currentDay].split(' - ')[1]
+
+        const closing = new Date(now)
+        const [hours, minutes] = closingTime.split(':')
+        closing.setHours(hours)
+        closing.setMinutes(minutes)
+
+        if (now > closing) {
+        return "Closed" 
+        }
+
+        const timeDiff = closing - now
+        if (timeDiff <= 60 * 60 * 1000 && timeDiff > 0) {
+        return `Closing in ${Math.floor(timeDiff / 1000 / 60)} minutes`
+        } else {
+        return " Closing at " + closingTime
+        }
+
+        // Do your computations and return the closing time as a string
+        // ...
+      }
     },
+  },
+
+  methods: {
+    handleSearch(value) {
+      if (value && value.length > 0) {
+        this.searchOn = true;
+        this.searchRestaurant = this.restaurants.filter(r => {
+          const val = value.toLowerCase()
+          const restaurantName = r.Name.toString().toLowerCase().split(" ")
+          for (let i = 0; i < restaurantName.length; i++) {
+            if (restaurantName[i].indexOf(val) !== -1) {
+              this.searchOn = true;
+              return true;
+            }
+          }
+        })
+        return false;
+      } else {
+        this.searchOn = false;
+        this.searchRestaurant = this.restaurants
+      }
+    }
   }
+
 }
 </script>
 
 <style scoped>
+
+/*
+.main-page {
+  display: flex;
+  align-items: center;
+}
+.text {
+  width: 10%;
+  text-align: left;
+}
+*/
+
 .closingTime {
   margin-top:20px;
   float:right;
@@ -256,14 +305,10 @@
   text-align: center;
 }
 
-#searchbutton {
-  border-radius: 10px;
-  top: 30vh;
-  left: 39vw;
-  height: 7.0%;
-  font-size: 1.0vw;
-  position: relative;
-  color: black;
+.searchtagline {
+  text-align: center;
+  font-family:Nunito; 
+  color: rgb(128,128,128);
 }
 
 .text-field-wrapper {
