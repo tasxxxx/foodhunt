@@ -82,9 +82,9 @@
                 <!-- <v-card-title>{{ items[selectedItem].Name }}</v-card-title> -->
 
                 <v-card-subtitle>
-                  <span class="me-1">{{ 'Completed'}}</span>
+                  <!-- <span class="me-1">{{ 'Completed'}}</span> -->
 
-                  <!-- <span class="me-1">{{ selected_reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</span> -->
+                  <span class="me-1">{{ selected_reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</span>
 
                   
                 </v-card-subtitle>
@@ -94,27 +94,27 @@
                 
 
                 <div class="my-4 text-subtitle-1">
-                  Order Time and Date: today
+                  <!-- Order Time and Date: today -->
 
-                  <!-- Order Time and Date: {{ selected_reservation.createdAt.toDate().toLocaleString('en-SG', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) }} -->
+                  Order Time and Date: {{ selected_reservation.createdAt.toDate().toLocaleString('en-SG', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) }}
                 </div>
 
                 <!-- <div>{{ items[selectedItem].Description }}</div> -->
               </v-card-text>
 
               <v-divider class="mx-4 mb-1"></v-divider>
-                <!-- <v-card-text>
+                <v-card-text>
                   <div v-for="(orders, restaurant) in ordersByRestaurant" :key="restaurant">
                     <h3>{{ restaurant }}</h3>
                     <div v-for="order in orders" :key="order.id">
                       <p>{{ order.quantity }}x {{ order.item }} ${{ order.subtotal }}</p>
                     </div>
                   </div>
-                </v-card-text> -->
+                </v-card-text>
               <v-divider class="mx-4 mb-1"></v-divider>
               <v-card-text>
-                Total: hello
-                <!-- Total: ${{ selected_reservation.total }} -->
+                <!-- Total: hello -->
+                Total: ${{ selected_reservation.total }}
               </v-card-text>
               <v-card-text>
                 Payment By: In Store Payment
@@ -192,13 +192,11 @@ export default {
 
     }
   },
-  mounted() {
-
-  },
+  
 
   created() {
     const auth = getAuth();
-     onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, (user) => {
       if (user) {
         this.useremail = auth.currentUser.email;
         this.getReservations();
@@ -224,6 +222,7 @@ export default {
         }
       }
     });
+
     if (this.reservations.length > 0) {
       this.selected_reservation = this.reservations[0]
     }
@@ -239,7 +238,10 @@ export default {
         console.log(reservation)
         this.reservations.push(reservation);
         
-      });
+      })
+      if (this.reservations.length > 0) {
+        this.selected_reservation = this.reservations[0]
+      };
     },
     selectReservation(reservation) {
       this.selected_reservation = reservation;
