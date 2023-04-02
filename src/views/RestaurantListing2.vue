@@ -82,6 +82,9 @@
             const now = new Date()
             const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
             const currentDay = days[now.getDay()]
+            if (restaurant[currentDay] === 'Closed') {
+              return "Closed"
+            }
             const closingTime = restaurant[currentDay].split(' - ')[1]
 
             const closing = new Date(now)
@@ -115,13 +118,8 @@
 
 <style scoped>
 
-.main-page {
-  /* display: flex; */
-  /* align-items: center; */
-}
-.text {
-  /* width: 10%; */
-  /* text-align: left; */
+a {
+    text-decoration: none;
 }
 .closingTime {
   margin-top:20px;
@@ -130,6 +128,7 @@
   right: 0;
   margin-right: 10px;
   font-size: 18px;
+  color: black;
 
 }
 
@@ -178,6 +177,7 @@
 .restaurant-name {
   font-size: 20px;
   margin-top: -10px;
+  color: black;
 }
 .restaurant-img {
   width: 100%;
