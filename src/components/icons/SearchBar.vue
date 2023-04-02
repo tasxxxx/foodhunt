@@ -4,21 +4,35 @@
         label= "Search"
         variant="outlined"
         append-inner-icon="mdi-magnify"
-        append-icon="mdi-filter"
         single-line
         style="font-family:Nunito"
         density="compact"
         class="search"
         @change="onChange"
         @keyup="onChange"
-    ></v-text-field>
+    >
+    <template v-slot:append>
+        <v-icon>{{ icon }}</v-icon>
+        </template>
+    </v-text-field>
+
+    <v-menu
+        open-on-hover
+    >
+    </v-menu>
 </template>
 
 <script>
 export default {
     data() {
-        searchText: ''
+        return {
+            searchText: '',
+            icon: "mdi-filter",
+
+        }
     },
+
+    emits: ["search"],
 
     methods: {
         onChange() {

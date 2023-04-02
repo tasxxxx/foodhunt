@@ -47,7 +47,7 @@
         </div>
       </div>
       <h3 v-if="searchOn" class="searchtagline" >The end... Happy hunting!</h3>
- `` </div>
+   </div>
   </template>
   
   <script> 
@@ -135,7 +135,6 @@ export default {
         return false;
       } else {
         this.searchOn = false;
-        console.log(this.searchOn)
         this.searchRestaurant = this.restaurants
       }
     }
