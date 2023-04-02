@@ -23,7 +23,7 @@
       <div v-if="showPlaceholder && openRestaurants.length === 0">
           <h3 class="information">All restaurants are currently closed. Please check back later.</h3>
       </div>
-      <div v-else v-for="restaurant in openRestaurants" :key="restaurant.id" className="restaurant">
+      <div v-else v-for="restaurant in searchRestaurant" :key="restaurant.id" className="restaurant">
         <router-link :to="{ name: 'restaurant', params: { id: restaurant.Restaurant_PersonalisationId }}">
           <div>
             <img src="../assets/macs.jpg" alt="Restaurant Image" className="restaurant-img">
@@ -126,6 +126,10 @@ export default {
     openRestaurants() {
       return this.restaurants.filter(restaurant => this.closingTimes(restaurant) !== 'Closed')
     },
+
+    searchRestaurant() {
+      return this.searchRestaurant.filter(restaurant => this.closingTimes(restaurant) !== 'Closed')
+    }
   },
   methods: {
     handleSearch(value) {
