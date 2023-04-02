@@ -350,6 +350,9 @@ export default {
 </script>
 
 <style scoped>
+[v-cloak] {
+  display: none;
+}
 .empty-cart-container {
   display: flex;
   flex-direction: column;
