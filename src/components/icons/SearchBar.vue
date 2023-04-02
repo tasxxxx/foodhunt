@@ -4,7 +4,6 @@
         label= "Search"
         variant="outlined"
         append-inner-icon="mdi-magnify"
-        append-icon="mdi-filter"
         single-line
         style="font-family:Nunito"
         density="compact"
@@ -32,9 +31,7 @@ export default {
 .search {
   padding-top: 0;
   padding-bottom: 0;
-  padding-left: 30vw;
+  padding-left:30vw;
   padding-right: 30vw;
-  border-radius: 10px;
 }
-
 </style>
