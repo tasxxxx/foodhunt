@@ -75,10 +75,6 @@ export default {
       if (user) {
         this.useremail = auth.currentUser.email;
         this.retrieveCart();
-        // Set showPlaceholder to true after a delay of 3 seconds
-                  setTimeout(() => {
-            this.showPlaceholder = true;
-          },200);
       } else {
         if (this.$route.path.split('/').pop() !== "restaurantlisting") {
           toast.error("Access denied! Please sign in!", {
@@ -343,7 +339,12 @@ export default {
           }
         })
       } 
-    }
+    },
+    created() {
+      setTimeout(() => {
+        this.showPlaceholder = true;
+      }, 3000);
+  },
   }
     
 </script>
