@@ -131,7 +131,6 @@ export default {
         imageUrl: 'https://via.placeholder.com/500',
         image: null,
         imageFirebase: null,
- 
         formErrors: {},
     }
   },
@@ -247,7 +246,8 @@ export default {
             AvailableQty: this.quantity,
             VendorID: Docdata.VendorID,
             Food_listingID: food_listing_id,
-            Restaurant_PersonalisationId: vendor_doc_id
+            Restaurant_PersonalisationId: vendor_doc_id,
+            VendorName: vendor_name
         })
 
     },
