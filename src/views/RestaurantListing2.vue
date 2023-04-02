@@ -19,36 +19,38 @@
           My restaurant |
       </v-breadcrumbs-item> -->
 
-      <div className="restaurants">       
-        <div v-for="restaurant in searchRestaurant" :key="restaurant.id" className="restaurant" >
-          <router-link :to="{ name: 'restaurant', params: { id: restaurant.Restaurant_PersonalisationId }}">
-            <div>
-                <!-- <img :src="restaurant.img" alt="Restaurant Image" className="restaurant-img"> -->
-                <img src="../assets/macs.jpg" alt="Restaurant Image" className="restaurant-img">
-            </div>
-            <div className="restaurant-name">
-              {{ restaurant.Name }}
-            </div>
-            <div className="description">
-              <div className="cuisine"> 
-                <v-chip color="rgba(109,93,36,1)"> {{ restaurant.Cuisines }} </v-chip>
-              </div>
-              <div className="price">
-                <v-chip color="rgba(109,93,36,1)"> {{ restaurant.Price_Range }} </v-chip>
-              </div>
-              <div className="location">
-                <img src="../assets/location.png" :title="restaurant.Address">
-              </div>
-              <div className="closingTime">
-                {{ closingTimes(restaurant) }}
-              </div>
-            </div>
-         </router-link>
-        </div>
+    <div class="restaurants">       
+      <div v-if="showPlaceholder && openRestaurants.length === 0">
+          <h3 class="information">All restaurants are currently closed. Please check back later.</h3>
       </div>
-      <h3 v-if="searchOn" class="searchtagline" >The end... Happy hunting!</h3>
-   </div>
-  </template>
+      <div v-else v-for="restaurant in openRestaurants" :key="restaurant.id" className="restaurant">
+        <router-link :to="{ name: 'restaurant', params: { id: restaurant.Restaurant_PersonalisationId }}">
+          <div>
+            <img src="../assets/macs.jpg" alt="Restaurant Image" className="restaurant-img">
+          </div>
+          <div className="restaurant-name">
+            {{ restaurant.Name }}
+          </div>
+          <div className="description">
+            <div className="cuisine"> 
+              <v-chip color="rgba(109,93,36,1)"> {{ restaurant.Cuisines }} </v-chip>
+            </div>
+            <div className="price">
+              <v-chip color="rgba(109,93,36,1)"> {{ restaurant.Price_Range }} </v-chip>
+            </div>
+            <div className="location">
+              <img src="../assets/location.png" :title="restaurant.Address">
+            </div>
+            <div className="closingTime">
+              {{ closingTimes(restaurant) }}
+            </div>
+          </div>
+        </router-link>
+      </div>
+    </div>
+    <h3 v-if="searchOn" class="searchtagline" >The end... Happy hunting!</h3>
+  </div>
+</template>
   
   <script> 
 import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
@@ -61,7 +63,6 @@ const db = getFirestore(firebaseApp);
   
 export default {
   name: "RestaurantListing",
-  // props: ['id'],
   components:{
     NavigationBar1,
     SearchBar
@@ -72,6 +73,7 @@ export default {
       restaurants: [],
       searchRestaurant: [],
       searchOn: false,
+      showPlaceholder: false // Add a boolean data property
     }
   },
 
@@ -81,6 +83,10 @@ export default {
       this.restaurants = querySnapshot.docs.map(doc => doc.data())
       this.searchRestaurant = querySnapshot.docs.map(doc => doc.data())
       console.log(this.restaurants)
+      // Set showPlaceholder to true after a delay of 3 seconds
+      setTimeout(() => {
+        this.showPlaceholder = true;
+      },0.003);
     } catch (error) {
       console.log(error)
     }
@@ -89,28 +95,38 @@ export default {
   computed: {
     
     closingTimes() {
-        return restaurant => {
-            console.log("friday time")
-            console.log(restaurant.Friday);
-            const now = new Date()
-            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-            const currentDay = days[now.getDay()]
-            if (restaurant[currentDay] === 'Closed' || restaurant[currentDay] === 'closed') {
-              return "Closed"
-            }
-            const closingTime = restaurant[currentDay].split(' - ')[1]
-
-            const closing = new Date(now)
-            const [hours, minutes] = closingTime.split(':')
-            closing.setHours(hours)
-            closing.setMinutes(minutes)
-
-            if (now > closing) {
+      return restaurant => {
+        const now = new Date()
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        const currentDay = days[now.getDay()]
+        const closingTime = restaurant[currentDay] 
+        const regex = /^(?!(\d{2}:\d{2} - \d{2}:\d{2})$).*/;
+        const isMatch = regex.test(closingTime); 
+        console.log(closingTime + isMatch)
+        if (isMatch) {
+          return "Closed" 
+        } else { 
+          const closingTime = restaurant[currentDay].split(' - ')[1]
+          const closing = new Date(now)
+          const [hours, minutes] = closingTime.split(':')
+          closing.setHours(hours)
+          closing.setMinutes(minutes)
+          if (now > closing) {
             return "Closed" 
+          }
+          const timeDiff = closing - now
+          if (timeDiff <= 60 * 60 * 1000 && timeDiff > 0) {
+            return `Closing in ${Math.floor(timeDiff / 1000 / 60)} minutes`
+          } else {
+            return " Closing at " + closingTime
             }
-        }
+          }
+      }
     },
-
+    openRestaurants() {
+      return this.restaurants.filter(restaurant => this.closingTimes(restaurant) !== 'Closed')
+    },
+  },
   methods: {
     handleSearch(value) {
       if (value && value.length > 0) {
@@ -134,7 +150,7 @@ export default {
   }
 
 }
-}
+
 </script>
 
 <style scoped>
@@ -231,6 +247,14 @@ a {
   position: relative;
 }
 
+.information {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    margin-left: 600px;
+    color: red;
+}
+
 .restaurant .img {
   width: 100%;
   height: 120px;
@@ -239,7 +263,7 @@ a {
 .restaurants {
   display:flex;
   flex-wrap: wrap;
-  margin: 50px;
+  margin-left: 3.5%;
 }
 
 #landingimage {
@@ -248,8 +272,6 @@ a {
   left: 0px;
   height: 100%;
 }
-
-
 
 .rightHalf {
   width: 55%;

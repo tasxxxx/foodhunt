@@ -26,7 +26,6 @@
                 <p>{{ order.quantity }}x {{ order.item }} ${{ order.subtotal }}</p>
               </div>
             </div>
-          
           <hr>
           <p>Total: ${{ selected_reservation.total }}</p>
           <button>Cancel reservation</button>
