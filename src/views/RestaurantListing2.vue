@@ -120,7 +120,7 @@ export default {
           if (now < opening || now > closing) {
             return "Closed"
           }
-          
+
           const timeDiff = closing - now
 
           if (timeDiff <= 60 * 60 * 1000 && timeDiff > 0) {
@@ -181,6 +181,9 @@ export default {
 </script>
 
 <style scoped>
+[v-cloak] {
+  display: none;
+}
 
 a {
     text-decoration: none;
