@@ -1,6 +1,146 @@
 <template>  
     <NavigationBar1/>
-    <h3>All orders at a glance</h3>
+    <div class="empty-cart-container" v-if="reservations.length === 0">
+      <img id ="emptycart" src="@/assets/preview.png" alt = "">
+      <h1 id="message">Oops! You have no current reservations. Time to add some items and fill it up!</h1>
+      <v-breadcrumbs-item :to="{ name: 'restaurantlisting'}">
+        <v-btn rounded="lg" color="primary"> Start Hunting!</v-btn>
+      </v-breadcrumbs-item>
+      <img id ="emojisad" src="@/assets/emoji.webp" alt = "">
+    </div>
+    <div v-else>
+  
+      <v-card
+        class="mx-auto" 
+        max-width=1230
+        max-height="640"
+      >
+      <div class="text-h5 pa-5"> All orders at a glance...</div>
+      <v-divider></v-divider> 
+      <v-row>
+        <v-col cols="4">
+          <div class="list-container">
+            <v-card 
+              v-for="reservation in reservations" 
+              key="reservation.id" 
+              @click="selectReservation(reservation)"
+              min-height="150"
+            >
+              <br>
+              <v-row>
+                <v-col cols="4">
+                  <v-avatar class="mx-auto d-flex" size="100">
+                    <v-img :src="reservation.ImageURL" contain class="white--text"></v-img>
+                  </v-avatar>
+                </v-col>
+                <v-col cols="8">
+                  <v-row>
+                    <div class="text-h6 mb-1">{{ reservation.reservationNo }}</div>
+                  </v-row>
+                  <v-row>
+                    <v-col cols="5">
+                    <div class="text-subtitle-2 mb-1">{{ reservation.createdAt.toDate().toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }) }}</div>
+                    </v-col>
+                    <v-col cols="5">
+                      <div class="text-h6 mb-1">${{ reservation.total }}</div>
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                      <v-chip>{{ reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</v-chip>  
+                  </v-row>
+
+                  <!-- <div class="text-body-1">{{ item.Category }}</div> -->
+                </v-col>
+              </v-row>
+            </v-card>
+          </div>
+        </v-col>
+        <v-col cols="8">     
+            <v-card
+              :loading="loading"
+              
+              height="100%"
+              width="100%"
+
+            >
+              <template v-slot:loader="{ isActive }">
+                <v-progress-linear
+                  :active="isActive"
+                  color="deep-purple"
+                  height="4"
+                  indeterminate
+                ></v-progress-linear>
+              </template>
+              
+              <!-- <v-img
+                cover
+                height="300"
+                :src= "items[selectedItem].ImageURL"
+              ></v-img> -->
+
+              <v-card-item>
+                <!-- <v-card-title>{{ items[selectedItem].Name }}</v-card-title> -->
+
+                <v-card-subtitle>
+                  <!-- <span class="me-1">{{ 'Completed'}}</span> -->
+
+                  <span class="me-1">{{ selected_reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</span>
+
+                  
+                </v-card-subtitle>
+              </v-card-item>
+
+              <v-card-text>
+                
+
+                <div class="my-4 text-subtitle-1">
+                  <!-- Order Time and Date: today -->
+
+                  Order Time and Date: {{ selected_reservation.createdAt.toDate().toLocaleString('en-SG', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) }}
+                </div>
+
+                <!-- <div>{{ items[selectedItem].Description }}</div> -->
+              </v-card-text>
+
+              <v-divider class="mx-4 mb-1"></v-divider>
+                <v-card-text>
+                  <div v-for="(orders, restaurant) in ordersByRestaurant" :key="restaurant">
+                    <h3>{{ restaurant }}</h3>
+                    <div v-for="order in orders" :key="order.id">
+                      <p>{{ order.quantity }}x {{ order.item }} ${{ order.subtotal }}</p>
+                    </div>
+                  </div>
+                </v-card-text>
+              <v-divider class="mx-4 mb-1"></v-divider>
+              <v-card-text>
+                <!-- Total: hello -->
+                Total: ${{ selected_reservation.total }}
+              </v-card-text>
+              <v-card-text>
+                Payment By: In Store Payment
+              </v-card-text>
+              <v-divider class="mx-4 mb-1"></v-divider>
+
+              <!-- <v-card-title>Tonight's availability</v-card-title> -->
+
+
+              <v-card-actions>
+                <v-btn
+                  color="deep-purple-lighten-2"
+                  variant="text"
+                >
+                  Cancel Reservation
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+        </v-col>
+      </v-row> 
+      </v-card>
+    </div>
+
+
+    
+    <!-- <h3>All orders at a glance</h3>
     <div class="reservation-panel">
       <div class="left-panel">
         <div v-for="reservation in reservations" :key="reservation.id" className='restaurant' @click="selectReservation(reservation)">
@@ -12,11 +152,6 @@
       </div>
       <div class="right-panel">
         <div v-if="selected_reservation">
-          <!-- <div v-for="order in selected_reservation.cart" :key="order.id">
-            <p>{{ order }}</p>
-            <p>{{ order.quantity}}x {{ order.item }} ${{ order.subtotal }}</p>
-          </div> -->
-          
           <p>{{ selected_reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</p>
           <p>{{ selected_reservation.createdAt.toDate().toLocaleString('en-SG', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) }}</p>
           <hr>
@@ -29,10 +164,9 @@
           <hr>
           <p>Total: ${{ selected_reservation.total }}</p>
           <button>Cancel reservation</button>
-          <!-- Display more details about the selected reservation here -->
         </div>
       </div>
-    </div>
+    </div> -->
     
 </template>
 
@@ -58,10 +192,11 @@ export default {
 
     }
   },
+  
 
   created() {
     const auth = getAuth();
-     onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, (user) => {
       if (user) {
         this.useremail = auth.currentUser.email;
         this.getReservations();
@@ -87,6 +222,7 @@ export default {
         }
       }
     });
+
     if (this.reservations.length > 0) {
       this.selected_reservation = this.reservations[0]
     }
@@ -102,7 +238,10 @@ export default {
         console.log(reservation)
         this.reservations.push(reservation);
         
-      });
+      })
+      if (this.reservations.length > 0) {
+        this.selected_reservation = this.reservations[0]
+      };
     },
     selectReservation(reservation) {
       this.selected_reservation = reservation;
