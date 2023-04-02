@@ -49,7 +49,6 @@
   
   <script> 
   import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
-  import AddToCart from '@/components/icons/AddToCart.vue';
   import firebaseApp from "../firebase";
   import { getFirestore } from 'firebase/firestore';
   import { getDoc, doc, getDocs, collection} from 'firebase/firestore';
@@ -57,7 +56,7 @@
   
   export default {
     name: "RestaurantListing",
-    // props: ['id'],
+    props: ['id'],
     components:{
         NavigationBar1,
     },
@@ -104,25 +103,11 @@
       // ...
     }
     },
-  },
+  }
 }
 </script>
 
-
-
-
-
-
 <style scoped>
-
-.main-page {
-  /* display: flex; */
-  /* align-items: center; */
-}
-.text {
-  /* width: 10%; */
-  /* text-align: left; */
-}
 .closingTime {
   margin-top:20px;
   float:right;
