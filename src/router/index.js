@@ -28,9 +28,7 @@ const routes = [
     component: Landing,
   },
   {
-    // path: '/restrauants/:id',
     path: '/restaurant/:id',
-    // path: '/restaurants',
     name: 'restaurant',
     component: Restaurant,
     props: true,

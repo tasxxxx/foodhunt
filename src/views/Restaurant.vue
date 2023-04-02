@@ -200,7 +200,7 @@ async mounted() {
       this.products.push(product);
     }
   });
-  },
+},
   
   computed: {
   categorizedProducts() {
@@ -222,9 +222,7 @@ async mounted() {
 
 async created() {
   const productRef = await getDocs(collection(db, "food_listings"));
- 
   const uniqueCategories = [];
-  
   productRef.forEach((doc) => {
     if (doc.data().Restaurant_PersonalisationId === this.id && doc.data().AvailableQty > 0) {
       const product = doc.data();
@@ -233,13 +231,13 @@ async created() {
         uniqueCategories.push(product.category);
       }
     }
-  });  
-
-  uniqueCategories.sort((a, b) => a.localeCompare(b));
-  this.tab = uniqueCategories[0]; // set default tab selected to first category
-}
+  })  
+    uniqueCategories.sort((a, b) => a.localeCompare(b));
+    this.tab = uniqueCategories[0]; // set default tab selected to first category
+  }
 }
 </script>
+
 <style scoped>
 
 #restaurantimg {

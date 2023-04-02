@@ -12,15 +12,20 @@
       </div>
       <div class="right-panel">
         <div v-if="selected_reservation">
-          <!-- <p>{{ selected_reservation.cart }}</p> -->
-          <div v-for="order in selected_reservation.cart" :key="order.id">
+          <!-- <div v-for="order in selected_reservation.cart" :key="order.id">
             <p>{{ order }}</p>
             <p>{{ order.quantity}}x {{ order.item }} ${{ order.subtotal }}</p>
-          </div>
+          </div> -->
           
           <p>{{ selected_reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</p>
           <p>{{ selected_reservation.createdAt.toDate().toLocaleString('en-SG', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) }}</p>
           <hr>
+            <div v-for="(orders, restaurant) in ordersByRestaurant" :key="restaurant">
+              <h3>{{ restaurant }}</h3>
+              <div v-for="order in orders" :key="order.id">
+                <p>{{ order.quantity }}x {{ order.item }} ${{ order.subtotal }}</p>
+              </div>
+            </div>
           
           <hr>
           <p>Total: ${{ selected_reservation.total }}</p>
@@ -83,6 +88,9 @@ export default {
         }
       }
     });
+    if (this.reservations.length > 0) {
+      this.selected_reservation = this.reservations[0]
+    }
   },
   methods: {
     async getReservations() {
@@ -99,6 +107,18 @@ export default {
     },
     selectReservation(reservation) {
       this.selected_reservation = reservation;
+    }
+  },
+  computed: {
+    ordersByRestaurant() {
+      const ordersByRestaurant = {}
+      this.selected_reservation.cart.forEach(order => {
+        if (!ordersByRestaurant[order.restaurant]) {
+          ordersByRestaurant[order.restaurant] = []
+        }
+        ordersByRestaurant[order.restaurant].push(order)
+      })
+      return ordersByRestaurant
     }
   }
 }
