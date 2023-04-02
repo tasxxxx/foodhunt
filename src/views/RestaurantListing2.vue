@@ -93,6 +93,7 @@ export default {
   },
 
   computed: {
+    
     closingTimes() {
       return restaurant => {
         const now = new Date()
@@ -149,16 +150,14 @@ export default {
   }
 
 }
+
 </script>
 
 <style scoped>
 
-/*
-.main-page {
-  display: flex;
-  align-items: center;
+a {
+    text-decoration: none;
 }
-*/
 .closingTime {
   margin-top:20px;
   float:right;
@@ -166,6 +165,7 @@ export default {
   right: 0;
   margin-right: 10px;
   font-size: 18px;
+  color: black;
 
 }
 
@@ -214,6 +214,7 @@ export default {
 .restaurant-name {
   font-size: 20px;
   margin-top: -10px;
+  color: black;
 }
 .restaurant-img {
   width: 100%;
