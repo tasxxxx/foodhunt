@@ -6,7 +6,7 @@
       <v-breadcrumbs-item :to="{ name: 'restaurantlisting'}">
         <v-btn rounded="lg" color="primary"> Start Hunting!</v-btn>
       </v-breadcrumbs-item>
-      <img id ="emojisad" src="@/assets/emoji.webp" alt = "">
+      <!-- <img id ="emojisad" src="@/assets/emoji.webp" alt = ""> -->
     </div>
     <div v-else>
       <div class="shopping-cart">
@@ -367,7 +367,9 @@ export default {
 }
 
 #message {
-  margin-bottom: 20px;
+  margin-top: -15px;
+  margin-bottom: 25px;
+  font-family: Nunito; 
 }
 
 * {
