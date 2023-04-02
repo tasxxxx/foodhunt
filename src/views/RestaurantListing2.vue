@@ -16,8 +16,7 @@
         </v-breadcrumbs-item> -->
 
         <div className="restaurants">
-            
-            <div v-for="restaurant in restaurants" :key="restaurant.id" className="restaurant" >
+          <div v-for="restaurant in restaurants.filter(restaurant => closingTimes(restaurant) !== 'Closed')" :key="restaurant.id" className="restaurant">
                 <router-link :to="{ name: 'restaurant', params: { id: restaurant.Restaurant_PersonalisationId }}">
                     <div>
                         <!-- <img :src="restaurant.img" alt="Restaurant Image" className="restaurant-img"> -->
@@ -76,31 +75,31 @@
     computed: {
     closingTimes() {
         return restaurant => {
-            console.log("friday time")
-            console.log(restaurant.Friday);
             const now = new Date()
             const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
             const currentDay = days[now.getDay()]
-            const closingTime = restaurant[currentDay].split(' - ')[1]
-
-            const closing = new Date(now)
-            const [hours, minutes] = closingTime.split(':')
-            closing.setHours(hours)
-            closing.setMinutes(minutes)
-
-            if (now > closing) {
-            return "Closed" 
+            const closingTime = restaurant[currentDay] 
+            const regex = /^(?!(\d{2}:\d{2} - \d{2}:\d{2})$).*/;
+            const isMatch = regex.test(closingTime); 
+            console.log(closingTime + isMatch)
+            if (isMatch) {
+              return "Closed" 
+            } else { 
+              const closingTime = restaurant[currentDay].split(' - ')[1]
+              const closing = new Date(now)
+              const [hours, minutes] = closingTime.split(':')
+              closing.setHours(hours)
+              closing.setMinutes(minutes)
+              if (now > closing) {
+              return "Closed" 
+              }
+              const timeDiff = closing - now
+              if (timeDiff <= 60 * 60 * 1000 && timeDiff > 0) {
+              return `Closing in ${Math.floor(timeDiff / 1000 / 60)} minutes`
+              } else {
+              return " Closing at " + closingTime
+              }
             }
-
-            const timeDiff = closing - now
-            if (timeDiff <= 60 * 60 * 1000 && timeDiff > 0) {
-            return `Closing in ${Math.floor(timeDiff / 1000 / 60)} minutes`
-            } else {
-            return " Closing at " + closingTime
-            }
-
-      // Do your computations and return the closing time as a string
-      // ...
     }
     },
   }
