@@ -343,7 +343,7 @@ export default {
     created() {
       setTimeout(() => {
         this.showPlaceholder = true;
-      }, 3000);
+      }, 500);
   },
   }
     
