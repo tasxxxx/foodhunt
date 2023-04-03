@@ -101,8 +101,8 @@
 </template>
 
 <script>
-import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
-import AddToCart from '@/components/icons/AddToCart.vue';
+import NavigationBar1 from '@/components/NavigationBar1.vue'
+import AddToCart from '@/components/AddToCart.vue';
 
 export default {
   name: "MainListing",

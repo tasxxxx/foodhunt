@@ -105,7 +105,7 @@
 </template>
 
 <script>
-import VendorBreadCrumbs from '@/components/icons/VendorBreadCrumbs.vue';
+import VendorBreadCrumbs from '@/components/VendorBreadCrumbs.vue';
 import firebase from 'firebase/compat/app';
 import { getStorage, uploadBytes, getDownloadURL, ref } from "firebase/storage";
 import firebaseApp from "../firebase";

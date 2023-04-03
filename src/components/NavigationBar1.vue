@@ -69,7 +69,7 @@
 
   <script>
     // Error when uncommenting firebaseApp, cannot find
-    import firebaseApp from "../../firebase";
+    import firebaseApp from "../firebase";
     import { collection, getFirestore } from "firebase/firestore";
     import { doc, setDoc, getDoc } from "firebase/firestore";
     import { getAuth, signOut } from "@firebase/auth";

@@ -5,7 +5,7 @@
   <script>
   import {getAuth, onAuthStateChanged} from "firebase/auth";
   import { useToast } from 'vue-toastification'
-  import firebaseApp from "../../firebase";
+  import firebaseApp from "../firebase";
   import { getFirestore } from 'firebase/firestore';
   import { getDoc, getDocs, collection, doc, setDoc} from 'firebase/firestore';
   const db = getFirestore(firebaseApp);

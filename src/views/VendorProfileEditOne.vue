@@ -141,7 +141,7 @@
     </template>
       
     <script>
-    import VendorBreadCrumbs from '../components/icons/VendorBreadCrumbs.vue'
+    import VendorBreadCrumbs from '../components/VendorBreadCrumbs.vue'
     import firebaseApp from "../firebase";
     import { getDoc, getFirestore } from "firebase/firestore";
     import { doc, updateDoc} from "firebase/firestore";
