@@ -216,9 +216,9 @@ export default {
     setTimeout(() => {
         this.showPlaceholder = true;
       },3000);
-
-      const allReservations = querySnapshot.docs.filter(doc => doc.data().user === this.useremail);
-      this.reservations = allReservations.map(doc => doc.data());
+      // const querySnapshot = await getDocs(collection(db, "reservation_orders"))
+      // const allReservations = querySnapshot.docs.filter(doc => doc.data().user === this.useremail);
+      // this.reservations = allReservations.map(doc => doc.data());
   },
   
 
@@ -278,29 +278,27 @@ export default {
       console.log(db)
       const deleted_reservation = doc(db, "reservation_orders", reservationNo);
       const deleted_reservation_data = await getDoc(deleted_reservation);
+      console.log("deleted reservation")
+      console.log(deleted_reservation_data.data())
       const products = deleted_reservation_data.data().cart  
-      const deletedItems = products.map(product => product.key);
+      console.log(products)
+      // const deletedItems = products.map(product => product.foodID);
+      const deletedItems = products.map(product => ({foodID: product.foodID, quantity: product.quantity}));
+
       console.log(deletedItems)
 
-      // for (const item of deletedItems) {
-      //   const cartRef = doc(db, "shopping_carts", this.useremail);
-      //   const cartData = await getDoc(cartRef);
-      //   // products refer to the product inside the cart.
-      //   const products = cartData.data().products  
+      for (const item of deletedItems) {
+        const itemRef = doc(db, "food_listings", item.foodID);
+        // const itemRef = doc(foodListingsRef, item);
+        const itemDoc = await getDoc(itemRef);
+        console.log("item doc")
+        console.log(itemDoc)
+        const availableQty = itemDoc.data().AvailableQty;
+        await updateDoc(itemRef, { AvailableQty: availableQty + item.quantity });
+        // await updateDoc(itemRef, { AvailableQty: availableQty + 1 });
+      }
 
-      //   console.log("products")
-      //   console.log(products)
-      //   const foodDocRef = doc(db, "food_listing", 'MOSBurgerCompassOne_lG2PFprodHotMayoFries');
-      //   console.log("food doc ref")
-      //   console.log(foodDocRef)
-      //   const foodDoc = await getDoc(foodDocRef);
-      //   console.log("food doc")
-      //   console.log(foodDoc)
-      //   const availableQty = foodDoc.data();
-      //   console.log("favailableQty")
-      //   console.log(availableQty)
-      //   await updateDoc(foodDoc, { AvailableQty: availableQty +1 });
-      // }
+      
       await deleteDoc(doc(db, "reservation_orders", reservationNo));
       await this.getReservations();
       toast.success("Reservation cancelled!", {
