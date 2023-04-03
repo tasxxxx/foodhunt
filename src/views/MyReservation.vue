@@ -47,7 +47,7 @@
                     <div class="text-subtitle-2 mb-1">{{ reservation.createdAt.toDate().toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }) }}</div>
                     </v-col>
                     <v-col cols="5">
-                      <div class="text-h6 mb-1">${{ reservation.total }}</div>
+                      <div class="text-h6 mb-1">${{ reservation.total.toFixed(2) }}</div>
                     </v-col>
                   </v-row>
                   <v-row>
@@ -112,14 +112,14 @@
                   <div v-for="(orders, restaurant) in ordersByRestaurant" :key="restaurant">
                     <h3>{{ restaurant }}</h3>
                     <div v-for="order in orders" :key="order.id">
-                      <p>{{ order.quantity }}x {{ order.item }} ${{ order.subtotal }}</p>
+                      <p>{{ order.quantity }}x {{ order.item }} ${{ order.subtotal.toFixed(2) }}</p>
                     </div>
                   </div>
                 </v-card-text>
               <v-divider class="mx-4 mb-1"></v-divider>
               <v-card-text>
                 <!-- Total: hello -->
-                Total: ${{ selected_reservation.total }}
+                Total: ${{ selected_reservation.total.toFixed(2) }}
               </v-card-text>
               <v-card-text>
                 Payment By: In Store Payment
@@ -216,7 +216,7 @@ export default {
   async mounted() {
     setTimeout(() => {
         this.showPlaceholder = true;
-      }, 1000);
+      }, 750);
       // const querySnapshot = await getDocs(collection(db, "reservation_orders"))
       // const allReservations = querySnapshot.docs.filter(doc => doc.data().user === this.useremail);
       // this.reservations = allReservations.map(doc => doc.data());

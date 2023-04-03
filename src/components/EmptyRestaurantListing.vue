@@ -1,7 +1,7 @@
 <template>
     <div class="empty-cart-container">
       <img id ="emptycart" src="@/assets/How-to-say-Sorry-in-Japanese.png" alt = "">
-      <h2 class="information">All restaurants are currently closed. Please check back later.</h2>
+      <h2 class="information">Sold out for the day. Please check back tomorrow.</h2>
     </div>
 </template>
 
@@ -25,7 +25,7 @@
 .information {
     font-weight: bold;
     text-align: center;
-    margin-top: 30px;
+    margin-top: 20px;
     color: red;
 }
 

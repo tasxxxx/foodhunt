@@ -7,23 +7,23 @@
       <h4 id="time">Order Time and Date: {{ details.dateTimeString }}</h4>
     </div>
     <!-- Item iteration -->
-    <div class="item" v-for="prod in details.cart" :key="index">
+    <div class="item" v-for="prod in details.cart">
       <div class="image">
             <img id="imageIter" src="@/assets/macs.jpg" alt="" />
       </div>
       <div class="description">
         <span>{{ prod.restaurant }}</span>
         <span>{{ prod.item }}</span>
-        <span>${{ prod.price.toFixed(2) }}</span>
+        <span>${{ prod.price}}</span>
 
       </div>
       <div class="quantity">
         {{ prod.quantity }}x
       </div>
-      <div class="total-price">${{ prod.subtotal.toFixed(2) }}</div>
+      <div class="total-price">${{ prod.subtotal ? prod.subtotal.toFixed(2): '' }}</div>
     </div>
     <div class="total">
-      <h2 id="totalProfit"> Total: ${{ details.total.toFixed(2) }} </h2>
+      <h2 id="totalProfit"> Total: ${{details.total ? details.total.toFixed(2) : ''}} </h2>
       <h3 id="totalProfit"> Payment by: In store payment </h3>
       <h3 id="totalProfit"> Pickup By: {{ details.pickUpTime }} </h3>
       <h3 id="totalProfit"> Pickup Location: {{ details.address }} </h3>
@@ -57,8 +57,6 @@ components:{
 data() {
   return {
     details: [],
-    vendorImageURL: null,
-
   }
 },    
 async mounted() {
@@ -83,7 +81,7 @@ async mounted() {
     const dateString = date.toDateString();
     const timeString = date.toLocaleTimeString();
     const dateTimeString = dateString + ' ' + timeString;
-    const pickUpTime = dateString +"," + closingTime
+    const pickUpTime = dateString +", " + closingTime
     const total = documentData.total;
     this.details = {
           name,
