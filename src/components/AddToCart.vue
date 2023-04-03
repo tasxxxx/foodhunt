@@ -70,8 +70,8 @@
               // Get the current list of products in the cart, or create an empty list if none exists
               const products = cartData.exists() ? cartData.data().products : {};
               
-              const productKey = `${this.prodID.Food_listingID}, ${this.prodID.VendorName},${this.prodID.Name},${this.prodID.Price}`
-              
+              const productKey = `${this.prodID.Food_listingID},${this.prodID.VendorName},${this.prodID.Name},${this.prodID.Price}`
+
               // get maxQuantity 
                 const productRef = await getDocs(collection(db, "food_listings"));
                 productRef.forEach((doc) => {
