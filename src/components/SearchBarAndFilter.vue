@@ -18,18 +18,17 @@
     :close-on-content-click="false"
     location="end"
     >
-        <template v-slot:activator="{ props }">
-          <v-col class="m-0">
-          <v-btn
-            color="primary"
-            v-bind="props"
-            style="font-family:Nunito"
-          >
-            Filter
-          </v-btn>
-        </v-col>
-        </template>
-
+    <template v-slot:activator="{ props }">
+      <v-col class="m-0">
+      <v-btn
+        color="primary"
+        v-bind="props"
+        style="font-family:Nunito"
+      >
+        Filter
+      </v-btn>
+    </v-col>
+    </template>
     <v-card
       class="mx-auto"
       max-width="300"
@@ -39,15 +38,12 @@
         color="primary"
         dark
       >
-
         <v-toolbar-title style="font-family:Nunito">Tags</v-toolbar-title>
       </v-toolbar>
-  
         <v-card-text>
         <h2 class="text-h6 mb-2">
           Cuisines
         </h2>
-  
         <v-chip-group
           v-model="cuisines"
           column
@@ -84,9 +80,8 @@
         <h2 class="text-h6 mb-2">
           Price range
         </h2>
-  
         <v-chip-group
-          v-model="pricerange"
+          v-model="price"
           column
           multiple
         >
@@ -111,22 +106,7 @@
         </v-chip-group>
       </v-card-text>
     </v-card>
-
-
-        <!-- <v-card>
-          <v-card-title>My Card Title</v-card-title>
-          <v-card-text>Some text for the card</v-card-text>
-        </v-card> -->
-  
-        <!-- <v-list>
-          <v-list-item
-            v-for="(item, index) in items"
-            :key="index"
-          >
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list> -->
-      </v-menu>
+    </v-menu>
 </div>
 </template>
 
@@ -134,21 +114,15 @@
 import { computed } from 'vue'
 export default {
     data() {
-        return {
-            searchText: '',
-            items: [
-                { title: 'Click Me' },
-                { title: 'Click Me' },
-                { title: 'Click Me' },
-                { title: 'Click Me 2' },
-                ],
-            cuisines: [],
-            pricerange: [],
+      return {
+        searchText: '',
+        cuisines: [],
+        price: [],
 
         }
     },
 
-    emits: ["search"],
+    emits: ["search", "filterCuisine", "filterPrice"],
 
     methods: {
         onChange() {
@@ -156,7 +130,18 @@ export default {
         },
 
     },
+
+    watch: {
+      cuisines(val) {
+        this.$emit("filterCuisine", this.cuisines)
+      },
+
+      price(val) {
+        this.$emit("filterPrice", this.price)
+      }
+    }
 }
+
 </script>
 
 <style scoped>
