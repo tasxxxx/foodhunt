@@ -1,8 +1,6 @@
 <template>  
     <NavigationBar1/>
 
-    <div>
-
       <div className="banner">
         <img src="../assets/bg1.png">
       </div>
@@ -19,11 +17,14 @@
           My restaurant |
       </v-breadcrumbs-item> -->
 
+    <div v-if="openRestaurants.length === 0 && !showPlaceholder"> 
+      <div class="loader"></div>
+      <h1 id="loadingmessage" > Sourcing for available restaurants...</h1>
+    </div>
+    <EmptyRestaurant v-else-if="openRestaurants.length === 0 && showPlaceholder"/>
+    <div v-else>
     <div class="restaurants">       
-      <div v-if="showPlaceholder && openRestaurants.length === 0">
-          <h3 class="information">All restaurants are currently closed. Please check back later.</h3>
-      </div>
-      <div v-else v-for="restaurant in searchRestaurant" :key="restaurant.id" className="restaurant">
+      <div v-for="restaurant in searchRestaurant" :key="restaurant.id" className="restaurant">
         <router-link :to="{ name: 'restaurant', params: { id: restaurant.Restaurant_PersonalisationId }}">
           <div>
             <img src="../assets/macs.jpg" alt="Restaurant Image" className="restaurant-img">
@@ -59,13 +60,15 @@ import firebaseApp from "../firebase";
 import { getFirestore } from 'firebase/firestore';
 import { getDoc, doc, getDocs, collection} from 'firebase/firestore';
 import { onRenderTracked } from 'vue';
+import EmptyRestaurant from '@/components/EmptyRestaurant.vue'
 const db = getFirestore(firebaseApp);
   
 export default {
   name: "RestaurantListing",
   components:{
     NavigationBar1,
-    SearchBarAndFilter
+    SearchBarAndFilter,
+    EmptyRestaurant
   },
 
   data() {
@@ -102,7 +105,7 @@ export default {
       // Set showPlaceholder to true after a delay of 3 seconds
       setTimeout(() => {
         this.showPlaceholder = true;
-      },0.003);
+      },750);
     } catch (error) {
       console.log(error)
     }
@@ -414,70 +417,38 @@ a {
   margin-left: 3.5%;
 }
 
-#landingimage {
-  width: 45%;
-  position: absolute;
-  left: 0px;
-  height: 100%;
-}
-
-.rightHalf {
-  width: 55%;
-  position: absolute;
-  right: 0px;
-  height: 100%;
-}
-
-#foodimage { 
-    height: 5.5vh;
-    top: 1.9vh;
-    left: 3vw;
-    background-position: center center;
-    background-size: cover;
-    opacity: 1;
-    position: relative;
-}
-
-#lpbreadcrumbs {
-    color: rgba(109,93,36,1);
-    position: relative;
-    height: 0vh;
-    top: -2.5vh;
-    left: 32vw;
-    font-family: Nunito; 
-    font-size: 1.1vw;
-    text-align: right;
-    display: flex;
-} 
-
-#tagline {
-  width: 500px;
-  color: rgba(0,0,0,1);
+.loader-container {
   position: relative;
-  top: 30vh;
-  left: 3vw;
-  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0);
-  font-family: Lato;
-  font-size: 2.67vw;
-  opacity: 1;
+  height: 100%;
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid rgba(109,93,36,1);
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  animation: spin 2s linear infinite;
+  position: absolute;
+  top: 60%;
+  left: 45%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#loadingmessage{
   text-align: center;
-}
-
-.searchtagline {
-  text-align: center;
-  font-family:Nunito; 
-  color: rgb(128,128,128);
-}
-
-.text-field-wrapper {
-  margin-top: 23.1vh; 
-  margin-left: 3vw; 
-  margin-right: 30%;
-}
-
-#PostalField { 
-  height: 7.0%;
+  position: absolute;
+  top: 80%;
+  left: 48%;
+  transform: translate(-50%, -50%);
+  font-family: Nunito; 
   
 }
+
 
 </style>

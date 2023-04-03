@@ -1,7 +1,7 @@
 <template>
     <div class="container">
       <!-- This looks super weird atm with the background image so let's just comment this out first :)-->
-      <!-- <img id = "backgroundimg" src="@/assets/loginbg.jpg" alt = ""> -->
+      <img id = "backgroundimg" src="@/assets/brooke-lark-V4MBq8kue3U-unsplash.jpg" alt = "">
 
       <div class="pa-6-wrapper">
     
@@ -14,12 +14,45 @@
 
             <v-form ref="form" @submit.prevent = "personalise">
 
+            <!--Imaging-->
+            <center>
+              <h4 style="font-family:Nunito">Company Profile Image</h4> 
+                  <v-img 
+                  :src="url"
+                  :width="150" 
+                  :height="150" 
+                  contain class="ma-4"
+                  accept="image/png, image/gif, image/jpeg"
+                  ></v-img>  
+            </center>        
+
+              <!-- Image picker-->
+              <div id = 'imagePicker'>
+                  <v-file-input 
+                  @change="previewImage"
+                  prepend-icon="mdi-camera" 
+                  v-model="file" 
+                  label="Select image"
+                  style="font-family:Nunito"
+                  :error-messages="formErrors.image"
+                  ></v-file-input>
+              </div>
+
             <!-- Address -->
             <v-text-field
               v-model="form.address"
-              label="Address"
+              clearable label="Address"
               required
               :error-messages="formErrors.address"
+              style="font-family:Nunito"
+            ></v-text-field>
+
+            <!-- Postal Code -->
+            <v-text-field
+              v-model="form.postalcode"
+              label="Postal Code"
+              required
+              :error-messages="formErrors.postalcode"
               style="font-family:Nunito"
             ></v-text-field>
 
@@ -101,8 +134,9 @@
                         
                                 <v-col cols="8">
                                 <v-text-field
-                                    label="Start - End"
+                                    clearable label="Start - End"
                                     style="font-family:Nunito"
+                                    placeholder="07:00 - 23:00"
                                     :error-messages="formErrors.time1"
                                     required
                                     v-model="form.time1"
@@ -117,8 +151,9 @@
                         
                                 <v-col cols="8">
                                 <v-text-field
-                                    label="Start - End"
+                                    clearable label="Start - End"
                                     style="font-family:Nunito"
+                                    placeholder="07:00 - 23:00"
                                     :error-messages="formErrors.time2"
                                     required
                                     v-model="form.time2"
@@ -133,8 +168,9 @@
                         
                                 <v-col cols="8">
                                 <v-text-field
-                                    label="Start - End"
+                                    clearable label="Start - End"
                                     style="font-family:Nunito"
+                                    placeholder="07:00 - 23:00"
                                     :error-messages="formErrors.time3"
                                     required
                                     v-model="form.time3"
@@ -149,7 +185,8 @@
                         
                                 <v-col cols="8">
                                 <v-text-field
-                                    label="Start - End"
+                                    clearable label="Start - End"
+                                    placeholder="07:00 - 23:00"
                                     style="font-family:Nunito"
                                     :error-messages="formErrors.time4"
                                     required
@@ -165,7 +202,8 @@
                         
                                 <v-col cols="8">
                                 <v-text-field
-                                    label="Start - End"
+                                    clearable label="Start - End"
+                                    placeholder="07:00 - 23:00"
                                     style="font-family:Nunito"
                                     :error-messages="formErrors.time5"
                                     required
@@ -181,7 +219,8 @@
                         
                                 <v-col cols="8">
                                 <v-text-field
-                                    label="Start - End"
+                                    clearable label="Start - End"
+                                    placeholder="07:00 - 23:00"
                                     style="font-family:Nunito"
                                     :error-messages="formErrors.time6"
                                     required
@@ -197,7 +236,8 @@
                         
                                 <v-col cols="8">
                                 <v-text-field
-                                    label="Start - End"
+                                    clearable label="Start - End"
+                                    placeholder="07:00 - 23:00"
                                     style="font-family:Nunito"
                                     :error-messages="formErrors.time7"
                                     required
@@ -214,7 +254,8 @@
             <v-list-item title="Remarks" style="font-family:Nunito"></v-list-item>
             <v-text-field
               v-model="form.remarks"
-              label="Separate remarks with a comma (,)"
+              clearable label="Separate remarks with a comma (,)"
+              placeholder="Remark 1, Remark 2, Remark 3"
               required
               style="font-family:Nunito"
             ></v-text-field>
@@ -245,12 +286,18 @@
     import 'firebase/compat/auth';
     import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "@firebase/auth";
     const db = getFirestore(firebaseApp); 
+
+    //Imaging tools
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+    const storage = getStorage(firebaseApp)
     
     export default {
       data() {
         return {
           form: {
+            image: '',
             address: '',
+            postalcode: '',
             time1:'',
             time2:'',
             time3:'',
@@ -261,8 +308,11 @@
             remarks:''
           },
 
-          cuisines: ['Chinese',  'Indian',  'Malay', 'Café'],
+          file: null,
+          //if no image selected display this by default
+          url: 'https://i.imgur.com/cbERxrb.png',
 
+          cuisines: ['Chinese',  'Indian',  'Malay', 'Café'],
 
           priceranges: ['$', '$$', '$$$'],
 
@@ -279,13 +329,27 @@
         };
       },
       methods: {
-
+        previewImage() {
+          this.url = URL.createObjectURL(this.file[0])
+        },
 
         async personalise() {
           this.formErrors = {};
 
+          if (!this.file) {
+            this.formErrors.image = ['Please choose a company profile picture'];
+          } 
+
           if (!this.form.address) {
             this.formErrors.address = ['Please enter an address'];
+          } 
+
+          if (!this.form.postalcode) {
+            this.formErrors.postalcode = ['Please enter a postal code'];
+          }
+
+          if (this.form.postalcode.length != 6) {
+            this.formErrors.postalcode = ['Please enter a valid postal code'];
           } 
 
           if (!this.form.time1) {
@@ -342,6 +406,7 @@
                 // });
                 // this.$router.push('/vendor-dashboard')
 
+                //Other fields
                 const curr_email = getAuth().currentUser.email;
                 const db = getFirestore();
                 const docRef = doc(db, "Users", curr_email);
@@ -353,6 +418,21 @@
                 const vendor_name = Docdata.Name;
                 const vendor_doc_id = (vendor_name + vendor_id.substring(0,5)).replace(/\s+/g, '')
 
+                //Imaging
+                //This accesses storage and sets the name for the file, concatenate with vendor_id to make filename unqiue
+                const storageRef = ref(storage, `vendorProfilePic/${this.file[0].name + vendor_id}`);
+                
+                //This uploads to storage and w correct filename and correct storage collection
+                await uploadBytes(storageRef, this.file[0]);
+
+                //This gets imageurl that has been uploaded to storage, so we will 
+                //write this url to restaurant_personalisation collection lor
+                const imageURL = await getDownloadURL(storageRef);
+
+                //console.log(this.file[0].name)
+                //console.log(this.file[0][0]) 
+                //console.log(imageURL);
+
                 //Change for vendorid/ vendor name
                 const docRef2 = doc(db, "restaurant_personalisation", vendor_doc_id)
 
@@ -361,6 +441,7 @@
 
                 await setDoc(docRef2, {
                     Address: this.form.address,
+                    Postal_Code: this.form.postalcode,
                     Cuisines: this.cuisines[this.selectedCuisines],
                     Price_Range: this.priceranges[this.selectedPriceRanges],
                     Town: this.towns[this.selectedTowns],
@@ -374,7 +455,8 @@
                     Remarks: this.form.remarks,
                     Name: vendor_name,
                     VendorID: vendor_id,
-                    Restaurant_PersonalisationId: vendor_doc_id
+                    Restaurant_PersonalisationId: vendor_doc_id,
+                    ProfileURL: imageURL
                 })
 
                 await updateDoc(reserveRef, {
@@ -398,18 +480,18 @@
     <style scoped>
       #backgroundimg {
         width: 100vw;
-        height: 130vh;
+        height: 280%;
         position: absolute;
-        opacity: 0.5;
       }
     
       #backgroundimg1{
         width:10vw;
       }
       .pa-6-wrapper {
-        padding:15vh;
+        padding:10vh;
         padding-left: 30vw;
         padding-right: 30vw;
+        
       }
     
     </style>

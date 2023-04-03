@@ -1,14 +1,11 @@
 <template>
   <NavigationBar1/>
-    <div class="empty-cart-container" v-if="cart.length === 0">
-      <img id ="emptycart" src="@/assets/preview.png" alt = "">
-      <h1 id="message">Oops! It seems like your cart is feeling a bit lonely. Time to add some items and fill it up!</h1>
-      <v-breadcrumbs-item :to="{ name: 'restaurantlisting'}">
-        <v-btn rounded="lg" color="primary"> Start Hunting!</v-btn>
-      </v-breadcrumbs-item>
-      <!-- <img id ="emojisad" src="@/assets/emoji.webp" alt = ""> -->
-    </div>
-    <div v-else>
+  <div v-if="cart.length === 0 && !showPlaceholder"> 
+    <div class="loader"></div>
+    <h1 id="loadingmessage" >Loading your cart...</h1>
+  </div>
+  <EmptyCart v-else-if="cart.length === 0 && showPlaceholder"/>
+  <div v-else>
       <div class="shopping-cart">
         <div class="title">
           <h1>What's in your cart...</h1>
@@ -36,10 +33,10 @@
               +             
             </button>
           </div>
-          <div class="total-price">${{ item.subtotal }}</div>
+          <div class="total-price">${{ item.subtotal.toFixed(2) }}</div>
         </div>   
         <div class="total">
-          <h2 id="totalProfit"> Total: ${{totalCost}}</h2>
+          <h2 id="totalProfit"> Total: ${{totalCost.toFixed(2)}}</h2>
           <v-btn rounded="lg" color="green" @click="addToReservation(this.cart)" class="checkout-btn"> Add to Reservations</v-btn>
           </div>
     </div>
@@ -52,13 +49,15 @@ import { useToast } from 'vue-toastification'
 import firebaseApp from "../firebase";
 import { getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, collection, deleteDoc, serverTimestamp} from 'firebase/firestore';
 import NavigationBar1 from '@/components/NavigationBar1.vue'
+import EmptyCart from '@/components/EmptyCart.vue'
 const toast = useToast();
 const db = getFirestore(firebaseApp);
 
 export default {
   name: 'AddToCart',
   components:{
-    NavigationBar1
+    NavigationBar1,
+    EmptyCart
   }, 
   data() {
     return {
@@ -66,7 +65,7 @@ export default {
       cart: [],
       totalCost: 0,
       availableQty:0,
-      // showPlaceholder: false // Add a boolean data property
+      showPlaceholder: false // Add a boolean data property
     }
   },
   async mounted() {
@@ -341,9 +340,9 @@ export default {
       } 
     },
     created() {
-      // setTimeout(() => {
-      //   this.showPlaceholder = true;
-      // }, 500);
+      setTimeout(() => {
+        this.showPlaceholder = true;
+      }, 750);
   },
   }
     
@@ -353,27 +352,6 @@ export default {
 /* [v-cloak] {
   display: none;
 } */
-.empty-cart-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-
-#emptycart {
-  width: 500px;
-}
-
-#emojisad {
-  width: 320px;
-}
-
-#message {
-  margin-top: -15px;
-  margin-bottom: 25px;
-  font-family: Nunito; 
-}
 
 * {
 box-sizing: border-box;
@@ -499,8 +477,8 @@ outline:0;
 .total-price {
 width: 83px;
 padding-top: 27px;
-padding-left: 50px;
-text-align: center;
+padding-left: 20px;
+text-align: right;
 font-size: 16px;
 font-weight: 300;
 }
@@ -544,6 +522,39 @@ font-weight: 300;
 .buttons {
   margin-right: 20px;
 }
+}
+
+.loader-container {
+  position: relative;
+  height: 100%;
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid rgba(109,93,36,1);
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  animation: spin 2s linear infinite;
+  position: absolute;
+  top: 40%;
+  left: 45%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#loadingmessage{
+  text-align: center;
+  position: absolute;
+  top: 60%;
+  left: 49%;
+  transform: translate(-50%, -50%);
+  font-family: Nunito; 
+  
 }
 
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-      <img id = "backgroundimg" src="@/assets/loginbg.jpg" alt = "">
+      <img id = "backgroundimg" src="@/assets/brooke-lark-wMzx2nBdeng-unsplash.jpg" alt = "">
       <div class="pa-6-wrapper">
         <v-app>
           <v-container>
@@ -13,7 +13,7 @@
 
                 <v-text-field
                   v-model="form.companyemail"
-                  label="Company Email"
+                  clearable label="Company Email"
                   type = "email"
                   required
                   :error-messages="formErrors.companyemail"
@@ -22,7 +22,7 @@
 
                 <v-text-field
                   v-model="form.companypassword"
-                  label="Password"
+                  clearable label="Password"
                   required
                   :error-messages="formErrors.companypassword"
                   style="font-family:Nunito"
@@ -35,7 +35,7 @@
 
                 <v-text-field
                   v-model="form.companyname"
-                  label="Company Name"
+                  clearable label="Company Name"
                   required
                   :error-messages="formErrors.companyname"
                   style="font-family:Nunito"
@@ -43,33 +43,12 @@
 
                 <v-text-field
                   v-model="form.companyregnum"
-                  label="Company Registration Number"
+                  clearable label="Company Registration Number"
                   required
                   :error-messages="formErrors.companyregnum"
                   style="font-family:Nunito"
+                  placeholder="123456789A"
                 ></v-text-field>
-
-                <center>
-                    <h4 style="font-family:Nunito">Company Profile Image</h4> 
-
-                    <v-img 
-                    :src="image" 
-                    :width="100" 
-                    :height="100" 
-                    contain class="ma-4"
-                    accept="image/png, image/gif, image/jpeg"
-                    ></v-img>          
-                </center>
-
-                <!-- Image picker-->
-                <div id = 'imagePicker'>
-
-                    <v-file-input 
-                    prepend-icon="mdi-camera" 
-                    v-model="file" 
-                    label="Upload Image"
-                    ></v-file-input>
-                </div>
 
                 <v-btn
                     type="submit"
@@ -107,6 +86,7 @@
             companyregnum: '',
 
           },
+          file: null,
           formErrors: {},
           isLoading: false,
           show1: false,
@@ -210,7 +190,7 @@
                 UserType: "Vendor",
                 Email: this.form.companyemail,
                 RegistrationNo: this.form.companyregnum,
-                Name: this.form.companyname
+                Name: this.form.companyname,
               });
             } else {
               console.log('No user signed in');
@@ -228,16 +208,16 @@
     <style scoped>
       #backgroundimg {
         width: 100vw;
-        height: 130vh;
+        margin-top: -9%;
+        height: auto;
         position: absolute;
-        opacity: 0.5;
       }
     
       #backgroundimg1{
         width:10vw;
       }
       .pa-6-wrapper {
-        padding:15vh;
+        padding:10vh;
         padding-left: 30vw;
         padding-right: 30vw;
       }

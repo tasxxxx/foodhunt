@@ -3,30 +3,33 @@
   <div class="shopping-cart">
     <div class="title">
       <h2>Confirm your reservation for {{ this.reservationNumber }}!</h2>
-      <h4 id="time">{{ details.dateTimeString }}</h4>
+      <h4 id="time">Order from: {{ details.name }}</h4>
+      <h4 id="time">Order Time and Date: {{ details.dateTimeString }}</h4>
     </div>
     <!-- Item iteration -->
-    <div class="item" v-for="prod in details.cart" :key="index">
+    <div class="item" v-for="prod in details.cart">
       <div class="image">
             <img id="imageIter" src="@/assets/macs.jpg" alt="" />
       </div>
       <div class="description">
         <span>{{ prod.restaurant }}</span>
         <span>{{ prod.item }}</span>
-        <span>${{ prod.price }}</span>
+        <span>${{ prod.price}}</span>
 
       </div>
       <div class="quantity">
         {{ prod.quantity }}x
       </div>
-      <div class="total-price">${{ prod.subtotal }}</div>
+      <div class="total-price">${{ prod.subtotal ? prod.subtotal.toFixed(2): '' }}</div>
     </div>
     <div class="total">
-      <h2 id="totalProfit"> Total: ${{ details.total }} </h2>
+      <h2 id="totalProfit"> Total: ${{details.total ? details.total.toFixed(2) : ''}} </h2>
       <h3 id="totalProfit"> Payment by: In store payment </h3>
+      <h3 id="totalProfit"> Pickup By: {{ details.pickUpTime }} </h3>
+      <h3 id="totalProfit"> Pickup Location: {{ details.address }} </h3>
       <v-btn class="confirmreservationbtn" rounded="lg" color="primary" @click="confirm"> Confirm Reservation</v-btn>
     </div>
-  </div>   
+  </div> 
 </template>
 
 <script>
@@ -59,23 +62,34 @@ data() {
 async mounted() {
     const reserveRef = doc(db, "reservation_orders", this.reservationNumber);
     const docSnap = await getDoc(reserveRef); 
-
-    if (docSnap.exists()) {
-        const documentData = docSnap.data();
-        const cart = documentData.cart;
-        const timestamp = documentData.createdAt;
-        const date = timestamp.toDate();
-        const dateString = date.toDateString();
-        const timeString = date.toLocaleTimeString();
-        const dateTimeString = dateString + ' ' + timeString;
-        const total = documentData.total;
-        this.details = {
-            cart, 
-            dateTimeString, 
-            total
-        }
-    } else {
-        console.log('No such document!');
+    const documentData = docSnap.data();
+    const cart = documentData.cart;
+    const foodID = cart[0].foodID
+    const foodRef = doc(db, "food_listings", foodID);
+    const foodRefData = await getDoc(foodRef); 
+    const foodRefPersID = foodRefData.data().Restaurant_PersonalisationId
+    const restaurantPers = doc(db, "restaurant_personalisation", foodRefPersID);
+    const restaurantPersData = await getDoc(restaurantPers); 
+    const address = restaurantPersData.data().Address
+    const name = cart[0].restaurant
+    const now = new Date()
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    const currentDay = days[now.getDay()]
+    const closingTime = restaurantPersData.data()[currentDay].split(' - ')[1]        
+    const timestamp = documentData.createdAt;
+    const date = timestamp.toDate();
+    const dateString = date.toDateString();
+    const timeString = date.toLocaleTimeString();
+    const dateTimeString = dateString + ' ' + timeString;
+    const pickUpTime = dateString +", " + closingTime
+    const total = documentData.total;
+    this.details = {
+          name,
+          cart, 
+          dateTimeString, 
+          total,
+          address,
+          pickUpTime
     }
 },
 methods: {
@@ -143,7 +157,7 @@ methods: {
 <style scoped>
 
 .shopping-cart {
-width: 720px;
+width: 750px;
 height: auto;
 margin: 5vh auto;
 background: #FFFFFF;
@@ -152,17 +166,17 @@ border-radius: 6px;
 display: flex;
 flex-direction: column;
 }
+
 .title {
-  height: 100px;
+  height: 130px;
   border-bottom: 1px solid #E1E8EE;
   padding: 20px;
   color: black;
   font-family: Nunito; 
 }
 
-
 .total {
-  height: 140px;
+  height: 200px;
   border-bottom: 1px solid #E1E8EE;
   padding: 20px;
   font-family: Nunito; 
@@ -185,6 +199,7 @@ width: 150px;
 
 .description {
 width: 350px;
+
 }
 
 .description span {
@@ -237,4 +252,4 @@ font-weight: 300;
 }
 
 }
-</style>
+</style> 
