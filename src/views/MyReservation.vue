@@ -126,12 +126,23 @@
 
               <v-card-actions>
                 <v-btn
-                  color="deep-purple-lighten-2"
+                  color="red"
                   variant="text"
+                  @click="showDialog = true"
                 >
                   Cancel Reservation
                 </v-btn>
               </v-card-actions>
+              <v-dialog v-model="showDialog" max-width="500">
+                <v-card>
+                  <v-card-title>Confirm Cancel</v-card-title>
+                  <v-card-text>Are you sure you want to cancel your reservation?</v-card-text>
+                  <v-card-actions>
+                    <v-btn color="red" text @click="showDialog = false">No</v-btn>
+                    <v-btn color="green" text @click="cancelReservation(selected_reservation.reservationNo)">Yes</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
             </v-card>
         </v-col>
       </v-row> 
@@ -189,8 +200,16 @@ export default {
       useremail: '',
       reservations: [],
       selected_reservation: null,
+      showDialog: false,
+      showPlaceholder: false,
 
     }
+  },
+
+  async mounted() {
+    setTimeout(() => {
+        this.showPlaceholder = true;
+      },0.003);
   },
   
 
@@ -232,16 +251,65 @@ export default {
       const querySnapshot = await getDocs(collection(db, "reservation_orders"))
       console.log("printing data")
       const allReservations = querySnapshot.docs.filter(doc => doc.data().user === this.useremail);
-      
-      allReservations.forEach(doc => {
-        const reservation = doc.data();
-        console.log(reservation)
-        this.reservations.push(reservation);
+      this.reservations = allReservations.map(doc => doc.data());
+
+      // allReservations.forEach(doc => {
+      //   const reservation = doc.data();
+      //   console.log(reservation)
+      //   this.reservations.push(reservation);
         
-      })
+      // })
       if (this.reservations.length > 0) {
         this.selected_reservation = this.reservations[0]
       };
+    },
+    async cancelReservation(reservationNo) {
+      this.showDialog = false;
+      console.log("db")
+      console.log(db)
+      const deleted_reservation = doc(db, "reservation_orders", reservationNo);
+      const deleted_reservation_data = await getDoc(deleted_reservation);
+      const products = deleted_reservation_data.data().cart  
+      const deletedItems = products.map(product => product.key);
+      console.log(deletedItems)
+
+      for (const item of deletedItems) {
+        const cartRef = doc(db, "shopping_carts", this.useremail);
+        const cartData = await getDoc(cartRef);
+        // products refer to the product inside the cart.
+        const products = cartData.data().products  
+
+        console.log("products")
+        console.log(products)
+        const foodDocRef = doc(db, "food_listing", 'MOSBurgerCompassOne_lG2PFprodHotMayoFries');
+        console.log("food doc ref")
+        console.log(foodDocRef)
+        const foodDoc = await getDoc(foodDocRef);
+        console.log("food doc")
+        console.log(foodDoc)
+        const availableQty = foodDoc.data();
+        console.log("favailableQty")
+        console.log(availableQty)
+        await updateDoc(foodDoc, { AvailableQty: availableQty +1 });
+      }
+      // await deleteDoc(doc(db, "reservation_orders", reservationNo));
+      // await this.getReservations();
+      toast.success("Reservation cancelled!", {
+              position: "top-right",
+              timeout: 2019,
+              closeOnClick: true,
+              pauseOnFocusLoss: false,
+              pauseOnHover: false,
+              draggable: true,
+              draggablePercent: 2,
+              showCloseButtonOnHover: false,
+              hideProgressBar: false,
+              closeButton: "button",
+              icon: true,
+              rtl: false
+              }); 
+      
+      //remove from reservations, add qty back to vendors
     },
     selectReservation(reservation) {
       this.selected_reservation = reservation;
