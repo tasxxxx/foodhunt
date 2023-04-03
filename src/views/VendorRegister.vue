@@ -50,28 +50,6 @@
                   placeholder="123456789A"
                 ></v-text-field>
 
-                <center>
-                    <h4 style="font-family:Nunito">Company Profile Image</h4> 
-
-                    <v-img 
-                    :src="image" 
-                    :width="100" 
-                    :height="100" 
-                    contain class="ma-4"
-                    accept="image/png, image/gif, image/jpeg"
-                    ></v-img>          
-                </center>
-
-                <!-- Image picker-->
-                <div id = 'imagePicker'>
-
-                    <v-file-input 
-                    prepend-icon="mdi-camera" 
-                    v-model="file" 
-                    label="Upload Image"
-                    ></v-file-input>
-                </div>
-
                 <v-btn
                     type="submit"
                     color="primary"
@@ -108,6 +86,7 @@
             companyregnum: '',
 
           },
+          file: null,
           formErrors: {},
           isLoading: false,
           show1: false,
@@ -211,7 +190,7 @@
                 UserType: "Vendor",
                 Email: this.form.companyemail,
                 RegistrationNo: this.form.companyregnum,
-                Name: this.form.companyname
+                Name: this.form.companyname,
               });
             } else {
               console.log('No user signed in');
