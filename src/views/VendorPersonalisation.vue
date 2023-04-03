@@ -23,6 +23,15 @@
               style="font-family:Nunito"
             ></v-text-field>
 
+            <!-- Postal Code -->
+            <v-text-field
+              v-model="form.postalcode"
+              label="Postal Code"
+              required
+              :error-messages="formErrors.postalcode"
+              style="font-family:Nunito"
+            ></v-text-field>
+
             <!-- Tags -->
             
             <v-card class="mx-auto" width="500">
@@ -259,6 +268,7 @@
         return {
           form: {
             address: '',
+            postalcode: '',
             time1:'',
             time2:'',
             time3:'',
@@ -270,7 +280,6 @@
           },
 
           cuisines: ['Chinese',  'Indian',  'Malay', 'Café'],
-
 
           priceranges: ['$', '$$', '$$$'],
 
@@ -294,6 +303,14 @@
 
           if (!this.form.address) {
             this.formErrors.address = ['Please enter an address'];
+          } 
+
+          if (!this.form.postalcode) {
+            this.formErrors.postalcode = ['Please enter a postal code'];
+          }
+
+          if (this.form.postalcode.length != 6) {
+            this.formErrors.postalcode = ['Please enter a valid postal code'];
           } 
 
           if (!this.form.time1) {
@@ -369,6 +386,7 @@
 
                 await setDoc(docRef2, {
                     Address: this.form.address,
+                    Postal_Code: this.form.postalcode,
                     Cuisines: this.cuisines[this.selectedCuisines],
                     Price_Range: this.priceranges[this.selectedPriceRanges],
                     Town: this.towns[this.selectedTowns],
