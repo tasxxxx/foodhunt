@@ -186,7 +186,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useToast } from 'vue-toastification'
 import firebaseApp from "../firebase";
 import { getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, collection, deleteDoc, serverTimestamp} from 'firebase/firestore';
-import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
+import NavigationBar1 from '@/components/NavigationBar1.vue'
 const toast = useToast();
 const db = getFirestore(firebaseApp);
 

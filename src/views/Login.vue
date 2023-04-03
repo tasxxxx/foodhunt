@@ -1,6 +1,6 @@
 <template>
 <div class="container">
-  <img id = "backgroundimg" src="@/assets/loginbg.jpg" alt = "">
+  <img id = "backgroundimg" src="@/assets/brooke-lark-wMzx2nBdeng-unsplash.jpg" alt = "">
   <div class="pa-6-wrapper">
 
     <v-container>
@@ -11,14 +11,14 @@
       <v-form ref="form" @submit.prevent="login">
         <v-text-field
           v-model="form.email"
-          label="Email"
+          clearable label="Email"
           required
           :error-messages="formErrors.email"
           style="font-family:Nunito"
         ></v-text-field>
         <v-text-field
           v-model="form.password"
-          label="Password"
+          clearable label="Password"
           required
           :error-messages="formErrors.password"
           style="font-family:Nunito"
@@ -160,17 +160,18 @@ export default {
 
 <style scoped>
   #backgroundimg {
+    margin-top: -9%;
     width: 100vw;
-    height: 130vh;
+    height: auto;
     position: absolute;
-    opacity: 0.5;
+    opacity: 1;
   }
 
   #backgroundimg1{
     width:10vw;
   }
   .pa-6-wrapper {
-    padding:15vh;
+    padding:20vh;
     padding-left: 30vw;
     padding-right: 30vw;
   }

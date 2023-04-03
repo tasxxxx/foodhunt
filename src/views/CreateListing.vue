@@ -1,11 +1,11 @@
 <template>
   <VendorBreadCrumbs/>
-  <h1 class="text-h4">All listings at a glance...</h1> <br>
+
   <v-card 
     class="mx-auto" 
-    max-width=1000
+    max-width=1230
   >
-    
+    <div class="text-h5 pa-5"> Create your next listing! </div>
     <v-card-text>
       <v-form @submit.prevent="submitForm">
         <h3>Food Name</h3> <br>
@@ -90,7 +90,7 @@
             ></v-text-field>
           </v-col>
         </v-row>
-
+        <br>
         <v-btn 
           type="submit" 
           color="primary" 
@@ -99,13 +99,15 @@
         >
           Confirm
         </v-btn>
+        <br>
+        <br><br>
       </v-form>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
-import VendorBreadCrumbs from '@/components/icons/VendorBreadCrumbs.vue';
+import VendorBreadCrumbs from '@/components/VendorBreadCrumbs.vue';
 import firebase from 'firebase/compat/app';
 import { getStorage, uploadBytes, getDownloadURL, ref } from "firebase/storage";
 import firebaseApp from "../firebase";
@@ -131,7 +133,6 @@ export default {
         imageUrl: 'https://via.placeholder.com/500',
         image: null,
         imageFirebase: null,
- 
         formErrors: {},
     }
   },
@@ -177,7 +178,7 @@ export default {
 
         // Submit form if no errors
         if (Object.keys(this.formErrors).length === 0) {
-          /*
+          
           if (this.image === null) {
             this.imageFirebase = this.imageUrl;
           } else {
@@ -193,8 +194,8 @@ export default {
             this.imageFirebase = downloadUrl;   
             this.image = null;
           }
-          */
-          this.imageFirebase = this.imageUrl;
+          
+          //this.imageFirebase = this.imageUrl;
           console.log(this.imageFirebase)
           
 
@@ -247,7 +248,8 @@ export default {
             AvailableQty: this.quantity,
             VendorID: Docdata.VendorID,
             Food_listingID: food_listing_id,
-            Restaurant_PersonalisationId: vendor_doc_id
+            Restaurant_PersonalisationId: vendor_doc_id,
+            VendorName: vendor_name
         })
 
     },

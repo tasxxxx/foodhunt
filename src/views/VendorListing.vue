@@ -1,6 +1,6 @@
 <template>
   <VendorBreadCrumbs/>
-  
+
   <v-card
     class="mx-auto" 
     max-width=1230
@@ -14,9 +14,10 @@
         <v-card 
           v-for="(item, index) in items" 
           :key="index" 
-          @click="selectedItem = index" 
-          :class="{'selected': selectedItem === index}"
+          @click="selectedIndex = index" 
+          :class="{'selected': selectedIndex === index} "
           min-height="150"
+          
         >
           <br>
           <v-row>
@@ -26,12 +27,6 @@
               </v-avatar>
             </v-col>
             <v-col cols="8">
-              <!-- <div class="d-flex justify-space-between">
-                <div class="text-h5 mb-2">{{ item.Name }}</div>
-                <v-chip>{{ item.Category }}</v-chip>
-                <div class="text-h6 mb-2">{{ item.Price }}</div>
-              </div> -->
-              
               <v-row>
                 <div class="text-h6 mb-1">{{ item.Name }}</div>
               </v-row>
@@ -70,15 +65,14 @@
             ></v-progress-linear>
           </template>
           
-          <!-- <v-img
+          <v-img
             cover
             height="300"
-            :src= "items[selectedItem].ImageURL"
-          ></v-img> -->
+            :src= "items[selectedIndex].ImageURL"
+          ></v-img>
 
           <v-card-item>
-            <!-- <v-card-title>{{ items[selectedItem].Name }}</v-card-title> -->
-
+            <v-card-title>{{ items[selectedIndex].Name }}</v-card-title>
             <v-card-subtitle>
               <span class="me-1">Local Favorite</span>
 
@@ -113,7 +107,7 @@
               $ • Italian, Cafe
             </div>
 
-            <!-- <div>{{ items[selectedItem].Description }}</div> -->
+            <div>{{ items[selectedIndex].Description }}</div>
           </v-card-text>
 
           <v-divider class="mx-4 mb-1"></v-divider>
@@ -147,7 +141,7 @@
 </template>
 
 <script>
-import VendorBreadCrumbs from '@/components/icons/VendorBreadCrumbs.vue';
+import VendorBreadCrumbs from '@/components/VendorBreadCrumbs.vue';
 import firebaseApp from "../firebase";
 import { getDoc, getDocs, collection, doc, updateDoc} from 'firebase/firestore';
 import { getFirestore } from 'firebase/firestore';
@@ -162,11 +156,12 @@ export default {
   },
   data() {
     return {
-      selectedItem: 0,
-      items: [],
+      selectedIndex: 0,
+      items: ["test"],
       user: false,
       loading: true,
       selection: "",
+      selectedItem: null,
       /*
       items: [
         {
@@ -202,20 +197,23 @@ export default {
         const products = productRef.docs;
         const items = [];
         for (const prod of products) {
-          console.log(vendorID + " - " + prod.data().VendorID)
+          //console.log(vendorID + " - " + prod.data().VendorID)
           if (vendorID == prod.data().VendorID) { //This listing is by the current vendor
             //const userDocument = await getDoc(doc(db, "food_listings", prod.id));
             const userDocument = prod.data();
             items.push(userDocument);
 
-            //console.log(userDocument);
+            console.log(userDocument.Name);
           }
         }   
         this.items = items;
+
+        this.selectedItem = this.items[this.selectedIndex];
+
         this.loading = false;
         // this.selectedItem = this.items[0];
         // console.log(this.selectedCard)
-        console.log(this.items[this.selectedItem].ImageURL)
+        console.log(this.items[this.selectedIndex].ImageURL)
       } else {
         console.log("No user")
       }
@@ -224,7 +222,7 @@ export default {
   },
   computed: {
     selectedCard() {
-      return this.items[this.selectedItem];
+      return this.items[this.selectedIndex];
     }
   }
 };

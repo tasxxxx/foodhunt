@@ -53,9 +53,8 @@
 </template>
   
   <script> 
-import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
-import SearchBar from '@/components/icons/SearchBar.vue'
-import AddToCart from '@/components/icons/AddToCart.vue';
+import NavigationBar1 from '@/components/NavigationBar1.vue'
+import SearchBar from '@/components/SearchBar.vue'
 import firebaseApp from "../firebase";
 import { getFirestore } from 'firebase/firestore';
 import { getDoc, doc, getDocs, collection} from 'firebase/firestore';
@@ -106,20 +105,43 @@ export default {
         if (isMatch) {
           return "Closed" 
         } else { 
+          const openingTime = restaurant[currentDay].split(' - ')[0]
           const closingTime = restaurant[currentDay].split(' - ')[1]
           const closing = new Date(now)
-          const [hours, minutes] = closingTime.split(':')
-          closing.setHours(hours)
-          closing.setMinutes(minutes)
-          if (now > closing) {
-            return "Closed" 
+          const [openingHours, openingMinutes] = openingTime.split(':')
+          const [closingHours, closingMinutes] = closingTime.split(':')
+          const opening = new Date(now)
+          opening.setHours(openingHours)
+          opening.setMinutes(openingMinutes)
+          closing.setHours(closingHours)
+          closing.setMinutes(closingMinutes)
+
+          if (now < opening || now > closing) {
+            return "Closed"
           }
+
           const timeDiff = closing - now
+
           if (timeDiff <= 60 * 60 * 1000 && timeDiff > 0) {
             return `Closing in ${Math.floor(timeDiff / 1000 / 60)} minutes`
           } else {
             return " Closing at " + closingTime
-            }
+          }
+
+          // const closingTime = restaurant[currentDay].split(' - ')[1]
+          // const closing = new Date(now)
+          // const [hours, minutes] = closingTime.split(':')
+          // closing.setHours(hours)
+          // closing.setMinutes(minutes)
+          // if (now > closing) {
+          //   return "Closed" 
+          // }
+          // const timeDiff = closing - now
+          // if (timeDiff <= 60 * 60 * 1000 && timeDiff > 0) {
+          //   return `Closing in ${Math.floor(timeDiff / 1000 / 60)} minutes`
+          // } else {
+          //   return " Closing at " + closingTime
+          //   }
           }
       }
     },
@@ -158,6 +180,9 @@ export default {
 </script>
 
 <style scoped>
+[v-cloak] {
+  display: none;
+}
 
 a {
     text-decoration: none;

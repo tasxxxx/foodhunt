@@ -20,7 +20,7 @@
 </template>
   
 <script>
-import BreadCrumbs from '@/components/icons/BreadCrumbs.vue'
+import BreadCrumbs from '@/components/BreadCrumbs.vue'
 
 export default {
 name: "PartnerUs",

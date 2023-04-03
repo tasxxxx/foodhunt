@@ -17,7 +17,7 @@
 
       </div>
       <div class="quantity">
-        {{ prod.quantity }} x
+        {{ prod.quantity }}x
       </div>
       <div class="total-price">${{ prod.subtotal }}</div>
     </div>
@@ -30,10 +30,10 @@
 </template>
 
 <script>
-import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
+import NavigationBar1 from '@/components/NavigationBar1.vue'
 import firebaseApp from "../firebase";
 import { getFirestore } from 'firebase/firestore';
-import { getDoc, getDocs, collection, doc, updateDoc} from 'firebase/firestore';
+import { getDoc, deleteDoc, collection, doc, updateDoc} from 'firebase/firestore';
 import { useToast } from 'vue-toastification'
 import { getAuth} from "@firebase/auth";
 const db = getFirestore(firebaseApp);
@@ -80,14 +80,25 @@ async mounted() {
 },
 methods: {
     async confirm() {
+      let canConfirm = true;
+      const reserveRef = doc(db, "reservation_orders", this.reservationNumber);
       for (const item of this.details.cart) {
-        const productRef = doc(db, "food_listings", item.key);
+        const productRef = doc(db, "food_listings", item.foodID);
         const thisproductData = await getDoc(productRef);
-        await updateDoc(productRef, {
+        if (thisproductData.data().AvailableQty < item.quantity) {
+          canConfirm = false;
+          break;
+        } 
+      }
+
+      if (canConfirm) {
+        for (const item of this.details.cart) {
+          const productRef = doc(db, "food_listings", item.foodID);
+          const thisproductData = await getDoc(productRef);
+          await updateDoc(productRef, {
           AvailableQty: thisproductData.data().AvailableQty - item.quantity
         })
       }
-      const reserveRef = doc(db, "reservation_orders", this.reservationNumber);
         updateDoc(reserveRef, {
         confirmed: true
         })
@@ -105,9 +116,27 @@ methods: {
                   icon: true,
                   rtl: false
                   }); 
-        this.$router.push('/restaurantlisting') 
+                
+      } else {
+        await deleteDoc(reserveRef);
+        toast.error("Product quantity is not available, please try again!", {
+          position: "top-right",
+          timeout: 2019,
+          closeOnClick: true,
+          pauseOnFocusLoss: false,
+          pauseOnHover: false,
+          draggable: true,
+          draggablePercent: 2,
+          showCloseButtonOnHover: false,
+          hideProgressBar: false,
+          closeButton: "button",
+          icon: true,
+          rtl: false
+        });
     }
+    this.$router.push('/restaurantlisting') 
   }
+}
 }
 </script>
 
