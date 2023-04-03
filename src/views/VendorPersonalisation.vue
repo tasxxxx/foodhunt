@@ -14,6 +14,29 @@
 
             <v-form ref="form" @submit.prevent = "personalise">
 
+            <!--Imaging-->
+            <center>
+              <h4 style="font-family:Nunito">Company Profile Image</h4> 
+                  <v-img 
+                  :src="url" 
+                  :width="150" 
+                  :height="150" 
+                  contain class="ma-4"
+                  accept="image/png, image/gif, image/jpeg"
+                  ></v-img>  
+            </center>        
+
+              <!-- Image picker-->
+              <div id = 'imagePicker'>
+                  <v-file-input 
+                  @change="previewImage"
+                  prepend-icon="mdi-camera" 
+                  v-model="file" 
+                  label="Select image"
+                  style="font-family:Nunito"
+                  ></v-file-input>
+              </div>
+
             <!-- Address -->
             <v-text-field
               v-model="form.address"
@@ -262,6 +285,10 @@
     import 'firebase/compat/auth';
     import { getAuth, createUserWithEmailAndPassword, onAuthStateChanged } from "@firebase/auth";
     const db = getFirestore(firebaseApp); 
+
+    //Imaging tools
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+    const storage = getStorage(firebaseApp)
     
     export default {
       data() {
@@ -278,6 +305,9 @@
             time7:'',
             remarks:''
           },
+
+          file: null,
+          url: null,
 
           cuisines: ['Chinese',  'Indian',  'Malay', 'Café'],
 
@@ -296,7 +326,9 @@
         };
       },
       methods: {
-
+        previewImage() {
+          this.url = URL.createObjectURL(this.file[0])
+        },
 
         async personalise() {
           this.formErrors = {};
@@ -367,6 +399,22 @@
                 // });
                 // this.$router.push('/vendor-dashboard')
 
+                //Imaging
+                //This accesses storage and sets the name for the file 
+                const storageRef = ref(storage, `vendorProfilePic/${this.file[0].name}`);
+                
+                //This uploads to storage and w correct filename and correct storage collection
+                await uploadBytes(storageRef, this.file[0]);
+
+                //This gets imageurl that has been uploaded to storage, so we will 
+                //write this url to restaurant_personalisation collection lor
+                const imageURL = await getDownloadURL(storageRef);
+
+                //console.log(this.file[0].name)
+                //console.log(this.file[0][0]) 
+                //console.log(imageURL);
+
+                //Other fields
                 const curr_email = getAuth().currentUser.email;
                 const db = getFirestore();
                 const docRef = doc(db, "Users", curr_email);
@@ -400,7 +448,8 @@
                     Remarks: this.form.remarks,
                     Name: vendor_name,
                     VendorID: vendor_id,
-                    Restaurant_PersonalisationId: vendor_doc_id
+                    Restaurant_PersonalisationId: vendor_doc_id,
+                    ProfileURL: imageURL
                 })
 
                 await updateDoc(reserveRef, {
