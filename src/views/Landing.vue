@@ -3,7 +3,7 @@
   <router-link to="/login"><button>Login</button></router-link> -->
   
   <!-- <router-view/> -->
-  <img id = "landingimage" src="@/assets/landingimage.jpg" alt = "">
+  <img id = "landingimage" src="@/assets/nicolas-perondi-UxRhrU8fPHQ-unsplash.jpg" alt = "">
 
   <div class = "rightHalf">
     <v-breadcrumbs-item :to="{ name: 'landing'}">
@@ -45,8 +45,8 @@ export default {
 #landingimage {
   width: 45%;
   position: absolute;
-  left: 0px;
-  height: 100%;
+  margin-top: -250px;
+  height: auto;
 }
 
 .rightHalf {

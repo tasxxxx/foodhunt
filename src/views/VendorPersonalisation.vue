@@ -1,7 +1,7 @@
 <template>
     <div class="container">
       <!-- This looks super weird atm with the background image so let's just comment this out first :)-->
-      <!-- <img id = "backgroundimg" src="@/assets/loginbg.jpg" alt = ""> -->
+      <img id = "backgroundimg" src="@/assets/brooke-lark-V4MBq8kue3U-unsplash.jpg" alt = "">
 
       <div class="pa-6-wrapper">
     
@@ -17,7 +17,7 @@
             <!-- Address -->
             <v-text-field
               v-model="form.address"
-              label="Address"
+              clearable label="Address"
               required
               :error-messages="formErrors.address"
               style="font-family:Nunito"
@@ -101,8 +101,9 @@
                         
                                 <v-col cols="8">
                                 <v-text-field
-                                    label="Start - End"
+                                    clearable label="Start - End"
                                     style="font-family:Nunito"
+                                    placeholder="07:00 - 23:00"
                                     :error-messages="formErrors.time1"
                                     required
                                     v-model="form.time1"
@@ -117,8 +118,9 @@
                         
                                 <v-col cols="8">
                                 <v-text-field
-                                    label="Start - End"
+                                    clearable label="Start - End"
                                     style="font-family:Nunito"
+                                    placeholder="07:00 - 23:00"
                                     :error-messages="formErrors.time2"
                                     required
                                     v-model="form.time2"
@@ -133,8 +135,9 @@
                         
                                 <v-col cols="8">
                                 <v-text-field
-                                    label="Start - End"
+                                    clearable label="Start - End"
                                     style="font-family:Nunito"
+                                    placeholder="07:00 - 23:00"
                                     :error-messages="formErrors.time3"
                                     required
                                     v-model="form.time3"
@@ -149,7 +152,8 @@
                         
                                 <v-col cols="8">
                                 <v-text-field
-                                    label="Start - End"
+                                    clearable label="Start - End"
+                                    placeholder="07:00 - 23:00"
                                     style="font-family:Nunito"
                                     :error-messages="formErrors.time4"
                                     required
@@ -165,7 +169,8 @@
                         
                                 <v-col cols="8">
                                 <v-text-field
-                                    label="Start - End"
+                                    clearable label="Start - End"
+                                    placeholder="07:00 - 23:00"
                                     style="font-family:Nunito"
                                     :error-messages="formErrors.time5"
                                     required
@@ -181,7 +186,8 @@
                         
                                 <v-col cols="8">
                                 <v-text-field
-                                    label="Start - End"
+                                    clearable label="Start - End"
+                                    placeholder="07:00 - 23:00"
                                     style="font-family:Nunito"
                                     :error-messages="formErrors.time6"
                                     required
@@ -197,7 +203,8 @@
                         
                                 <v-col cols="8">
                                 <v-text-field
-                                    label="Start - End"
+                                    clearable label="Start - End"
+                                    placeholder="07:00 - 23:00"
                                     style="font-family:Nunito"
                                     :error-messages="formErrors.time7"
                                     required
@@ -214,7 +221,8 @@
             <v-list-item title="Remarks" style="font-family:Nunito"></v-list-item>
             <v-text-field
               v-model="form.remarks"
-              label="Separate remarks with a comma (,)"
+              clearable label="Separate remarks with a comma (,)"
+              placeholder="Remark 1, Remark 2, Remark 3"
               required
               style="font-family:Nunito"
             ></v-text-field>
@@ -398,16 +406,15 @@
     <style scoped>
       #backgroundimg {
         width: 100vw;
-        height: 130vh;
+        height: 200%;
         position: absolute;
-        opacity: 0.5;
       }
     
       #backgroundimg1{
         width:10vw;
       }
       .pa-6-wrapper {
-        padding:15vh;
+        padding:10vh;
         padding-left: 30vw;
         padding-right: 30vw;
       }
