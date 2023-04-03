@@ -1,6 +1,6 @@
 <template>
   <NavigationBar1/>
-    <div class="empty-cart-container" v-if="showPlaceholder && cart.length === 0">
+    <div class="empty-cart-container" v-if="cart.length === 0">
       <img id ="emptycart" src="@/assets/preview.png" alt = "">
       <h1 id="message">Oops! It seems like your cart is feeling a bit lonely. Time to add some items and fill it up!</h1>
       <v-breadcrumbs-item :to="{ name: 'restaurantlisting'}">
@@ -51,7 +51,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useToast } from 'vue-toastification'
 import firebaseApp from "../firebase";
 import { getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, collection, deleteDoc, serverTimestamp} from 'firebase/firestore';
-import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
+import NavigationBar1 from '@/components/NavigationBar1.vue'
 const toast = useToast();
 const db = getFirestore(firebaseApp);
 
@@ -66,7 +66,7 @@ export default {
       cart: [],
       totalCost: 0,
       availableQty:0,
-      showPlaceholder: false // Add a boolean data property
+      // showPlaceholder: false // Add a boolean data property
     }
   },
   async mounted() {
@@ -341,18 +341,18 @@ export default {
       } 
     },
     created() {
-      setTimeout(() => {
-        this.showPlaceholder = true;
-      }, 500);
+      // setTimeout(() => {
+      //   this.showPlaceholder = true;
+      // }, 500);
   },
   }
     
 </script>
 
 <style scoped>
-[v-cloak] {
+/* [v-cloak] {
   display: none;
-}
+} */
 .empty-cart-container {
   display: flex;
   flex-direction: column;

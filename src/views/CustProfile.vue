@@ -58,7 +58,7 @@
 
   <script>
   import firebaseApp from "../firebase";
-  import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
+  import NavigationBar1 from '@/components/NavigationBar1.vue'
   import { collection, getFirestore, updateDoc } from "firebase/firestore"
   import { doc, setDoc, getDoc, getDocs } from "firebase/firestore";
   import { getAuth, onAuthStateChanged, sendPasswordResetEmail } from "firebase/auth";

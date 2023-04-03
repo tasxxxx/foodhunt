@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
+import NavigationBar1 from '@/components/NavigationBar1.vue'
 import firebaseApp from "../firebase";
 import { getFirestore } from 'firebase/firestore';
 import { getDoc, deleteDoc, collection, doc, updateDoc} from 'firebase/firestore';

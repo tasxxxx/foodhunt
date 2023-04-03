@@ -65,8 +65,8 @@
 
   
 <script>
-import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
-import VendorBreadCrumbs from '@/components/icons/VendorBreadCrumbs.vue';
+import NavigationBar1 from '@/components/NavigationBar1.vue'
+import VendorBreadCrumbs from '@/components/VendorBreadCrumbs.vue';
 import firebaseApp from "../firebase";
 import { collection, getFirestore } from "firebase/firestore";
 import { doc, setDoc, getDoc } from "firebase/firestore";
