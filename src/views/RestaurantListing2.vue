@@ -12,7 +12,7 @@
         <h2 style="font-family:Nunito; margin-left: 5vw;">Around the island..</h2>
       </div>
 
-      <SearchBar @search="handleSearch"/>
+      <SearchBarAndFilter @search="handleSearch"/>
 
       <!-- <v-breadcrumbs-item :to="{ name: 'restaurant'}">
         <v-icon icon="mdi-shopping"></v-icon>
@@ -54,7 +54,7 @@
   
   <script> 
 import NavigationBar1 from '@/components/NavigationBar1.vue'
-import SearchBar from '@/components/SearchBar.vue'
+import SearchBarAndFilter from '@/components/SearchBarAndFilter.vue'
 import firebaseApp from "../firebase";
 import { getFirestore } from 'firebase/firestore';
 import { getDoc, doc, getDocs, collection} from 'firebase/firestore';
@@ -64,7 +64,7 @@ export default {
   name: "RestaurantListing",
   components:{
     NavigationBar1,
-    SearchBar
+    SearchBarAndFilter
   },
 
   data() {
