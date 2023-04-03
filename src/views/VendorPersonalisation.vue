@@ -18,7 +18,7 @@
             <center>
               <h4 style="font-family:Nunito">Company Profile Image</h4> 
                   <v-img 
-                  :src="url" 
+                  :src="url"
                   :width="150" 
                   :height="150" 
                   contain class="ma-4"
@@ -34,6 +34,7 @@
                   v-model="file" 
                   label="Select image"
                   style="font-family:Nunito"
+                  :error-messages="formErrors.image"
                   ></v-file-input>
               </div>
 
@@ -294,6 +295,7 @@
       data() {
         return {
           form: {
+            image: '',
             address: '',
             postalcode: '',
             time1:'',
@@ -307,7 +309,8 @@
           },
 
           file: null,
-          url: null,
+          //if no image selected display this by default
+          url: 'https://i.imgur.com/cbERxrb.png',
 
           cuisines: ['Chinese',  'Indian',  'Malay', 'Café'],
 
@@ -332,6 +335,10 @@
 
         async personalise() {
           this.formErrors = {};
+
+          if (!this.file) {
+            this.formErrors.image = ['Please choose a company profile picture'];
+          } 
 
           if (!this.form.address) {
             this.formErrors.address = ['Please enter an address'];
@@ -399,21 +406,6 @@
                 // });
                 // this.$router.push('/vendor-dashboard')
 
-                //Imaging
-                //This accesses storage and sets the name for the file 
-                const storageRef = ref(storage, `vendorProfilePic/${this.file[0].name}`);
-                
-                //This uploads to storage and w correct filename and correct storage collection
-                await uploadBytes(storageRef, this.file[0]);
-
-                //This gets imageurl that has been uploaded to storage, so we will 
-                //write this url to restaurant_personalisation collection lor
-                const imageURL = await getDownloadURL(storageRef);
-
-                //console.log(this.file[0].name)
-                //console.log(this.file[0][0]) 
-                //console.log(imageURL);
-
                 //Other fields
                 const curr_email = getAuth().currentUser.email;
                 const db = getFirestore();
@@ -425,6 +417,21 @@
                 const vendor_id = Docdata.VendorID;
                 const vendor_name = Docdata.Name;
                 const vendor_doc_id = (vendor_name + vendor_id.substring(0,5)).replace(/\s+/g, '')
+
+                //Imaging
+                //This accesses storage and sets the name for the file, concatenate with vendor_id to make filename unqiue
+                const storageRef = ref(storage, `vendorProfilePic/${this.file[0].name + vendor_id}`);
+                
+                //This uploads to storage and w correct filename and correct storage collection
+                await uploadBytes(storageRef, this.file[0]);
+
+                //This gets imageurl that has been uploaded to storage, so we will 
+                //write this url to restaurant_personalisation collection lor
+                const imageURL = await getDownloadURL(storageRef);
+
+                //console.log(this.file[0].name)
+                //console.log(this.file[0][0]) 
+                //console.log(imageURL);
 
                 //Change for vendorid/ vendor name
                 const docRef2 = doc(db, "restaurant_personalisation", vendor_doc_id)
