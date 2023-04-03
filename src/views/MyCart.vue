@@ -16,7 +16,7 @@
         <div class="item" v-for="(item, index) in cart" :key="index">
           <div class="buttons">
             <span class="delete-btn">
-              <button @click="deleteItem(item.key)" class="delete-btn">X</button>
+              <button @click="deleteItem(item.foodID, item.item, item.restaurant, item.price )" class="delete-btn">X</button>
             </span>
           </div>
           <div class="image">
@@ -28,11 +28,11 @@
             <span>${{ item.price }}</span>
           </div>
           <div class="quantity">
-            <button class="minus-btn" @click="minusItem(item.key)">
+            <button class="minus-btn" @click="minusItem(item.foodID, item.item, item.restaurant, item.price)">
               -
             </button>
             {{ item.quantity }}
-            <button class="plus-btn" @click="addItem(item.key)">
+            <button class="plus-btn" @click="addItem(item.foodID, item.item, item.restaurant, item.price)">
               +             
             </button>
           </div>
@@ -51,7 +51,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useToast } from 'vue-toastification'
 import firebaseApp from "../firebase";
 import { getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, collection, deleteDoc, serverTimestamp} from 'firebase/firestore';
-import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
+import NavigationBar1 from '@/components/NavigationBar1.vue'
 const toast = useToast();
 const db = getFirestore(firebaseApp);
 
@@ -65,10 +65,11 @@ export default {
       useremail: '',
       cart: [],
       totalCost: 0,
-      availableQty:0
+      availableQty:0,
+      // showPlaceholder: false // Add a boolean data property
     }
   },
-  created() {
+  async mounted() {
     const auth = getAuth();
      onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -96,7 +97,9 @@ export default {
         }
       }
     });
+
   },
+
   computed: {
     subtotal() {
       return this.cart.reduce((sum, item) => sum + item.subtotal, 0);
@@ -112,23 +115,17 @@ export default {
       const items = cartData.data().products;
       let tempArray = []
       tempArray = Object.entries(items).map(async ([key, value]) => {
-        const thisFood = doc(db, "food_listings", key); 
-        const thisFoodData = await getDoc(thisFood);
-        const item = thisFoodData.data().Name;
-        const thisRestaurant = doc(db, "restaurant_personalisation", thisFoodData.data().Restaurant_PersonalisationId); 
-        const thisRestaurantData = await getDoc(thisRestaurant);
-        const restaurant = thisRestaurantData.data().Name;
-        const price = thisFoodData.data().Price;
+        const [foodID, restaurant, item, price] = key.split(",");
         const quantity = value;
         const subtotal = price * quantity;
-        return { key, restaurant, item, price, quantity, subtotal };
+        return { foodID, restaurant, item, price, quantity, subtotal };
     });
 
       let tempResult = await Promise.all(tempArray);
       let canAddReservation = true;
 
       for (const item of tempResult) {
-        const productRef = doc(db, "food_listings", item.key);
+        const productRef = doc(db, "food_listings", item.foodID);
         const thisproductData = await getDoc(productRef);
         if (thisproductData.data().AvailableQty < item.quantity) {
           canAddReservation = false;
@@ -151,13 +148,14 @@ export default {
           confirmed: false,
           isPickedUp: false,
         });
+        this.cart = [];
         await deleteDoc(cartRef);
         const orderNumberWithPrefix = `FH-${randNum}`;
         this.$router.push({ name: 'Confirmation', params: { reservationNumber: orderNumberWithPrefix }});
         this.cart = [];
       } else {
-        await deleteDoc(cartRef);
         this.cart = [];
+        await deleteDoc(cartRef);
         toast.error("Product quantity is not available, please try again!", {
           position: "top-right",
           timeout: 2019,
@@ -183,34 +181,27 @@ export default {
       this.cart = [];
 
       this.cart = Object.entries(products).map(async ([key, value]) => {
-        const thisFood = doc(db, "food_listings", key); 
-        const thisFoodData = await getDoc(thisFood);
-        const item = thisFoodData.data().Name;
-        const thisRestaurant = doc(db, "restaurant_personalisation", thisFoodData.data().Restaurant_PersonalisationId); 
-        const thisRestaurantData = await getDoc(thisRestaurant);
-        const restaurant = thisRestaurantData.data().Name;
-        const price = thisFoodData.data().Price;
+        const [foodID, restaurant, item, price] = key.split(",");
         const quantity = value;
         const subtotal = price * quantity;
-        return { key, restaurant, item, price, quantity, subtotal };
+        return { foodID, restaurant, item, price, quantity, subtotal };
     });
-
-      // Wait for all promises to resolve before setting the cart
-      this.cart = await Promise.all(this.cart);
-      
       // sort the cart by id
-      this.cart.sort((a, b) => a.key.localeCompare(b.key));
+      this.cart = await Promise.all(this.cart);
+      this.cart.sort((a, b) => a.foodID.localeCompare(b.foodID));
     }, 
 
-      async addItem(productKey) {
+    async addItem(foodID, item, restaurant, price) {
         const cartRef = doc(db, "shopping_carts", this.useremail);
         const cartData = await getDoc(cartRef);
         // products refer to the product inside the cart.
         const products = cartData.data().products       
-        const thisProduct = await doc(db, "food_listings",productKey); 
+        const thisProduct = await doc(db, "food_listings",foodID); 
+        const productKey = `${foodID},${restaurant},${item},${price}`;
         const thisProductData = await getDoc(thisProduct);
         // this.availableQty refers to the product itself.
         this.availableQty = thisProductData.data().AvailableQty
+        console.log(this.availableQty)
         if(this.availableQty >= products[productKey] + 1) {
           products[productKey]++
           toast.success("Quantity is added successfully!", {
@@ -244,36 +235,38 @@ export default {
           });
         }// update the cart data
         await setDoc(cartRef, { products }, { merge: true });
-        // update the cart array in place
-        const itemIndex = this.cart.findIndex((item) => item.key === productKey);
-        if (itemIndex >= 0) {
-          this.cart[itemIndex].quantity += 1;
-          this.cart[itemIndex].subtotal += this.cart[itemIndex].price;
-        } else {
-          const thisProduct = await doc(db, "food_listings", productKey);
-          const thisProductData = await getDoc(thisProduct);
-          const restaurant = thisProductData.data().Vendor;
-          const item = thisProductData.data().Name;
-          const price = thisProductData.data().Price;
-          const quantity = 1;
-          const subtotal = price;
-          const newItem = { key: productKey, restaurant, item, price, quantity, subtotal };
-          this.cart.push(newItem);
-        }
+        await this.retrieveCart();
+        // // update the cart array in place
+        // const itemIndex = this.cart.findIndex((item) => item.key === productKey);
+        // if (itemIndex >= 0) {
+        //   this.cart[itemIndex].quantity += 1;
+        //   this.cart[itemIndex].subtotal += this.cart[itemIndex].price;
+        // } else {
+        //   const thisProduct = await doc(db, "food_listings", productKey);
+        //   const thisProductData = await getDoc(thisProduct);
+        //   const restaurant = thisProductData.data().Vendor;
+        //   const item = thisProductData.data().Name;
+        //   const price = thisProductData.data().Price;
+        //   const quantity = 1;
+        //   const subtotal = price;
+        //   const newItem = { key: productKey, restaurant, item, price, quantity, subtotal };
+        //   this.cart.push(newItem);
+        // }
       },
 
-      async minusItem(productKey) {
+      async minusItem(foodID, item, restaurant, price) {
         const cartRef = doc(db, "shopping_carts", this.useremail);
         const cartData = await getDoc(cartRef);
         // products refer to the product inside the cart.
         const products = cartData.data().products       
-        const thisProduct = await doc(db, "food_listings",productKey); 
+        const thisProduct = await doc(db, "food_listings",foodID); 
         const thisProductData = await getDoc(thisProduct);
+        const productKey = `${foodID},${restaurant},${item},${price}`;
         // this.availableQty refers to the product itself.
         this.availableQty = thisProductData.data().AvailableQty
         const productQuantity = products[productKey];
         if (productQuantity === 1) {
-          await this.deleteItem(item, restaurant, price);
+          await this.deleteItem(foodID, item, restaurant, price);
         } else {
           // Otherwise, decrease the quantity by 1
           products[productKey]--;
@@ -294,20 +287,21 @@ export default {
         }
         // update the cart data
         await setDoc(cartRef, { products }, { merge: true });
-        // update the cart array in place
-        const itemIndex = this.cart.findIndex((item) => item.key === productKey);
-        if (itemIndex >= 0) {
-          const item = this.cart[itemIndex];
-          if (item.quantity === 1) {
-            this.cart.splice(itemIndex, 1);
-          } else {
-            item.quantity -= 1;
-            item.subtotal -= item.price;
-          }
-        }
+        await this.retrieveCart();
+        // // update the cart array in place
+        // const itemIndex = this.cart.findIndex((item) => item.key === productKey);
+        // if (itemIndex >= 0) {
+        //   const item = this.cart[itemIndex];
+        //   if (item.quantity === 1) {
+        //     this.cart.splice(itemIndex, 1);
+        //   } else {
+        //     item.quantity -= 1;
+        //     item.subtotal -= item.price;
+        //   }
+        // }
       },
 
-      async deleteItem(productKey) {
+      async deleteItem(foodID, item, restaurant, price) {
          this.$swal.fire({
           title: 'Are you sure?',
           text: "Please confirm that you are removing the item from the cart?",
@@ -321,6 +315,7 @@ export default {
             const cartRef = doc(db, "shopping_carts", this.useremail);
             const cartData = await getDoc(cartRef);
             const products = cartData.data().products
+            const productKey = `${foodID},${restaurant},${item},${price}`;
             // remove the product from the products object
             delete products[productKey];      
             // update the cart data in Firestore
@@ -344,12 +339,20 @@ export default {
           }
         })
       } 
-    }
+    },
+    created() {
+      // setTimeout(() => {
+      //   this.showPlaceholder = true;
+      // }, 500);
+  },
   }
     
 </script>
 
 <style scoped>
+/* [v-cloak] {
+  display: none;
+} */
 .empty-cart-container {
   display: flex;
   flex-direction: column;

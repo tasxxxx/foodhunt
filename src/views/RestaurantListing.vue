@@ -54,7 +54,7 @@
   </template>
   
   <script>
-  import NavigationBar1 from '@/components/icons/NavigationBar1.vue'
+  import NavigationBar1 from '@/components/NavigationBar1.vue'
   // import Restaurant from '@/components/icons/Restaurant.vue'
   import image from "../assets/macs.jpg"
   import subway from "../assets/subway.png"

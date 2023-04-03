@@ -5,7 +5,7 @@
   <script>
   import {getAuth, onAuthStateChanged} from "firebase/auth";
   import { useToast } from 'vue-toastification'
-  import firebaseApp from "../../firebase";
+  import firebaseApp from "../firebase";
   import { getFirestore } from 'firebase/firestore';
   import { getDoc, getDocs, collection, doc, setDoc} from 'firebase/firestore';
   const db = getFirestore(firebaseApp);
@@ -37,8 +37,8 @@
     methods: {
         async addToCart() {
           const toast = useToast();
-          // Can access the details here. 
-          const productData = this.prodID;
+          // // Can access the details here. 
+          // const productData = this.prodID;
           if(this.user) {
               // Add the desired quantity of the product to the cart
               if (this.quantity === undefined) { 
@@ -70,11 +70,12 @@
               // Get the current list of products in the cart, or create an empty list if none exists
               const products = cartData.exists() ? cartData.data().products : {};
               
-              const productKey = this.prodID.Food_listingID
+              const productKey = `${this.prodID.Food_listingID}, ${this.prodID.VendorName},${this.prodID.Name},${this.prodID.Price}`
+              
               // get maxQuantity 
                 const productRef = await getDocs(collection(db, "food_listings"));
                 productRef.forEach((doc) => {
-                if (productKey === doc.data().Food_listingID) {
+                if (this.prodID.Food_listingID === doc.data().Food_listingID) {
                   this.maxQuantity = doc.data().AvailableQty
                 }})
 
@@ -94,12 +95,13 @@
                   rtl: false
                   });   
                 } else {
-                  if (products.hasOwnProperty(productKey)) {
-                  products[productKey] += this.quantity;
+                  if (products.hasOwnProperty([this.prodID.Food_listingID, this.prodID.VendorName, this.prodID.Name, this.prodID.Price])) {
+                  products[[this.prodID.Food_listingID, this.prodID.VendorName, this.prodID.Name, this.prodID.Price]] += this.quantity;
                   } else {
-                  products[productKey] = this.quantity;
+                  products[[this.prodID.Food_listingID, this.prodID.VendorName, this.prodID.Name, this.prodID.Price]] = this.quantity;
                   }
                   await setDoc(cartRef, { products: products });
+                  
                   toast.success("Product is successfully added to the cart!", {
                   position: "top-right",
                   timeout: 2019,
