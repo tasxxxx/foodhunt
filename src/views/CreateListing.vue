@@ -180,7 +180,7 @@ export default {
 
         // Submit form if no errors
         if (Object.keys(this.formErrors).length === 0) {
-          /*
+          
           if (this.image === null) {
             this.imageFirebase = this.imageUrl;
           } else {
@@ -196,8 +196,8 @@ export default {
             this.imageFirebase = downloadUrl;   
             this.image = null;
           }
-          */
-          this.imageFirebase = this.imageUrl;
+          
+          //this.imageFirebase = this.imageUrl;
           console.log(this.imageFirebase)
           
 

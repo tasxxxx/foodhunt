@@ -1,6 +1,6 @@
 <template>
   <VendorBreadCrumbs/>
-  
+
   <v-card
     class="mx-auto" 
     max-width=1230
@@ -27,12 +27,6 @@
               </v-avatar>
             </v-col>
             <v-col cols="8">
-              <!-- <div class="d-flex justify-space-between">
-                <div class="text-h5 mb-2">{{ item.Name }}</div>
-                <v-chip>{{ item.Category }}</v-chip>
-                <div class="text-h6 mb-2">{{ item.Price }}</div>
-              </div> -->
-              
               <v-row>
                 <div class="text-h6 mb-1">{{ item.Name }}</div>
               </v-row>
@@ -71,15 +65,14 @@
             ></v-progress-linear>
           </template>
           
-          <!-- <v-img
+          <v-img
             cover
             height="300"
-            :src= "items[selectedItem].ImageURL"
-          ></v-img> -->
+            :src= "items[selectedIndex].ImageURL"
+          ></v-img>
 
           <v-card-item>
-            <!-- <v-card-title>{{ items[selectedItem].Name }}</v-card-title> -->
-
+            <v-card-title>{{ items[selectedIndex].Name }}</v-card-title>
             <v-card-subtitle>
               <span class="me-1">Local Favorite</span>
 
@@ -114,7 +107,7 @@
               $ • Italian, Cafe
             </div>
 
-            <!-- <div>{{ items[selectedItem].Description }}</div> -->
+            <div>{{ items[selectedIndex].Description }}</div>
           </v-card-text>
 
           <v-divider class="mx-4 mb-1"></v-divider>
@@ -164,7 +157,7 @@ export default {
   data() {
     return {
       selectedIndex: 0,
-      items: [],
+      items: ["test"],
       user: false,
       loading: true,
       selection: "",
