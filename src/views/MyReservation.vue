@@ -1,12 +1,18 @@
 <template>  
     <NavigationBar1/>
-    <div class="empty-cart-container" v-if="reservations.length === 0">
+    <div v-if="reservations.length === 0 && !showPlaceholder">
+      <p>Loading reservations...</p>
+    </div>
+    <!-- <div class="empty-cart-container" v-if="reservations.length === 0">
       <img id ="emptycart" src="@/assets/preview.png" alt = "">
       <h1 id="message">Oops! You have no current reservations. Time to add some items and fill it up!</h1>
       <v-breadcrumbs-item :to="{ name: 'restaurantlisting'}">
         <v-btn rounded="lg" color="primary"> Start Hunting!</v-btn>
       </v-breadcrumbs-item>
       <img id ="emojisad" src="@/assets/emoji.webp" alt = "">
+    </div> -->
+    <div v-else-if="reservations.length === 0 && showPlaceholder">
+      <p>No reservations found.</p>
     </div>
     <div v-else>
   
@@ -209,7 +215,10 @@ export default {
   async mounted() {
     setTimeout(() => {
         this.showPlaceholder = true;
-      },0.003);
+      },3000);
+
+      const allReservations = querySnapshot.docs.filter(doc => doc.data().user === this.useremail);
+      this.reservations = allReservations.map(doc => doc.data());
   },
   
 
@@ -273,27 +282,27 @@ export default {
       const deletedItems = products.map(product => product.key);
       console.log(deletedItems)
 
-      for (const item of deletedItems) {
-        const cartRef = doc(db, "shopping_carts", this.useremail);
-        const cartData = await getDoc(cartRef);
-        // products refer to the product inside the cart.
-        const products = cartData.data().products  
+      // for (const item of deletedItems) {
+      //   const cartRef = doc(db, "shopping_carts", this.useremail);
+      //   const cartData = await getDoc(cartRef);
+      //   // products refer to the product inside the cart.
+      //   const products = cartData.data().products  
 
-        console.log("products")
-        console.log(products)
-        const foodDocRef = doc(db, "food_listing", 'MOSBurgerCompassOne_lG2PFprodHotMayoFries');
-        console.log("food doc ref")
-        console.log(foodDocRef)
-        const foodDoc = await getDoc(foodDocRef);
-        console.log("food doc")
-        console.log(foodDoc)
-        const availableQty = foodDoc.data();
-        console.log("favailableQty")
-        console.log(availableQty)
-        await updateDoc(foodDoc, { AvailableQty: availableQty +1 });
-      }
-      // await deleteDoc(doc(db, "reservation_orders", reservationNo));
-      // await this.getReservations();
+      //   console.log("products")
+      //   console.log(products)
+      //   const foodDocRef = doc(db, "food_listing", 'MOSBurgerCompassOne_lG2PFprodHotMayoFries');
+      //   console.log("food doc ref")
+      //   console.log(foodDocRef)
+      //   const foodDoc = await getDoc(foodDocRef);
+      //   console.log("food doc")
+      //   console.log(foodDoc)
+      //   const availableQty = foodDoc.data();
+      //   console.log("favailableQty")
+      //   console.log(availableQty)
+      //   await updateDoc(foodDoc, { AvailableQty: availableQty +1 });
+      // }
+      await deleteDoc(doc(db, "reservation_orders", reservationNo));
+      await this.getReservations();
       toast.success("Reservation cancelled!", {
               position: "top-right",
               timeout: 2019,
