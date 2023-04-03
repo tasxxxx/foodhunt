@@ -342,7 +342,7 @@ export default {
     created() {
       setTimeout(() => {
         this.showPlaceholder = true;
-      }, 500);
+      }, 1000);
   },
   }
     

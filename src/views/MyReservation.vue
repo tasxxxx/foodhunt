@@ -128,8 +128,8 @@
 
               <!-- <v-card-title>Tonight's availability</v-card-title> -->
 
-
-              <v-card-actions>
+              <v-btn rounded="lg" color="red" @click="cancelReservation(selected_reservation.reservationNo)"> Cancel Reservation</v-btn>
+              <!-- <v-card-actions>
                 <v-btn
                   color="red"
                   variant="text"
@@ -147,7 +147,7 @@
                     <v-btn color="green" text @click="cancelReservation(selected_reservation.reservationNo)">Yes</v-btn>
                   </v-card-actions>
                 </v-card>
-              </v-dialog>
+              </v-dialog> -->
             </v-card>
         </v-col>
       </v-row> 
@@ -192,7 +192,7 @@ import { useToast } from 'vue-toastification'
 import firebaseApp from "../firebase";
 import { getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, collection, deleteDoc, serverTimestamp} from 'firebase/firestore';
 import NavigationBar1 from '@/components/NavigationBar1.vue'
-import EmptyReservation from '@/components/EmptyCart.vue'
+import EmptyReservation from '@/components/EmptyReservation.vue'
 const toast = useToast();
 const db = getFirestore(firebaseApp);
 
@@ -216,7 +216,7 @@ export default {
   async mounted() {
     setTimeout(() => {
         this.showPlaceholder = true;
-      }, 50000);
+      }, 1000);
       // const querySnapshot = await getDocs(collection(db, "reservation_orders"))
       // const allReservations = querySnapshot.docs.filter(doc => doc.data().user === this.useremail);
       // this.reservations = allReservations.map(doc => doc.data());
@@ -274,49 +274,58 @@ export default {
       };
     },
     async cancelReservation(reservationNo) {
-      this.showDialog = false;
-      console.log("db")
-      console.log(db)
-      const deleted_reservation = doc(db, "reservation_orders", reservationNo);
-      const deleted_reservation_data = await getDoc(deleted_reservation);
-      console.log("deleted reservation")
-      console.log(deleted_reservation_data.data())
-      const products = deleted_reservation_data.data().cart  
-      console.log(products)
-      // const deletedItems = products.map(product => product.foodID);
-      const deletedItems = products.map(product => ({foodID: product.foodID, quantity: product.quantity}));
+        this.$swal.fire({
+            title: 'Are you sure?',
+            text: "Please confirm that you are removing the item from the cart?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Confirm'
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              this.showDialog = false;
+              console.log("db")
+              console.log(db)
+              const deleted_reservation = doc(db, "reservation_orders", reservationNo);
+              const deleted_reservation_data = await getDoc(deleted_reservation);
+              console.log("deleted reservation")
+              console.log(deleted_reservation_data.data())
+              const products = deleted_reservation_data.data().cart  
+              console.log(products)
+              // const deletedItems = products.map(product => product.foodID);
+              const deletedItems = products.map(product => ({foodID: product.foodID, quantity: product.quantity}));
 
-      console.log(deletedItems)
+              console.log(deletedItems)
 
-      for (const item of deletedItems) {
-        const itemRef = doc(db, "food_listings", item.foodID);
-        // const itemRef = doc(foodListingsRef, item);
-        const itemDoc = await getDoc(itemRef);
-        console.log("item doc")
-        console.log(itemDoc)
-        const availableQty = itemDoc.data().AvailableQty;
-        await updateDoc(itemRef, { AvailableQty: availableQty + item.quantity });
-        // await updateDoc(itemRef, { AvailableQty: availableQty + 1 });
-      }
-
-      
-      await deleteDoc(doc(db, "reservation_orders", reservationNo));
-      await this.getReservations();
-      toast.success("Reservation cancelled!", {
-              position: "top-right",
-              timeout: 2019,
-              closeOnClick: true,
-              pauseOnFocusLoss: false,
-              pauseOnHover: false,
-              draggable: true,
-              draggablePercent: 2,
-              showCloseButtonOnHover: false,
-              hideProgressBar: false,
-              closeButton: "button",
-              icon: true,
-              rtl: false
-              }); 
-      
+              for (const item of deletedItems) {
+                const itemRef = doc(db, "food_listings", item.foodID);
+                // const itemRef = doc(foodListingsRef, item);
+                const itemDoc = await getDoc(itemRef);
+                console.log("item doc")
+                console.log(itemDoc)
+                const availableQty = itemDoc.data().AvailableQty;
+                await updateDoc(itemRef, { AvailableQty: availableQty + item.quantity });
+                // await updateDoc(itemRef, { AvailableQty: availableQty + 1 });
+              }
+              await deleteDoc(doc(db, "reservation_orders", reservationNo));
+              await this.getReservations();
+              toast.success("Reservation cancelled!", {
+                      position: "top-right",
+                      timeout: 2019,
+                      closeOnClick: true,
+                      pauseOnFocusLoss: false,
+                      pauseOnHover: false,
+                      draggable: true,
+                      draggablePercent: 2,
+                      showCloseButtonOnHover: false,
+                      hideProgressBar: false,
+                      closeButton: "button",
+                      icon: true,
+                      rtl: false
+                      });      
+            }
+          })
       //remove from reservations, add qty back to vendors
     },
     selectReservation(reservation) {
