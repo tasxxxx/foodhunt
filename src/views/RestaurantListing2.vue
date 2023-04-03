@@ -88,7 +88,7 @@ export default {
       // Set showPlaceholder to true after a delay of 3 seconds
       setTimeout(() => {
         this.showPlaceholder = true;
-      },0.003);
+      },750);
     } catch (error) {
       console.log(error)
     }

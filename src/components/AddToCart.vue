@@ -91,6 +91,14 @@
                     this.maxQuantity = doc.data().AvailableQty
                   }})
 
+                  if (products[productKey] === undefined) {
+                    products[productKey] = 0;
+                  }
+                  console.log(this.maxQuantity)
+                  console.log(products[productKey])
+                  console.log(products[productKey] + this.quantity)
+                  console.log(this.maxQuantity <= (products[productKey] + this.quantity))
+
                   if(this.maxQuantity < (products[productKey] + this.quantity)) {
                     toast.error("Unsuccessful execution! Please reduce quantity!", {
                     position: "top-right",
