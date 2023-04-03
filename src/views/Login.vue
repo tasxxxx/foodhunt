@@ -162,7 +162,7 @@ export default {
   #backgroundimg {
     margin-top: -9%;
     width: 100vw;
-    height: auto;
+    height: 160%;
     position: absolute;
     opacity: 1;
   }

@@ -1,6 +1,10 @@
 <template>
   <NavigationBar1/>
-  <empty-cart v-if="cart.length === 0"/>
+  <div v-if="cart.length === 0 && !showPlaceholder"> 
+    <div class="loader"></div>
+    <h1 id="loadingmessage" >Loading your cart...</h1>
+  </div>
+  <EmptyCart v-else-if="cart.length === 0 && showPlaceholder"/>
   <div v-else>
       <div class="shopping-cart">
         <div class="title">
@@ -61,7 +65,7 @@ export default {
       cart: [],
       totalCost: 0,
       availableQty:0,
-      // showPlaceholder: false // Add a boolean data property
+      showPlaceholder: false // Add a boolean data property
     }
   },
   async mounted() {
@@ -336,9 +340,9 @@ export default {
       } 
     },
     created() {
-      // setTimeout(() => {
-      //   this.showPlaceholder = true;
-      // }, 500);
+      setTimeout(() => {
+        this.showPlaceholder = true;
+      }, 500);
   },
   }
     
@@ -519,4 +523,38 @@ font-weight: 300;
   margin-right: 20px;
 }
 }
+
+.loader-container {
+  position: relative;
+  height: 100%;
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid rgba(109,93,36,1);
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  animation: spin 2s linear infinite;
+  position: absolute;
+  top: 40%;
+  left: 45%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#loadingmessage{
+  text-align: center;
+  position: absolute;
+  top: 60%;
+  left: 49%;
+  transform: translate(-50%, -50%);
+  font-family: Nunito; 
+  
+}
+
 </style>

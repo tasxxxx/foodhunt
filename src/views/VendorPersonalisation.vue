@@ -473,7 +473,7 @@
     <style scoped>
       #backgroundimg {
         width: 100vw;
-        height: 200%;
+        height: 280%;
         position: absolute;
       }
     
@@ -484,6 +484,7 @@
         padding:10vh;
         padding-left: 30vw;
         padding-right: 30vw;
+        
       }
     
     </style>

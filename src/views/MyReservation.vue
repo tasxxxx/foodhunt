@@ -1,8 +1,9 @@
 <template>  
     <NavigationBar1/>
     <div v-if="reservations.length === 0 && !showPlaceholder">
-      <p>Loading reservations...</p>
-    </div>
+      <div class="loader"></div>
+        <h1 id="loadingmessage" >Loading your reservations...</h1>
+      </div>
     <!-- <div class="empty-cart-container" v-if="reservations.length === 0">
       <img id ="emptycart" src="@/assets/preview.png" alt = "">
       <h1 id="message">Oops! You have no current reservations. Time to add some items and fill it up!</h1>
@@ -11,9 +12,7 @@
       </v-breadcrumbs-item>
       <img id ="emojisad" src="@/assets/emoji.webp" alt = "">
     </div> -->
-    <div v-else-if="reservations.length === 0 && showPlaceholder">
-      <p>No reservations found.</p>
-    </div>
+    <EmptyReservation v-else-if="reservations.length === 0 && showPlaceholder"/>
     <div v-else>
   
       <v-card
@@ -193,13 +192,15 @@ import { useToast } from 'vue-toastification'
 import firebaseApp from "../firebase";
 import { getFirestore, doc, getDoc, getDocs, setDoc, updateDoc, collection, deleteDoc, serverTimestamp} from 'firebase/firestore';
 import NavigationBar1 from '@/components/NavigationBar1.vue'
+import EmptyReservation from '@/components/EmptyCart.vue'
 const toast = useToast();
 const db = getFirestore(firebaseApp);
 
 export default {
   name: "MyReservation",
   components:{
-    NavigationBar1
+    NavigationBar1,
+    EmptyReservation
   },
   data() {
     return {
@@ -215,7 +216,7 @@ export default {
   async mounted() {
     setTimeout(() => {
         this.showPlaceholder = true;
-      },3000);
+      }, 50000);
       // const querySnapshot = await getDocs(collection(db, "reservation_orders"))
       // const allReservations = querySnapshot.docs.filter(doc => doc.data().user === this.useremail);
       // this.reservations = allReservations.map(doc => doc.data());
@@ -386,5 +387,38 @@ export default {
   border-radius: 15px;
   overflow: hidden;
   position: relative;
+}
+
+.loader-container {
+  position: relative;
+  height: 100%;
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid rgba(109,93,36,1);
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  animation: spin 2s linear infinite;
+  position: absolute;
+  top: 40%;
+  left: 45%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#loadingmessage{
+  text-align: center;
+  position: absolute;
+  top: 60%;
+  left: 49%;
+  transform: translate(-50%, -50%);
+  font-family: Nunito; 
+  
 }
 </style>
