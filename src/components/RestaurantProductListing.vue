@@ -1,4 +1,10 @@
 <template>
+    <div v-if="products.length === 0 && !showPlaceholder"> 
+      <div class="loader"></div>
+      <h1 id="loadingmessage" > Sourcing for available products...</h1>
+    </div>
+    <EmptyRestaurantListing v-else-if="products.length === 0 && showPlaceholder"/>
+    <div v-else>
     <v-card id="finally">
     <v-tabs
         v-model="tab"
@@ -49,6 +55,7 @@
         </v-window>
     </v-card-text>
     </v-card>
+</div>
 </template>
 
 <script>
@@ -56,20 +63,23 @@
     import { getFirestore } from 'firebase/firestore';
     import AddToCart from '@/components/AddToCart.vue';
     import { getDoc, doc, getDocs, collection} from 'firebase/firestore';
+    import EmptyRestaurantListing from '@/components/EmptyRestaurantListing.vue'
     const db = getFirestore(firebaseApp);
 
     export default {
     name: "Restaurant",
     props: ['id'],
     components:{
-        AddToCart
+        AddToCart,
+        EmptyRestaurantListing
     },
     data() {
     return {
         products: [],
         uniqueCategories: [], 
         imageurl: "",
-        tab: ""
+        tab: "",
+        showPlaceholder: false
     }
     },
 
@@ -82,6 +92,9 @@
             this.products.push(product);
             }
         });
+        setTimeout(() => {
+            this.showPlaceholder = true;
+        },750);
 },
   
     computed: {
@@ -116,6 +129,7 @@
         })  
             uniqueCategories.sort((a, b) => a.localeCompare(b));
             this.tab = uniqueCategories[0]; // set default tab selected to first category
+            console.log(uniqueCategories.length)
         }
     }
 
@@ -198,4 +212,38 @@ width: 42%;
 select {
 -webkit-appearance: listbox !important;
 }
+
+.loader-container {
+  position: relative;
+  height: 100%;
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid rgba(109,93,36,1);
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  animation: spin 2s linear infinite;
+  position: absolute;
+  top: 70%;
+  left: 45%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#loadingmessage{
+  text-align: center;
+  position: absolute;
+  top: 85%;
+  left: 48%;
+  transform: translate(-50%, -50%);
+  font-family: Nunito; 
+  
+}
+
 </style>

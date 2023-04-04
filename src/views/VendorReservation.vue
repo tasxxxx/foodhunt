@@ -5,6 +5,7 @@
     class="mx-auto" 
     max-width=1230
   >
+
     <div class="text-h5 pa-5"> All Reservations at a glance...</div>
     <v-divider></v-divider>
     <v-row>
@@ -15,8 +16,7 @@
             :key="index" 
             @click="selectedIndex = index" 
             :class="{'selected': selectedIndex === index} "
-            min-height="150"
-            
+            min-height="150"          
           >
             <br>
             <v-row>
@@ -352,7 +352,6 @@ export default {
   }
 };
 </script>
-
 
 <style>
 .list-container {

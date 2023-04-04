@@ -10,12 +10,46 @@
 
             <v-form ref="form" @submit.prevent="checkerrors">
 
+            <!--Imaging will be here now-->
+            <center>
+                <h4 style="font-family:Nunito">Company Profile Image</h4> 
+                <v-img 
+                :src="image" 
+                :width="100" 
+                :height="100" 
+                contain class="ma-4"
+                accept="image/png, image/gif, image/jpeg"
+                ></v-img>          
+            </center>
+
+            <!-- Image picker-->
+            <div id = 'imagePicker'>
+
+                <v-file-input 
+                prepend-icon="mdi-camera" 
+                v-model="file" 
+                label="Select Image"
+                style="font-family:Nunito"
+                ></v-file-input>
+            </div>
+
+            <v-divider class="border-opacity-25"></v-divider><br>
+
             <!-- Address -->
             <v-text-field
               v-model="form.address"
               label="Address"
               required
               :error-messages="formErrors.address"
+              style="font-family:Nunito"
+            ></v-text-field>
+
+            <!-- Postal Code -->
+            <v-text-field
+              v-model="form.postalcode"
+              label="Postal Code"
+              required
+              :error-messages="formErrors.postalcode"
               style="font-family:Nunito"
             ></v-text-field>
 
@@ -250,6 +284,7 @@
         return {
           form: {
             address: '',
+            postalcode: '',
             tags: '',
             monday: '',
             tuesday: '',
@@ -307,6 +342,7 @@
             if (userDocument.exists()) {
                 const userData = userDocument.data();
                 this.form.address = userData.Address;
+                this.form.postalcode = userData.Postal_Code;
                 this.form.monday = userData.Monday;
                 this.form.tuesday = userData.Tuesday;
                 this.form.wed = userData.Wednesday;
@@ -327,11 +363,30 @@
       components:{
         VendorBreadCrumbs
       },
+      computed: {
+        image() {
+        if (this.file) {
+            console.log("Got image");
+            return URL.createObjectURL(this.file); 
+        }  else {
+            console.log("NOO image");
+            return 'https://via.placeholder.com/500';
+        }
+        }
+       },
       methods: {
         async checkerrors() {
             this.formErrors = {};
             if (!this.form.address) {
                 this.formErrors.address = ['Please enter an address'];
+            } 
+
+            if (!this.form.postalcode) {
+                this.formErrors.postalcode = ['Please enter a postal code'];
+            }
+
+            if (this.form.postalcode.length != 6) {
+                this.formErrors.postalcode = ['Please enter a valid postal code'];
             } 
 
             if (!this.form.monday) {
@@ -373,6 +428,7 @@
                 const docRef = doc(db, "restaurant_personalisation", this.vendorDocId)
                 updateDoc(docRef, {
                 Address: this.form.address,
+                Postal_Code: this.form.postalcode,
                 Monday: this.form.monday,
                 Tuesday: this.form.tuesday,
                 Wednesday: this.form.wed,

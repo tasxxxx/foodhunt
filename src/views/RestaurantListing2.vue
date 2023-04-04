@@ -1,8 +1,6 @@
 <template>  
     <NavigationBar1/>
 
-    <div>
-
       <div className="banner">
         <img src="../assets/bg1.png">
       </div>
@@ -12,18 +10,21 @@
         <h2 style="font-family:Nunito; margin-left: 5vw;">Around the island..</h2>
       </div>
 
-      <SearchBar @search="handleSearch"/>
+      <SearchBarAndFilter @search="handleSearch" @filterCuisine="handleCuisine" @filterPrice="handlePrice"/>
 
       <!-- <v-breadcrumbs-item :to="{ name: 'restaurant'}">
         <v-icon icon="mdi-shopping"></v-icon>
           My restaurant |
       </v-breadcrumbs-item> -->
 
+    <div v-if="openRestaurants.length === 0 && !showPlaceholder"> 
+      <div class="loader"></div>
+      <h1 id="loadingmessage" > Sourcing for available restaurants...</h1>
+    </div>
+    <EmptyRestaurant v-else-if="openRestaurants.length === 0 && showPlaceholder"/>
+    <div v-else>
     <div class="restaurants">       
-      <div v-if="showPlaceholder && openRestaurants.length === 0">
-          <h3 class="information">All restaurants are currently closed. Please check back later.</h3>
-      </div>
-      <div v-else v-for="restaurant in searchRestaurant" :key="restaurant.id" className="restaurant">
+      <div v-for="restaurant in searchRestaurant" :key="restaurant.id" className="restaurant">
         <router-link :to="{ name: 'restaurant', params: { id: restaurant.Restaurant_PersonalisationId }}">
           <div>
             <img src="../assets/macs.jpg" alt="Restaurant Image" className="restaurant-img">
@@ -48,31 +49,50 @@
         </router-link>
       </div>
     </div>
-    <h3 v-if="searchOn" class="searchtagline" >The end... Happy hunting!</h3>
+    <h3 v-if="searchOn" class="searchtagline" >The end... Happy hunting!<br><br><br></h3>
   </div>
 </template>
   
   <script> 
 import NavigationBar1 from '@/components/NavigationBar1.vue'
-import SearchBar from '@/components/SearchBar.vue'
+import SearchBarAndFilter from '@/components/SearchBarAndFilter.vue'
 import firebaseApp from "../firebase";
 import { getFirestore } from 'firebase/firestore';
 import { getDoc, doc, getDocs, collection} from 'firebase/firestore';
+import { onRenderTracked } from 'vue';
+import EmptyRestaurant from '@/components/EmptyRestaurant.vue'
 const db = getFirestore(firebaseApp);
   
 export default {
   name: "RestaurantListing",
   components:{
     NavigationBar1,
-    SearchBar
+    SearchBarAndFilter,
+    EmptyRestaurant
   },
 
   data() {
     return {
       restaurants: [],
       searchRestaurant: [],
+      searchValue: "",
       searchOn: false,
-      showPlaceholder: false // Add a boolean data property
+      cuisines: [ //hardcoded and order matches SearchBarAndFilter.vue same for pricerange
+        "Chinese",
+        "Indian",
+        "Malay",
+        "Café",
+      ],
+      pricerange: [
+        "$",
+        "$$",
+        "$$$",
+      ],
+      cuisineFilter: false,
+      priceFilter: false,
+      selectedCuisineTags : [],
+      selectedPriceTags: [],
+      needOriginalSearch: false,
     }
   },
 
@@ -85,7 +105,7 @@ export default {
       // Set showPlaceholder to true after a delay of 3 seconds
       setTimeout(() => {
         this.showPlaceholder = true;
-      },0.003);
+      },750);
     } catch (error) {
       console.log(error)
     }
@@ -145,18 +165,25 @@ export default {
           }
       }
     },
+
     openRestaurants() {
       return this.restaurants.filter(restaurant => this.closingTimes(restaurant) !== 'Closed')
     },
 
     searchRestaurant() {
       return this.searchRestaurant.filter(restaurant => this.closingTimes(restaurant) !== 'Closed')
-    }
+    },
+
   },
+
   methods: {
+
     handleSearch(value) {
-      if (value && value.length > 0) {
+      console.log("inside handleSearch")
+      if (value && value.length > 0 && this.needOriginalSearch) {
+        this.searchValue = value
         this.searchOn = true;
+        this.needOriginalSearch = false
         this.searchRestaurant = this.restaurants.filter(r => {
           const val = value.toLowerCase()
           const restaurantName = r.Name.toString().toLowerCase().split(" ")
@@ -167,12 +194,107 @@ export default {
             }
           }
         })
-        return false;
+        return false;      
+      } else if (value && value.length > 0) {
+        this.searchValue = value
+        this.searchOn = true;
+        this.searchRestaurant = this.searchRestaurant.filter(r => {
+          const val = value.toLowerCase()
+          const restaurantName = r.Name.toString().toLowerCase().split(" ")
+          for (let i = 0; i < restaurantName.length; i++) {
+            if (restaurantName[i].indexOf(val) !== -1) {
+              this.searchOn = true;
+              return true;
+            }
+          }
+        })
+        return false; 
       } else {
+        this.searchValue = false;
         this.searchOn = false;
         this.searchRestaurant = this.restaurants
       }
-    }
+    },
+
+    handleCuisine(value) {
+      if (value.length > 0) {
+        this.cuisineFilter = true
+        this.selectedCuisineTags = value
+      } else {
+        this.cuisineFilter = false
+      }
+      this.filtering()
+    },
+
+    handlePrice(value) {
+      if (value.length > 0) {
+        this.priceFilter = true
+        this.selectedPriceTags = value
+        console.log(value)
+      } else {
+        this.priceFilter = false
+      }
+      this.filtering()
+    },
+
+    filtering() {
+      if (this.cuisineFilter || this.priceFilter) {
+
+        if (this.cuisineFilter && this.searchOn) {
+          this.searchRestaurant = this.searchRestaurant.filter(r => {
+            for (let i = 0; i < this.selectedCuisineTags.length; i++) {
+              const index = this.selectedCuisineTags[i]
+                if (r.Cuisines === this.cuisines[index]) {
+                  return true
+                }
+          }
+          return false;
+          })
+        } else if (this.cuisineFilter) {
+          this.searchRestaurant = this.restaurants.filter(r => {
+            for (let i = 0; i < this.selectedCuisineTags.length; i++) {
+              const index = this.selectedCuisineTags[i]
+                if (r.Cuisines === this.cuisines[index]) {
+                  return true
+                }
+          }
+          return false;
+          })
+        }
+
+        if (this.priceFilter && this.searchOn) {
+          this.searchRestaurant = this.searchRestaurant.filter(r => {
+          for (let i = 0; i < this.selectedPriceTags.length; i++) {
+            const index = this.selectedPriceTags[i]
+            console.log(r.Price_Range === this.pricerange[index])
+              if (r.Price_Range === this.pricerange[index]) {
+                return true
+              }
+          }
+          return false;
+          })
+        } else if (this.priceFilter) {
+          this.searchRestaurant = this.restaurants.filter(r => {
+          for (let i = 0; i < this.selectedPriceTags.length; i++) {
+            const index = this.selectedPriceTags[i]
+            console.log(r.Price_Range === this.pricerange[index])
+              if (r.Price_Range === this.pricerange[index]) {
+                return true
+              }
+          }
+          return false;
+          })
+        }
+
+      } else {
+        if (this.searchValue) {
+          this.needOriginalSearch = true;
+          this.handleSearch(this.searchValue)
+        } else {
+          this.searchRestaurant = this.restaurants;
+        }
+      }
+    },
   }
 
 }
@@ -295,70 +417,38 @@ a {
   margin-left: 3.5%;
 }
 
-#landingimage {
-  width: 45%;
-  position: absolute;
-  left: 0px;
-  height: 100%;
-}
-
-.rightHalf {
-  width: 55%;
-  position: absolute;
-  right: 0px;
-  height: 100%;
-}
-
-#foodimage { 
-    height: 5.5vh;
-    top: 1.9vh;
-    left: 3vw;
-    background-position: center center;
-    background-size: cover;
-    opacity: 1;
-    position: relative;
-}
-
-#lpbreadcrumbs {
-    color: rgba(109,93,36,1);
-    position: relative;
-    height: 0vh;
-    top: -2.5vh;
-    left: 32vw;
-    font-family: Nunito; 
-    font-size: 1.1vw;
-    text-align: right;
-    display: flex;
-} 
-
-#tagline {
-  width: 500px;
-  color: rgba(0,0,0,1);
+.loader-container {
   position: relative;
-  top: 30vh;
-  left: 3vw;
-  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0);
-  font-family: Lato;
-  font-size: 2.67vw;
-  opacity: 1;
+  height: 100%;
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid rgba(109,93,36,1);
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  animation: spin 2s linear infinite;
+  position: absolute;
+  top: 60%;
+  left: 45%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#loadingmessage{
   text-align: center;
-}
-
-.searchtagline {
-  text-align: center;
-  font-family:Nunito; 
-  color: rgb(128,128,128);
-}
-
-.text-field-wrapper {
-  margin-top: 23.1vh; 
-  margin-left: 3vw; 
-  margin-right: 30%;
-}
-
-#PostalField { 
-  height: 7.0%;
+  position: absolute;
+  top: 80%;
+  left: 48%;
+  transform: translate(-50%, -50%);
+  font-family: Nunito; 
   
 }
+
 
 </style>

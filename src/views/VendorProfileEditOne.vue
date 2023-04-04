@@ -40,9 +40,9 @@
                 readonly
               ></v-text-field><br>
 
-              <v-divider class="border-opacity-25"></v-divider><br>
+              <!-- <v-divider class="border-opacity-25"></v-divider><br> -->
 
-              <center>
+              <!-- <center>
                   <h4 style="font-family:Nunito">Company Profile Image</h4> 
                   <v-img 
                   :src="image" 
@@ -51,10 +51,10 @@
                   contain class="ma-4"
                   accept="image/png, image/gif, image/jpeg"
                   ></v-img>          
-              </center>
+              </center> -->
 
               <!-- Image picker-->
-              <div id = 'imagePicker'>
+              <!-- <div id = 'imagePicker'>
 
                   <v-file-input 
                   prepend-icon="mdi-camera" 
@@ -71,7 +71,7 @@
                   block
                   style="font-family:Nunito">
                   Save new profile image
-              </v-btn><br><br>
+              </v-btn><br><br> -->
             </v-form>
 
             <!-- changing of passwords-->
@@ -203,17 +203,17 @@
       components:{
         VendorBreadCrumbs
       },
-      computed: {
-        image() {
-        if (this.file) {
-            console.log("Got image");
-            return URL.createObjectURL(this.file); 
-        }  else {
-            console.log("NOO image");
-            return 'https://via.placeholder.com/500';
-        }
-        }
-       },
+      // computed: {
+      //   image() {
+      //   if (this.file) {
+      //       console.log("Got image");
+      //       return URL.createObjectURL(this.file); 
+      //   }  else {
+      //       console.log("NOO image");
+      //       return 'https://via.placeholder.com/500';
+      //   }
+      //   }
+      //  },
       methods: {
         // Change password
         async updatePW() {

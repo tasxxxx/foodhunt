@@ -2,7 +2,7 @@
     <!-- <router-view/> -->
     <BreadCrumbs/>
     <div class="container">
-        <img id = "girlImage" src="@/assets/girl.jpg" alt = "">
+        <img id = "girlImage" src="@/assets/brian-tromp-MO8afII4J_o-unsplash.jpg" alt = "">
     </div>
     <div id = 'box'>
             <br><h1 id ='heading' style="font-family:Lato"><center>Partner with us!</center></h1><br>
@@ -15,7 +15,7 @@
                 So what are you waiting for? Join us by clicking the button below and let us build a food hunting ecosystem like no other! Happy hunting!
             </div><br><br>
 
-            <center><v-btn id = 'searchbutton' variant="outlined" href="/vendor-register">Register as a vendor!</v-btn></center>
+            <center><v-btn id = 'searchbutton' href="/vendor-register" style="font-family:Nunito" color="primary">Register as a vendor!</v-btn></center>
         </div>
 </template>
   
@@ -33,7 +33,8 @@ components:{
 <style scoped>
 #girlImage{
     width: 100vw;
-    height: 90vh;
+    margin-left:0%;
+    height: auto;
     position: absolute;
     opacity: 1;
 }
@@ -43,21 +44,20 @@ components:{
 }
 
 #box {
-    margin-top: 16vh;
-    margin-left: 5vw;
-    width:625px;
-    height:625px;
-    padding: 20px;
+    margin-top: 45vh;
+    margin-left: 28vw;
+    width:700px;
+    height:500px;
+    padding-left: 20px;
+    padding-right: 20px;
     background: white;
     position: absolute; 
     border-radius: 25px;
     box-shadow: 6.1px 12.2px 12.2px hsl(0deg 0% 0% / 0.31);
     font-size: smaller;
-    top: 30px;
-    left: 16px;
     text-align: center;
     letter-spacing: 0.1em;
     line-height: 2;
-    opacity: 0.73;
+    opacity: 0.90;
 }
 </style>
