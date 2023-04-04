@@ -347,7 +347,6 @@ export default {
 };
 </script>
 
-
 <style>
 .list-container {
   height: 700px;; /* set a fixed height */
