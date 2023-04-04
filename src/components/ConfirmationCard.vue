@@ -49,7 +49,7 @@
                     </v-col>
                   <v-col cols="0">
                     <v-card-subtitle style="font-family:Nunito; text-align:right">
-                      ${{ prod.subtotal }}
+                      ${{ prod.subtotal ? prod.subtotal.toFixed(2) : '' }}
                     </v-card-subtitle>
                     </v-col>
                 </v-row>
@@ -149,7 +149,7 @@ async mounted() {
       if (docSnap.exists()) {
         const documentData = docSnap.data();
         if(documentData.user === this.useremail) {
-        this.vendorImageURL = "https://picsum.photos/id/237/200/300";
+          this.vendorImageURL = "https://picsum.photos/id/237/200/300";
           const cart = documentData.cart;
           const foodID = cart[0].foodID
           const foodRef = doc(db, "food_listings", foodID);
@@ -212,10 +212,8 @@ async mounted() {
           });
           this.$router.push('/restaurantlisting');
         }
-      }
-  },
-  
-  async confirm() {
+      }, 
+      async confirm() {
       let canConfirm = true;
       const reserveRef = doc(db, "reservation_orders", this.reservationNumber);
       for (const item of this.details.cart) {
@@ -271,7 +269,9 @@ async mounted() {
         });
     }
     this.$router.push('/restaurantlisting') 
-  }
+    } 
+  },
+
 }
 
 </script>
