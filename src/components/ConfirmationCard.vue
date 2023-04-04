@@ -49,7 +49,7 @@
                     </v-col>
                   <v-col cols="0">
                     <v-card-subtitle style="font-family:Nunito; text-align:right">
-                      ${{ prod.subtotal }}
+                      ${{ prod.subtotal ? prod.subtotal.toFixed(2) : '' }}
                     </v-card-subtitle>
                     </v-col>
                 </v-row>
@@ -94,7 +94,7 @@ import firebaseApp from "../firebase";
 import { getFirestore } from 'firebase/firestore';
 import { getDoc, deleteDoc, collection, doc, updateDoc} from 'firebase/firestore';
 import { useToast } from 'vue-toastification'
-import { getAuth} from "@firebase/auth";
+import { getAuth, onAuthStateChanged} from "@firebase/auth";
 const db = getFirestore(firebaseApp);
 const toast = useToast();
 
@@ -109,45 +109,111 @@ props: {
 data() {
   return {
     details: [],
+    useremail: '',
     vendorImageURL: null,
   }
 },    
 async mounted() {
-  this.vendorImageURL = "https://picsum.photos/id/237/200/300";
-  const reserveRef = doc(db, "reservation_orders", this.reservationNumber);
-    const docSnap = await getDoc(reserveRef); 
-    const documentData = docSnap.data();
-    const cart = documentData.cart;
-    const foodID = cart[0].foodID
-    const foodRef = doc(db, "food_listings", foodID);
-    const foodRefData = await getDoc(foodRef); 
-    const foodRefPersID = foodRefData.data().Restaurant_PersonalisationId
-    const restaurantPers = doc(db, "restaurant_personalisation", foodRefPersID);
-    const restaurantPersData = await getDoc(restaurantPers); 
-    const address = restaurantPersData.data().Address
-    const name = cart[0].restaurant
-    const now = new Date()
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-    const currentDay = days[now.getDay()]
-    const closingTime = restaurantPersData.data()[currentDay].split(' - ')[1]        
-    const timestamp = documentData.createdAt;
-    const date = timestamp.toDate();
-    const dateString = date.toDateString();
-    const timeString = date.toLocaleTimeString();
-    const dateTimeString = dateString + ' ' + timeString;
-    const pickUpTime = dateString +", " + closingTime
-    const total = documentData.total;
-    this.details = {
-          name,
-          cart, 
-          dateTimeString, 
-          total,
-          address,
-          pickUpTime
-    }
-},
-methods: {
-    async confirm() {
+  const auth = getAuth();
+     onAuthStateChanged(auth, (user) => {
+      if (user) {
+        this.useremail = auth.currentUser.email;
+        this.retrieveReservation();
+      } else {
+        if (this.$route.path.split('/').pop() !== "restaurantlisting") {
+          toast.error("Access denied! Please sign in!", {
+            position: "top-right",
+            timeout: 2019,
+            closeOnClick: true,
+            pauseOnFocusLoss: false,
+            pauseOnHover: false,
+            draggable: true,
+            draggablePercent: 2,
+            showCloseButtonOnHover: false,
+            hideProgressBar: false,
+            closeButton: "button",
+            icon: true,
+            rtl: false
+          });
+          this.$router.push('/login');
+        } else { 
+          this.$router.push('/login');
+        }
+      }
+    });
+  }, 
+  methods: {
+    async retrieveReservation() {
+      const reserveRef = doc(db, "reservation_orders", this.reservationNumber);
+      const docSnap = await getDoc(reserveRef); 
+      if (docSnap.exists()) {
+        const documentData = docSnap.data();
+        if(documentData.user === this.useremail) {
+          this.vendorImageURL = "https://picsum.photos/id/237/200/300";
+          const cart = documentData.cart;
+          const foodID = cart[0].foodID
+          const foodRef = doc(db, "food_listings", foodID);
+          const foodRefData = await getDoc(foodRef); 
+          const foodRefPersID = foodRefData.data().Restaurant_PersonalisationId
+          const restaurantPers = doc(db, "restaurant_personalisation", foodRefPersID);
+          const restaurantPersData = await getDoc(restaurantPers); 
+          const address = restaurantPersData.data().Address
+          const name = cart[0].restaurant
+          const now = new Date()
+          const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+          const currentDay = days[now.getDay()]
+          const closingTime = restaurantPersData.data()[currentDay].split(' - ')[1]        
+          const timestamp = documentData.createdAt;
+          const date = timestamp.toDate();
+          const dateString = date.toDateString();
+          const timeString = date.toLocaleTimeString();
+          const dateTimeString = dateString + ' ' + timeString;
+          const pickUpTime = dateString +", " + closingTime
+          const total = documentData.total;
+          this.details = {
+                name,
+                cart, 
+                dateTimeString, 
+                total,
+                address,
+                pickUpTime
+          }
+        } else {
+          toast.error("Access denied!", {
+            position: "top-right",
+            timeout: 2019,
+            closeOnClick: true,
+            pauseOnFocusLoss: false,
+            pauseOnHover: false,
+            draggable: true,
+            draggablePercent: 2,
+            showCloseButtonOnHover: false,
+            hideProgressBar: false,
+            closeButton: "button",
+            icon: true,
+            rtl: false
+          });
+          this.$router.push('/restaurantlisting');
+        }
+      } else {
+        toast.error("No reservation found!", {
+            position: "top-right",
+            timeout: 2019,
+            closeOnClick: true,
+            pauseOnFocusLoss: false,
+            pauseOnHover: false,
+            draggable: true,
+            draggablePercent: 2,
+            showCloseButtonOnHover: false,
+            hideProgressBar: false,
+            closeButton: "button",
+            icon: true,
+            rtl: false
+          });
+          this.$router.push('/restaurantlisting');
+        }
+      }, 
+      async confirm() {
       let canConfirm = true;
       const reserveRef = doc(db, "reservation_orders", this.reservationNumber);
       for (const item of this.details.cart) {
@@ -203,9 +269,11 @@ methods: {
         });
     }
     this.$router.push('/restaurantlisting') 
-  }
+    } 
+  },
+
 }
-}
+
 </script>
 
 <style scoped>
