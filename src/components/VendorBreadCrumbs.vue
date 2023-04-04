@@ -1,7 +1,7 @@
 <template>  
     <div class = "VendorBreadCrumbs">
       <v-breadcrumbs id = "logo">
-      <v-breadcrumbs-item :to="{ name: 'vendor-dashboard'}">
+      <v-breadcrumbs-item>
         <img id = "foodimage" src="@/assets/FoodHuntLogo.png" alt = "">
       </v-breadcrumbs-item>
       </v-breadcrumbs>
