@@ -10,7 +10,7 @@
         <h2 style="font-family:Nunito; margin-left: 5vw;">Around the island..</h2>
       </div>
 
-      <SearchBar @search="handleSearch"/>
+      <SearchBarAndFilter @search="handleSearch" @filterCuisine="handleCuisine" @filterPrice="handlePrice"/>
 
       <!-- <v-breadcrumbs-item :to="{ name: 'restaurant'}">
         <v-icon icon="mdi-shopping"></v-icon>
@@ -49,16 +49,17 @@
         </router-link>
       </div>
     </div>
-    <h3 v-if="searchOn" class="searchtagline" >The end... Happy hunting!</h3>
+    <h3 v-if="searchOn" class="searchtagline" >The end... Happy hunting!<br><br><br></h3>
   </div>
 </template>
   
   <script> 
 import NavigationBar1 from '@/components/NavigationBar1.vue'
-import SearchBar from '@/components/SearchBar.vue'
+import SearchBarAndFilter from '@/components/SearchBarAndFilter.vue'
 import firebaseApp from "../firebase";
 import { getFirestore } from 'firebase/firestore';
 import { getDoc, doc, getDocs, collection} from 'firebase/firestore';
+import { onRenderTracked } from 'vue';
 import EmptyRestaurant from '@/components/EmptyRestaurant.vue'
 const db = getFirestore(firebaseApp);
   
@@ -66,7 +67,7 @@ export default {
   name: "RestaurantListing",
   components:{
     NavigationBar1,
-    SearchBar,
+    SearchBarAndFilter,
     EmptyRestaurant
   },
 
@@ -74,8 +75,24 @@ export default {
     return {
       restaurants: [],
       searchRestaurant: [],
+      searchValue: "",
       searchOn: false,
-      showPlaceholder: false // Add a boolean data property
+      cuisines: [ //hardcoded and order matches SearchBarAndFilter.vue same for pricerange
+        "Chinese",
+        "Indian",
+        "Malay",
+        "Café",
+      ],
+      pricerange: [
+        "$",
+        "$$",
+        "$$$",
+      ],
+      cuisineFilter: false,
+      priceFilter: false,
+      selectedCuisineTags : [],
+      selectedPriceTags: [],
+      needOriginalSearch: false,
     }
   },
 
@@ -148,18 +165,25 @@ export default {
           }
       }
     },
+
     openRestaurants() {
       return this.restaurants.filter(restaurant => this.closingTimes(restaurant) !== 'Closed')
     },
 
     searchRestaurant() {
       return this.searchRestaurant.filter(restaurant => this.closingTimes(restaurant) !== 'Closed')
-    }
+    },
+
   },
+
   methods: {
+
     handleSearch(value) {
-      if (value && value.length > 0) {
+      console.log("inside handleSearch")
+      if (value && value.length > 0 && this.needOriginalSearch) {
+        this.searchValue = value
         this.searchOn = true;
+        this.needOriginalSearch = false
         this.searchRestaurant = this.restaurants.filter(r => {
           const val = value.toLowerCase()
           const restaurantName = r.Name.toString().toLowerCase().split(" ")
@@ -170,12 +194,107 @@ export default {
             }
           }
         })
-        return false;
+        return false;      
+      } else if (value && value.length > 0) {
+        this.searchValue = value
+        this.searchOn = true;
+        this.searchRestaurant = this.searchRestaurant.filter(r => {
+          const val = value.toLowerCase()
+          const restaurantName = r.Name.toString().toLowerCase().split(" ")
+          for (let i = 0; i < restaurantName.length; i++) {
+            if (restaurantName[i].indexOf(val) !== -1) {
+              this.searchOn = true;
+              return true;
+            }
+          }
+        })
+        return false; 
       } else {
+        this.searchValue = false;
         this.searchOn = false;
         this.searchRestaurant = this.restaurants
       }
-    }
+    },
+
+    handleCuisine(value) {
+      if (value.length > 0) {
+        this.cuisineFilter = true
+        this.selectedCuisineTags = value
+      } else {
+        this.cuisineFilter = false
+      }
+      this.filtering()
+    },
+
+    handlePrice(value) {
+      if (value.length > 0) {
+        this.priceFilter = true
+        this.selectedPriceTags = value
+        console.log(value)
+      } else {
+        this.priceFilter = false
+      }
+      this.filtering()
+    },
+
+    filtering() {
+      if (this.cuisineFilter || this.priceFilter) {
+
+        if (this.cuisineFilter && this.searchOn) {
+          this.searchRestaurant = this.searchRestaurant.filter(r => {
+            for (let i = 0; i < this.selectedCuisineTags.length; i++) {
+              const index = this.selectedCuisineTags[i]
+                if (r.Cuisines === this.cuisines[index]) {
+                  return true
+                }
+          }
+          return false;
+          })
+        } else if (this.cuisineFilter) {
+          this.searchRestaurant = this.restaurants.filter(r => {
+            for (let i = 0; i < this.selectedCuisineTags.length; i++) {
+              const index = this.selectedCuisineTags[i]
+                if (r.Cuisines === this.cuisines[index]) {
+                  return true
+                }
+          }
+          return false;
+          })
+        }
+
+        if (this.priceFilter && this.searchOn) {
+          this.searchRestaurant = this.searchRestaurant.filter(r => {
+          for (let i = 0; i < this.selectedPriceTags.length; i++) {
+            const index = this.selectedPriceTags[i]
+            console.log(r.Price_Range === this.pricerange[index])
+              if (r.Price_Range === this.pricerange[index]) {
+                return true
+              }
+          }
+          return false;
+          })
+        } else if (this.priceFilter) {
+          this.searchRestaurant = this.restaurants.filter(r => {
+          for (let i = 0; i < this.selectedPriceTags.length; i++) {
+            const index = this.selectedPriceTags[i]
+            console.log(r.Price_Range === this.pricerange[index])
+              if (r.Price_Range === this.pricerange[index]) {
+                return true
+              }
+          }
+          return false;
+          })
+        }
+
+      } else {
+        if (this.searchValue) {
+          this.needOriginalSearch = true;
+          this.handleSearch(this.searchValue)
+        } else {
+          this.searchRestaurant = this.restaurants;
+        }
+      }
+    },
   }
 
 }
