@@ -206,6 +206,7 @@
     </script>
     
     <style scoped>
+
       #backgroundimg {
         width: 100vw;
         margin-top: -9%;
@@ -220,6 +221,11 @@
         padding:10vh;
         padding-left: 30vw;
         padding-right: 30vw;
+      }
+      .container {
+        position: relative;
+        height: 100vh;
+        overflow: hidden;
       }
     
     </style>

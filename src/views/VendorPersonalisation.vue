@@ -72,11 +72,11 @@
                         ></v-list-item>
                     </template>
 
-                    <v-item-group mandatory v-model="selectedCuisines" selected-class="bg-grey">
+                    <v-item-group mandatory v-model="selectedCuisines" selected-class="bg-primary">
                         <v-item v-for="cuisine in cuisines"
                             v-slot="{ selectedClass, toggle }">
 
-                            <v-chip :class="selectedClass" @click="toggle" v-text = "cuisine" style="font-family:Nunito"></v-chip>
+                            <v-chip :class="selectedClass" @click="toggle" v-text = "cuisine" style="font-family:Nunito; margin-left: 10px; padding: 8px;"></v-chip>
                         </v-item>
                     </v-item-group>
                 </v-list-group>
@@ -91,11 +91,11 @@
                         ></v-list-item>
                     </template>
 
-                    <v-item-group mandatory v-model="selectedPriceRanges" selected-class="bg-grey">
+                    <v-item-group mandatory v-model="selectedPriceRanges" selected-class="bg-primary">
                         <v-item v-for="pr in priceranges" 
                             v-slot="{ selectedClass, toggle }">
 
-                            <v-chip :class="selectedClass" @click="toggle" v-text = "pr" style="font-family:Nunito"></v-chip>
+                            <v-chip :class="selectedClass" @click="toggle" v-text = "pr" style="font-family:Nunito; margin-left: 10px; padding: 8px;"></v-chip>
                         </v-item>
                     </v-item-group>
                 </v-list-group>
@@ -109,11 +109,11 @@
                         required
                         ></v-list-item>
                     </template>
-                    <v-item-group mandatory v-model="selectedTowns" selected-class="bg-grey">
+                    <v-item-group mandatory v-model="selectedTowns" selected-class="bg-primary">
                         <v-item v-for="town in towns" 
                             v-slot="{ selectedClass, toggle }">
 
-                            <v-chip :class="selectedClass" @click="toggle" v-text = "town" style="font-family:Nunito"></v-chip>
+                            <v-chip :class="selectedClass" @click="toggle" v-text = "town" style="font-family:Nunito; margin-left: 10px; padding: 8px;"></v-chip>
                         </v-item>
                     </v-item-group>
                 </v-list-group>
@@ -480,10 +480,9 @@
     <style scoped>
       #backgroundimg {
         width: 100vw;
-        height: 280%;
+        height: 280vh;
         position: absolute;
       }
-    
       #backgroundimg1{
         width:10vw;
       }
@@ -491,7 +490,9 @@
         padding:10vh;
         padding-left: 30vw;
         padding-right: 30vw;
-        
+        margin-left: 5vh;
+        position: absolute;
+        top: 140%;
+        transform: translateY(-50%)
       }
-    
     </style>

@@ -15,7 +15,7 @@
                 So what are you waiting for? Join us by clicking the button below and let us build a food hunting ecosystem like no other! Happy hunting!
             </div><br><br>
 
-            <center><v-btn id = 'searchbutton' variant="outlined" href="/vendor-register">Register as a vendor!</v-btn></center>
+            <center><v-btn id = 'searchbutton' href="/vendor-register" style="font-family:Nunito" color="primary">Register as a vendor!</v-btn></center>
         </div>
 </template>
   
@@ -44,12 +44,12 @@ components:{
 }
 
 #box {
-    margin-top: 40vh;
-    margin-left: 18vw;
-    width:900px;
-    height:450px;
-    padding-left: 10px;
-    padding-right: 10px;
+    margin-top: 45vh;
+    margin-left: 28vw;
+    width:700px;
+    height:500px;
+    padding-left: 20px;
+    padding-right: 20px;
     background: white;
     position: absolute; 
     border-radius: 25px;

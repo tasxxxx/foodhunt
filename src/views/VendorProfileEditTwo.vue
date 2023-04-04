@@ -10,6 +10,31 @@
 
             <v-form ref="form" @submit.prevent="checkerrors">
 
+            <!--Imaging will be here now-->
+            <center>
+                <h4 style="font-family:Nunito">Company Profile Image</h4> 
+                <v-img 
+                :src="image" 
+                :width="100" 
+                :height="100" 
+                contain class="ma-4"
+                accept="image/png, image/gif, image/jpeg"
+                ></v-img>          
+            </center>
+
+            <!-- Image picker-->
+            <div id = 'imagePicker'>
+
+                <v-file-input 
+                prepend-icon="mdi-camera" 
+                v-model="file" 
+                label="Select Image"
+                style="font-family:Nunito"
+                ></v-file-input>
+            </div>
+
+            <v-divider class="border-opacity-25"></v-divider><br>
+
             <!-- Address -->
             <v-text-field
               v-model="form.address"
@@ -338,6 +363,17 @@
       components:{
         VendorBreadCrumbs
       },
+      computed: {
+        image() {
+        if (this.file) {
+            console.log("Got image");
+            return URL.createObjectURL(this.file); 
+        }  else {
+            console.log("NOO image");
+            return 'https://via.placeholder.com/500';
+        }
+        }
+       },
       methods: {
         async checkerrors() {
             this.formErrors = {};
