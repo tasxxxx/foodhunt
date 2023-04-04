@@ -47,6 +47,7 @@
         </v-card>
       </div>
     </v-col>
+    
     <v-col cols="8">     
         <v-card
           :loading="loading"
