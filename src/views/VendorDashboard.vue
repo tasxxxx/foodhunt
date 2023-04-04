@@ -78,6 +78,8 @@ export default {
     data() {
       return {
         user: false,
+        image: "",
+        imageURL: "",
       }
     },
     components:{
@@ -94,6 +96,9 @@ export default {
         goVendorReservation() {
             this.$router.push('/vendor-reservation')
         },
+    },
+    mounted() {
+        //this.imageUrl = URL.createObjectURL(this.image);
     }
 }
 </script>
