@@ -19,7 +19,7 @@
               v-for="(item, index) in items" 
               :key="index" 
               @click="selectedIndex = index" 
-              :class="{'selected': selectedIndex === index} "
+              :color="selectedIndex === index ? 'primary' : undefined"
               min-height="150"          
             >
               <br>
@@ -84,7 +84,7 @@
                     <v-card-subtitle>Order Time and Date</v-card-subtitle>
                     <v-card-subtitle>
                       <v-icon
-                        color="error"
+                        color="success"
                         icon="mdi-clipboard-text-clock"
                         size="small"
                       ></v-icon>
@@ -99,30 +99,26 @@
                 </v-row>
                 <v-divider></v-divider>
                 
-                <v-card-item
+                <br>
+                <v-row
                   v-for="(vendorItem, index) in items[selectedIndex].VendorItems" 
-                  :key="index" 
+                  :key="index"
                 >
-                  <v-row>
-                    <v-col cols="9">         
-                        <v-card-subtitle>{{ vendorItem.quantity }}X {{ vendorItem.item }}</v-card-subtitle>
-                    </v-col>
-                    <v-col cols="3" class="text-right">
-
-                      <v-card-subtitle class="me-1">${{ vendorItem.price }}</v-card-subtitle>
-                    </v-col>
-                  </v-row>
-                </v-card-item>
-                <v-card-subtitle>
-                  <v-icon
-                    color="error"
-                    icon="mdi-list-box"
-                    size="small"
-                  ></v-icon>
-                </v-card-subtitle>
-                  
-
-                <v-divider></v-divider>
+                  <v-col cols="9" class="text-left ml-16"> 
+                    <!-- <v-card-subtitle>
+                      <v-icon
+                        color="primary"
+                        icon="mdi-clipboard-text-clock"
+                        size="small"
+                      ></v-icon>
+                    </v-card-subtitle> -->
+                    <v-card-subtitle> {{ vendorItem.quantity }} X {{ vendorItem.item }}</v-card-subtitle>
+                  </v-col>
+                  <v-col cols="2" class="text-right">
+                    <v-card-subtitle class="me-1">${{ parseInt(vendorItem.price).toFixed(2) }}</v-card-subtitle>
+                  </v-col>
+                  <v-divider inset></v-divider>
+                </v-row>
 
                 <v-row>
                   <v-col cols="9">
@@ -131,46 +127,40 @@
                     <v-card-subtitle>Paid by</v-card-subtitle>
                     <v-card-subtitle>Pickup Time and Date</v-card-subtitle>
                     <v-card-subtitle>Pickup Location</v-card-subtitle>
-                    <v-card-subtitle>
-                      <v-icon
-                        color="error"
-                        icon="mdi-map-marker"
-                        size="small"
-                      ></v-icon>
-                    </v-card-subtitle>
                   </v-col>
                   <v-col cols="3" class="text-right">
                     <br>
-                    <v-card-subtitle class="me-1">${{ items[selectedIndex].total }}</v-card-subtitle>
+                    <v-card-subtitle class="me-1">${{ parseInt(items[selectedIndex].total).toFixed(2) }}</v-card-subtitle>
                     <v-card-subtitle class="me-1">In-store payment</v-card-subtitle>
                     <v-card-subtitle class="me-1">{{ items[selectedIndex].collectBy }}</v-card-subtitle>
                     <v-card-subtitle class="me-1">{{ vendorLocation }}</v-card-subtitle>
                   </v-col>
                 </v-row>
+                <br>
                 <v-divider></v-divider>
               </v-card-item>
               <v-row>
-              <v-col cols="7">
-                <v-btn 
-                  color="secondary" 
-                  class="mt-6 ml-6"
-                  width="250"
-                  @click="confirmPickup"
-                >
-                  Cancel Reservations
-                </v-btn>
-              </v-col>
-              <v-col cols="5">
-                <v-btn 
-                  color="primary" 
-                  class="mt-6 mr-0"
-                  width="250"
-                  @click="confirmPickup"
-                >
-                  Confirm Pickup
-                </v-btn>
-              </v-col>
-            </v-row>
+                <v-col cols="8">
+                  <v-btn 
+                    color="secondary" 
+                    class="mt-6 ml-6"
+                    width="230"
+                    @click="cancelReservation"
+                  >
+                    Cancel Reservations
+                  </v-btn>
+                </v-col>
+                <v-col cols="4">
+                  <v-btn 
+                    color="primary" 
+                    class="mt-6"
+                    width="230"
+                    @click="confirmPickup"
+                  >
+                    Confirm Pickup
+                  </v-btn>
+                </v-col>
+              </v-row>
               <br>
               <br>
               
@@ -212,7 +202,9 @@ export default {
       vendorLocation: "test",
       //vendorTotal: 0,
       noReserve: true,
-      showPlaceholder: false // Add a boolean data property
+      showPlaceholder: false, // Add a boolean data property
+      selected: false,
+  
 
       /*
       items: [
@@ -403,12 +395,27 @@ export default {
           closeButton: "button",
           icon: true,
           rtl: false
-        }); 
-        
+        });       
         this.$router.push('/vendor-dashboard');
       }
-      
     },
+    async cancelReservation() {
+      toast.success("Reservation has been cancelled", {
+        position: "top-right",
+        timeout: 2019,
+        closeOnClick: true,
+        pauseOnFocusLoss: false,
+        pauseOnHover: false,
+        draggable: true,
+        draggablePercent: 2,
+        showCloseButtonOnHover: false,
+        hideProgressBar: false,
+        closeButton: "button",
+        icon: true,
+        rtl: false
+      });       
+      this.$router.push('/vendor-dashboard');
+    }
   },
   created() {
     setTimeout(() => {
@@ -420,7 +427,7 @@ export default {
 
 <style scoped>
 .list-container {
-  height: 700px;; /* set a fixed height */
+  height: 820px; /* set a fixed height */
   overflow-y: scroll; /* make the container scrollable */
 }
 
@@ -625,7 +632,6 @@ font-weight: 300;
   left: 49%;
   transform: translate(-50%, -50%);
   font-family: Nunito; 
-  
 }
 
 </style>

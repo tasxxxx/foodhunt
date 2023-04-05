@@ -16,7 +16,7 @@
               v-for="(item, index) in items"
               :key="index"
               @click="selectedIndex = index"
-              :class="{ selected: selectedIndex === index }"
+              :color="selectedIndex === index ? 'primary' : undefined"
               min-height="150"
             >
               <br />
@@ -155,7 +155,7 @@
                   class="ml-auto mt-6 mr-0 d-flex"
                   width="250"
                 >
-                  Confirm
+                  Save Changes
                 </v-btn>
                 <br />
                 <br /><br />
@@ -402,7 +402,7 @@ export default {
 
 <style scoped>
 .list-container {
-  height: 800px;; /* set a fixed height */
+  height: 800px; /* set a fixed height */
   overflow-y: scroll; /* make the container scrollable */
 }
 
