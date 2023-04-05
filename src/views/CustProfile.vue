@@ -62,6 +62,8 @@
   import { collection, getFirestore, updateDoc } from "firebase/firestore"
   import { doc, setDoc, getDoc, getDocs } from "firebase/firestore";
   import { getAuth, onAuthStateChanged, sendPasswordResetEmail } from "firebase/auth";
+  import { useToast } from 'vue-toastification'
+  const toast = useToast();
   const db = getFirestore(firebaseApp);
   
   export default {
@@ -96,6 +98,26 @@
             this.form.phoneNo = userData.PhoneNo;
           } else {
             console.log("User document not found");
+          }
+        } else {
+          if (this.$route.path.split('/').pop() !== "restaurantlisting") {
+            toast.error("Access denied! Please sign in!", {
+              position: "top-right",
+              timeout: 2019,
+              closeOnClick: true,
+              pauseOnFocusLoss: false,
+              pauseOnHover: false,
+              draggable: true,
+              draggablePercent: 2,
+              showCloseButtonOnHover: false,
+              hideProgressBar: false,
+              closeButton: "button",
+              icon: true,
+              rtl: false
+            });
+            this.$router.push('/login');
+          } else { 
+            this.$router.push('/login');
           }
         }
       })
