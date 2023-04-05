@@ -48,6 +48,7 @@
           v-model="cuisines"
           column
           multiple
+          @clearFilters="handleClearFilters"
         >
           <v-chip
             filter
@@ -116,7 +117,7 @@
           type="text"
           @change="postalCodeChange"
           @keyup="postalCodeChange"
-          hint="6 digits"
+          maxlength="6"
         ></v-text-field>
       </v-card-text>
     </v-card>
@@ -125,6 +126,7 @@
 </template>
 
 <script>
+
 export default {
     data() {
       return {
@@ -147,6 +149,7 @@ export default {
         },
 
     },
+
 
     watch: {
       cuisines(val) {

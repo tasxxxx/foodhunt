@@ -49,7 +49,7 @@
         </router-link>
       </div>
     </div>
-    <h3 v-if="searchOn" class="searchtagline" >The end... Happy hunting!<br><br><br></h3>
+    <h3 v-if="showTagline" class="searchtagline" >The end... Happy hunting!<br><br><br></h3>
   </div>
 </template>
   
@@ -61,6 +61,7 @@ import { getFirestore } from 'firebase/firestore';
 import { getDoc, doc, getDocs, collection} from 'firebase/firestore';
 import { onRenderTracked } from 'vue';
 import EmptyRestaurant from '@/components/EmptyRestaurant.vue'
+
 const db = getFirestore(firebaseApp);
   
 export default {
@@ -68,7 +69,7 @@ export default {
   components:{
     NavigationBar1,
     SearchBarAndFilter,
-    EmptyRestaurant
+    EmptyRestaurant,
   },
 
   data() {
@@ -95,6 +96,7 @@ export default {
       needOriginalSearch: false,
       postalCodeFilter: false,
       selectedPostalCode: '',
+      showTagline: false,
     }
   },
 
@@ -178,12 +180,15 @@ export default {
 
   },
 
+  emits: ["clearFilters"],
+
   methods: {
 
     handleSearch(value) {
       if (value && value.length > 0 && this.needOriginalSearch) {
         this.searchValue = value
         this.searchOn = true;
+        this.showTagline = true;
         this.needOriginalSearch = false
         this.searchRestaurant = this.restaurants.filter(r => {
           const val = value.toLowerCase()
@@ -199,6 +204,7 @@ export default {
       } else if (value && value.length > 0) {
         this.searchValue = value
         this.searchOn = true;
+        this.showTagline = true;
         this.searchRestaurant = this.searchRestaurant.filter(r => {
           const val = value.toLowerCase()
           const restaurantName = r.Name.toString().toLowerCase().split(" ")
@@ -213,6 +219,7 @@ export default {
       } else {
         this.searchValue = false;
         this.searchOn = false;
+        this.showTagline = false;
         this.searchRestaurant = this.restaurants
       }
     },
@@ -251,7 +258,9 @@ export default {
     filtering() {
       if (this.cuisineFilter || this.priceFilter || this.postalCodeFilter) {
 
-        if (this.cuisineFilter && (this.searchOn || this.priceFilter || this.postalCodeFilter) ) {
+        this.showTagline = true;
+
+        if (this.cuisineFilter && (this.searchOn) ) {
           this.searchRestaurant = this.searchRestaurant.filter(r => {
             for (let i = 0; i < this.selectedCuisineTags.length; i++) {
               const index = this.selectedCuisineTags[i]
@@ -273,7 +282,7 @@ export default {
           })
         }
 
-        if (this.priceFilter && (this.searchOn || this.cuisineFilter || this.postalCodeFilter)) {
+        if (this.priceFilter && (this.searchOn || this.cuisineFilter)) {
           this.searchRestaurant = this.searchRestaurant.filter(r => {
           for (let i = 0; i < this.selectedPriceTags.length; i++) {
             const index = this.selectedPriceTags[i]
@@ -325,6 +334,7 @@ export default {
           this.handleSearch(this.searchValue)
         } else {
           this.searchRestaurant = this.restaurants;
+          this.showTagline = false;
         }
       }
     },
