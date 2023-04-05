@@ -1,10 +1,10 @@
 <template>
   <VendorBreadCrumbs />
-  <div v-if="noListing"> 
+  <div v-if="noListing && !showPlaceholder"> 
     <div class="loader"></div>
     <h1 id="loadingmessage" >Loading your Listings...</h1>
   </div>
-  <EmptyCart v-else-if="noListing && showPlaceholder"/>
+  <EmptyVendorListing v-else-if="noListing && showPlaceholder"/>
   <div v-else>
     <v-card class="mx-auto" max-width="1230">
       <div class="text-h5 pa-5">All listings at a glance...</div>
@@ -83,7 +83,7 @@
                   <v-col cols="6">
                     <h3>Image</h3>
                     <v-img
-                      :src="items[selectedIndex].ImageUrl"
+                      :src="items[selectedIndex].ImageURL"
                       v-if="imageUrl"
                       :width="150"
                       :height="150"
@@ -183,7 +183,7 @@ import {
 import { getFirestore } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 import { useToast } from "vue-toastification";
-import EmptyCart from '@/components/EmptyCart.vue'
+import EmptyVendorListing from '@/components/EmptyVendorListing.vue'
 const toast = useToast();
 const db = getFirestore(firebaseApp);
 const auth = getAuth();
@@ -192,6 +192,7 @@ export default {
   components: {
     //NavigationBar1,
     VendorBreadCrumbs,
+    EmptyVendorListing
   },
   data() {
     return {
@@ -263,6 +264,9 @@ export default {
       const file = event.target.files[0];
       this.imageUrl = URL.createObjectURL(file);
       this.image = file;
+
+      const submittedObject = this.items[this.selectedIndex];
+      submittedObject.ImageURL = URL.createObjectURL(file);
     },
 
     async submitForm() {
@@ -274,6 +278,7 @@ export default {
       this.price = submittedObject.Price;
       this.quantity = submittedObject.AvailableQty;
       this.imageFirebase = submittedObject.ImageURL;
+      this.imageUrl = submittedObject.ImageURL;
 
       this.formErrors = {};
       /*

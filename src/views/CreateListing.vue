@@ -130,7 +130,7 @@ export default {
         price: '',
         quantity: '',
         file: null,
-        imageUrl: 'https://via.placeholder.com/500',
+        imageUrl: 'https://firebasestorage.googleapis.com/v0/b/bt3103-project-8c8a0.appspot.com/o/Default.png?alt=media&token=f058916d-bc50-47de-a8eb-81c0194d22ad',
         image: null,
         imageFirebase: null,
         formErrors: {},
@@ -157,7 +157,7 @@ export default {
 
     async submitForm() {
         this.formErrors = {};
-        /*
+        
         if (!this.name) {
             this.formErrors.name = ['Name is required'];
         }
@@ -173,7 +173,7 @@ export default {
         if (!this.quantity) {
             this.formErrors.quantity = ['Quantity is required'];
         }
-        */
+        
         
 
         // Submit form if no errors
