@@ -221,6 +221,7 @@ export default {
         this.searchOn = false;
         this.showTagline = false;
         this.searchRestaurant = this.restaurants
+        this.emitter.emit("clearFilters")
       }
     },
 

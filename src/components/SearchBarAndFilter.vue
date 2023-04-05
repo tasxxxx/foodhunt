@@ -150,6 +150,14 @@ export default {
 
     },
 
+    created() {
+      this.emitter.on("clearFilters", () => {
+        this.cuisines = []
+        this.price = []
+        this.postalcode = ''
+        console.log("clearFilters event received")
+      })
+    },
 
     watch: {
       cuisines(val) {

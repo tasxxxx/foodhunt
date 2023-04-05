@@ -17,6 +17,8 @@ import "vue-toastification/dist/index.css";
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
+import mitt from 'mitt'
+
 
 
 
@@ -59,4 +61,8 @@ const vuetify = createVuetify({
   // },
 })
 
-createApp(App).use(vuetify).use(router).use(Toast).use(VueSweetalert2).mount('#app')
+const emitter = mitt()
+const app = createApp(App)
+app.config.globalProperties.emitter = emitter
+
+app.use(vuetify).use(router).use(Toast).use(VueSweetalert2).mount('#app')
