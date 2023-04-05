@@ -105,45 +105,28 @@
           </v-chip>
         </v-chip-group>
       </v-card-text>
-
-      <v-card-text>
-        <h2 class="text-h6 mb-2">
-          Postal code
-        </h2>
-        <v-text-field
-          v-model="postalcode"
-          variant="underlined"
-          type="text"
-          @change="postalCodeChange"
-          @keyup="postalCodeChange"
-          hint="6 digits"
-        ></v-text-field>
-      </v-card-text>
     </v-card>
     </v-menu>
 </div>
 </template>
 
 <script>
+import { computed } from 'vue'
 export default {
     data() {
       return {
         searchText: '',
         cuisines: [],
         price: [],
-        postalcode: '',
 
         }
     },
 
-    emits: ["search", "filterCuisine", "filterPrice", "filterPostalCode"],
+    emits: ["search", "filterCuisine", "filterPrice"],
 
     methods: {
         onChange() {
             this.$emit("search", this.searchText)
-        },
-        postalCodeChange() {
-          this.$emit("filterPostalCode", this.postalcode)
         },
 
     },

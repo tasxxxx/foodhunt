@@ -10,7 +10,7 @@
         <h2 style="font-family:Nunito; margin-left: 5vw;">Around the island..</h2>
       </div>
 
-      <SearchBarAndFilter @search="handleSearch" @filterCuisine="handleCuisine" @filterPrice="handlePrice" @filterPostalCode="handlePostalCode"/>
+      <SearchBarAndFilter @search="handleSearch" @filterCuisine="handleCuisine" @filterPrice="handlePrice"/>
 
       <!-- <v-breadcrumbs-item :to="{ name: 'restaurant'}">
         <v-icon icon="mdi-shopping"></v-icon>
@@ -93,8 +93,6 @@ export default {
       selectedCuisineTags : [],
       selectedPriceTags: [],
       needOriginalSearch: false,
-      postalCodeFilter: false,
-      selectedPostalCode: '',
     }
   },
 
@@ -181,6 +179,7 @@ export default {
   methods: {
 
     handleSearch(value) {
+      console.log("inside handleSearch")
       if (value && value.length > 0 && this.needOriginalSearch) {
         this.searchValue = value
         this.searchOn = true;
@@ -229,29 +228,19 @@ export default {
 
     handlePrice(value) {
       if (value.length > 0) {
-        console.log(value)
         this.priceFilter = true
         this.selectedPriceTags = value
+        console.log(value)
       } else {
         this.priceFilter = false
       }
       this.filtering()
     },
 
-    handlePostalCode(value) {
-      if (value && value.length >= 2) {
-        this.postalCodeFilter = true
-        this.selectedPostalCode = value
-      } else {
-        this.postalCodeFilter = false
-      }
-      this.filtering()
-    },
-
     filtering() {
-      if (this.cuisineFilter || this.priceFilter || this.postalCodeFilter) {
+      if (this.cuisineFilter || this.priceFilter) {
 
-        if (this.cuisineFilter && (this.searchOn || this.priceFilter || this.postalCodeFilter) ) {
+        if (this.cuisineFilter && this.searchOn) {
           this.searchRestaurant = this.searchRestaurant.filter(r => {
             for (let i = 0; i < this.selectedCuisineTags.length; i++) {
               const index = this.selectedCuisineTags[i]
@@ -273,7 +262,7 @@ export default {
           })
         }
 
-        if (this.priceFilter && (this.searchOn || this.cuisineFilter || this.postalCodeFilter)) {
+        if (this.priceFilter && this.searchOn) {
           this.searchRestaurant = this.searchRestaurant.filter(r => {
           for (let i = 0; i < this.selectedPriceTags.length; i++) {
             const index = this.selectedPriceTags[i]
@@ -294,28 +283,6 @@ export default {
               }
           }
           return false;
-          })
-        }
-
-        if (this.postalCodeFilter && (this.searchOn || this.cuisineFilter || this.priceFilter)) {
-          this.searchRestaurant = this.searchRestaurant.filter(r => {
-            const restaurantPC = r.Postal_Code.substring(0, 2)
-            const searchPC = this.selectedPostalCode.substring(0, 2)
-            if (restaurantPC === searchPC) {
-              return true;
-            } else {
-              return false;
-            }
-          })
-        } else if (this.postalCodeFilter) {
-            this.searchRestaurant = this.restaurants.filter(r => {
-            const restaurantPC = r.Postal_Code.substring(0, 2)
-            const searchPC = this.selectedPostalCode.substring(0, 2)
-            if (restaurantPC === searchPC) {
-              return true;
-            } else {
-              return false;
-            }
           })
         }
 
