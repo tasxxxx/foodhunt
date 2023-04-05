@@ -1,10 +1,10 @@
 <template>
   <VendorBreadCrumbs/>
-  <div v-if="noReserve"> 
+  <div v-if="noReserve && !showPlaceholder"> 
     <div class="loader"></div>
     <h1 id="loadingmessage" >Loading your reservations...</h1>
   </div>
-  <EmptyCart v-else-if="noReserve && showPlaceholder"/>
+  <EmptyVendorReservation v-else-if="noReserve && showPlaceholder"/>
   <div v-else>
     <v-card
       class="mx-auto" 
@@ -85,7 +85,7 @@
                     <v-card-subtitle>
                       <v-icon
                         color="error"
-                        icon="mdi-fire-circle"
+                        icon="mdi-clipboard-text-clock"
                         size="small"
                       ></v-icon>
                     </v-card-subtitle>
@@ -109,10 +109,18 @@
                     </v-col>
                     <v-col cols="3" class="text-right">
 
-                      <v-card-subtitle class="me-1">${{ vendorItem.subtotal }}</v-card-subtitle>
+                      <v-card-subtitle class="me-1">${{ vendorItem.price }}</v-card-subtitle>
                     </v-col>
                   </v-row>
                 </v-card-item>
+                <v-card-subtitle>
+                  <v-icon
+                    color="error"
+                    icon="mdi-list-box"
+                    size="small"
+                  ></v-icon>
+                </v-card-subtitle>
+                  
 
                 <v-divider></v-divider>
 
@@ -126,14 +134,14 @@
                     <v-card-subtitle>
                       <v-icon
                         color="error"
-                        icon="mdi-fire-circle"
+                        icon="mdi-map-marker"
                         size="small"
                       ></v-icon>
                     </v-card-subtitle>
                   </v-col>
                   <v-col cols="3" class="text-right">
                     <br>
-                    <v-card-subtitle class="me-1">${{ vendorTotal }}</v-card-subtitle>
+                    <v-card-subtitle class="me-1">${{ items[selectedIndex].total }}</v-card-subtitle>
                     <v-card-subtitle class="me-1">In-store payment</v-card-subtitle>
                     <v-card-subtitle class="me-1">{{ items[selectedIndex].collectBy }}</v-card-subtitle>
                     <v-card-subtitle class="me-1">{{ vendorLocation }}</v-card-subtitle>
@@ -181,7 +189,7 @@ import { getDoc, getDocs, collection, doc, updateDoc, setDoc} from 'firebase/fir
 import { getFirestore } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged} from "@firebase/auth";
 import { useToast } from 'vue-toastification';
-import EmptyCart from '@/components/EmptyCart.vue'
+import EmptyVendorReservation from '@/components/EmptyVendorReservation.vue'
 const db = getFirestore(firebaseApp);
 const auth = getAuth();
 const toast = useToast();
@@ -189,7 +197,8 @@ const toast = useToast();
 export default {
   components:{
         //NavigationBar1,
-        VendorBreadCrumbs
+        VendorBreadCrumbs,
+        EmptyVendorReservation
   },
   data() {
     return {
@@ -199,9 +208,9 @@ export default {
       loading: true,
       selection: "",
       selectedItem: null,
-      vendorImageURL: null,
+      vendorImageURL: 'https://firebasestorage.googleapis.com/v0/b/bt3103-project-8c8a0.appspot.com/o/Default.png?alt=media&token=f058916d-bc50-47de-a8eb-81c0194d22ad',
       vendorLocation: "test",
-      vendorTotal: 0,
+      //vendorTotal: 0,
       noReserve: true,
       showPlaceholder: false // Add a boolean data property
 
@@ -230,7 +239,7 @@ export default {
   },
   async mounted() {
     // KIV
-    this.vendorImageURL = "https://picsum.photos/id/237/200/300";
+    //this.vendorImageURL = "https://picsum.photos/id/237/200/300";
     console.log("Mounted is run")
     onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -241,9 +250,11 @@ export default {
         const userRef = await getDoc(doc(db, "Users", curr_email));
         const userName = userRef.data().Name;
 
+
         const userRestaurant_PersonalisationId = userRef.data().Restaurant_PersonalisationId;
         const personalisationRef = await getDoc(doc(db, "restaurant_personalisation", userRestaurant_PersonalisationId));
         this.vendorLocation = personalisationRef.data().Address;
+        this.vendorImageURL = personalisationRef.data().ProfileURL;
         
         /*
         const restPersID = userRef.data().Restaurant_PersonalisationId; 
@@ -264,7 +275,7 @@ export default {
           
           let array = [];
           resObject.VendorItems = array;
-          
+          resObject.reservationTotal = 0;
 
           
           const date = new Date(resObject.createdAt.seconds*1000);
@@ -324,7 +335,9 @@ export default {
               const vendorItems = resObject.VendorItems;
               vendorItems.push(cartItem);
               //console.log("curre: ")
-              this.vendorTotal = this.vendorTotal + cartItem.subtotal;
+              //this.vendorTotal = this.vendorTotal + cartItem.subtotal;
+              //resObject.reservationTotal = resObject.reservationTotal + cartItem.subtotal;
+              
               resObject.VendorItems = vendorItems
               
             }

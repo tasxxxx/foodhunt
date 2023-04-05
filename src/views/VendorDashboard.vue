@@ -6,38 +6,48 @@
             <v-row>
             <v-col cols="12">
             <v-parallax
-                src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"
+                :src="imageURL"
                 height="300"
             >
-                <div class="d-flex flex-column fill-height justify-center align-center text-white">
-                <h1 class="text-h4 font-weight-thin mb-4">
-                    Welcome Back!
-                </h1>
-                <h4 class="subheading">
-                    "Company name"
-                </h4>
-                </div>
+
+                    <div class="d-flex flex-column fill-height justify-center align-center text-white">
+                    <div class="text-h1 font-weight-thin mb-4">
+                        Welcome Back!
+                    </div>
+                    <div class="text-h3 font-weight-thin mb-4">
+                        {{ name }}
+                    </div>
+                    <!-- <v-card class="translucent-card">
+                        <v-card-text>
+                            {{ name }}
+                        </v-card-text>
+                    </v-card> -->
+                    </div>
+
             </v-parallax>
             </v-col>
             </v-row>
 
-            <v-row height = "300">
+            <v-row height = "1000">
                 <v-col cols="6">
                     <div class="d-flex flex-column fill-height justify-center align-center text-black">
+                    <br>
                     <h1 class="text-h4 font-weight-thin mb-4">
-                        Total Listings
+                        TOTAL LISTINGS
                     </h1>
-                    <h4 class="subheading">
-                        "number"
+                    <br>
+                    <h4 class="text-h4 font-weight-thin mb-4">
+                        {{ totalListings }} Items
                     </h4>
                     <br>
+                    <br>
                     <v-row>
-                    <v-col>
-                    <v-btn @click="goVendorListing" variant="outlined">View My Listing</v-btn>
+                    <v-col cols="6">
+                    <v-btn @click="goVendorListing" color="primary" class="mr-5">View My Listing</v-btn>
                      </v-col>
 
-                    <v-col>
-                    <v-btn @click = "goCreateListing" variant="outlined">Create Listing</v-btn>
+                    <v-col cols="6">
+                    <v-btn @click = "goCreateListing" color="primary" class="ml-5">Create Listing</v-btn>
                     </v-col>
                     </v-row>
                     
@@ -46,14 +56,22 @@
                 <v-divider vertical></v-divider>
                 <v-col cols="6">
                     <div class="d-flex flex-column fill-height justify-center align-center text-black">
+                    <br>
                     <h1 class="text-h4 font-weight-thin mb-4">
-                        Sales to Date
+                        SALES TO DATE
                     </h1>
-                    <h4 class="subheading">
-                        "number"
+                    <br>
+                    <h4 class="text-h4 font-weight-thin mb-4">
+                        ${{ totalEarnings.toFixed(2) }}
                     </h4>
                     <br>
-                    <v-btn @click = "goVendorReservation" variant="outlined">View My Reservations</v-btn>
+                    <br>
+                    <v-btn 
+                        @click = "goVendorReservation" 
+                        color="primary"
+                    >
+                        View My Reservations
+                    </v-btn>
 
                     </div>
                 </v-col>
@@ -68,10 +86,10 @@
 import NavigationBar1 from '@/components/NavigationBar1.vue'
 import VendorBreadCrumbs from '@/components/VendorBreadCrumbs.vue';
 import firebaseApp from "../firebase";
-import { collection, getFirestore } from "firebase/firestore";
-import { doc, setDoc, getDoc } from "firebase/firestore";
-import { getAuth, signOut } from "@firebase/auth";
+import { getDoc, getDocs, collection, doc, updateDoc, setDoc, getFirestore} from 'firebase/firestore';
+import { getAuth, onAuthStateChanged} from "@firebase/auth";
 const db = getFirestore(firebaseApp);
+const auth = getAuth();
 
 export default {
     name: "VendorDashboard",
@@ -79,7 +97,10 @@ export default {
       return {
         user: false,
         image: "",
-        imageURL: "",
+        imageURL: "https://firebasestorage.googleapis.com/v0/b/bt3103-project-8c8a0.appspot.com/o/VendorBanner3.jpg?alt=media&token=c18e0ed8-74ba-486d-b24b-661a2ea45840",
+        name: "",
+        totalListings: 0,
+        totalEarnings: 0,
       }
     },
     components:{
@@ -97,9 +118,46 @@ export default {
             this.$router.push('/vendor-reservation')
         },
     },
-    mounted() {
-        //this.imageUrl = URL.createObjectURL(this.image);
-    }
+    async mounted() {
+        
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const vendorID = user.uid;
+
+                // Get current vendor
+                const curr_email = getAuth().currentUser.email;
+                const userRef = await getDoc(doc(db, "Users", curr_email));
+                const userName = userRef.data().Name;
+                this.name = userRef.data().Name;
+
+                const listingRef = await getDocs(collection(db, "food_listings"));
+                const listing = listingRef.docs;
+                for (const lis of listing) {
+                    const lisObject = lis.data();
+                    if (lisObject.VendorID === vendorID) {
+                        this.totalListings = this.totalListings + 1;
+                    }
+                }
+
+                const reservationRef = await getDocs(collection(db, "reservation_orders"));
+                const reservation = reservationRef.docs;
+                for (const res of reservation) {
+                    const resObject = res.data();
+                    const restaurantName = resObject.cart[0].restaurant
+                    if (restaurantName === this.name) {
+                        this.totalEarnings = (this.totalEarnings + resObject.total);
+                    }
+                }
+                /*
+                const userRestaurant_PersonalisationId = userRef.data().Restaurant_PersonalisationId;
+                const personalisationRef = await getDoc(doc(db, "restaurant_personalisation", userRestaurant_PersonalisationId));
+                this.imageURL = personalisationRef.data().ProfileURL;
+                console.log(personalisationRef.data().ProfileURL)
+                */
+            }
+        })
+        
+    },
 }
 </script>
 
@@ -131,5 +189,8 @@ export default {
     letter-spacing: 0.1em;
     line-height: 2;
     opacity: 0.73;
+}
+.translucent-card {
+  background-color: rgba(255, 255, 255, 0.5);
 }
 </style>
