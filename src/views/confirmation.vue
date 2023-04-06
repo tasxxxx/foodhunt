@@ -1,6 +1,10 @@
 <template>
+  <v-parallax
+    :src="backgroundImg"
+  >
   <NavigationBar1/>
   <ConfirmationCard :reservationNumber="reservationNumber"/>
+  </v-parallax>
 </template>
 
 <script>
@@ -27,7 +31,12 @@ props: {
 components:{
   NavigationBar1,
   ConfirmationCard
-},    
+}, 
+data() {
+  return { 
+    backgroundImg: "https://firebasestorage.googleapis.com/v0/b/bt3103-project-8c8a0.appspot.com/o/VendorBackground3.jpg?alt=media&token=b39dfd4b-eb7e-4164-977e-39a8498bcfbd"
+  }
+}   
 }
 </script>
 

@@ -1,8 +1,8 @@
 <template>
+      <v-parallax
+      :src="backgroundImg"
+      >
   <NavigationBar1/>
-  <div class="container">
-  <div>
-    <v-app>
       <v-container>
       <div class="pa-7-wrapper">
       <h2 style="font-family:Nunito;" class="text-left mb-7">Your Profile</h2>
@@ -51,9 +51,7 @@
       </v-card>
       </div>
     </v-container>
-    </v-app>
-  </div>
-  </div>
+  </v-parallax>
 </template>
 
   <script>
@@ -82,6 +80,7 @@
         showPISuccess: false,
         showPWSuccess: false,
         isReadOnly: true,
+        backgroundImg: "https://firebasestorage.googleapis.com/v0/b/bt3103-project-8c8a0.appspot.com/o/VendorBackground3.jpg?alt=media&token=b39dfd4b-eb7e-4164-977e-39a8498bcfbd"
       }
     },
     async mounted() {
@@ -215,6 +214,7 @@
 <style scoped>
   .pa-7-wrapper {
     padding:15vh;
+    margin-top:-50px;
     padding-left: 30vw;
     padding-right: 30vw;
   }

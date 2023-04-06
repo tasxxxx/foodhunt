@@ -124,14 +124,14 @@
                 </v-row>
 
                 <v-row>
-                  <v-col cols="9">
+                  <v-col cols="5">
                     <br>
                     <v-card-subtitle>Total</v-card-subtitle>
                     <v-card-subtitle>Paid by</v-card-subtitle>
                     <v-card-subtitle>Pickup Time and Date</v-card-subtitle>
                     <v-card-subtitle>Pickup Location</v-card-subtitle>
                   </v-col>
-                  <v-col cols="3" class="text-right">
+                  <v-col cols="7" class="text-right">
                     <br>
                     <v-card-subtitle class="me-1">${{ parseInt(items[selectedIndex].total).toFixed(2) }}</v-card-subtitle>
                     <v-card-subtitle class="me-1">In-store payment</v-card-subtitle>

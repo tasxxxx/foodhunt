@@ -25,7 +25,7 @@
               key="reservation.id" 
               @click="selectReservation(reservation)"
               :color="reservation === selected_reservation ? 'primary' : undefined"
-              min-height="150"
+              min-height="200"
             >
               <br>
               <v-row>
@@ -38,14 +38,15 @@
                   <v-row>
                     <div class="text-h6 mb-1">{{ reservation.reservationNo }}</div>
                   </v-row>
+
                   <v-row>
-                    <v-col cols="5">
+                    <v-col cols="8">
                     <div class="text-subtitle-2 mb-1">{{ reservation.cart[0].restaurant }}</div>
                     </v-col>
-                    <v-col cols="5">
+                    <v-col cols="6">
                     <div class="text-subtitle-2 mb-1">{{ reservation.createdAt.toDate().toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }) }}</div>
                     </v-col>
-                    <v-col cols="5">
+                    <v-col cols="6">
                       <div class="text-h6 mb-1">${{ reservation.total.toFixed(2) }}</div>
                     </v-col>
                   </v-row>
@@ -106,7 +107,7 @@
                   <v-col cols="9" class="text-left"> 
                     <v-card-subtitle> {{ order.quantity }} X {{ order.item }}</v-card-subtitle>
                   </v-col>
-                  <v-col cols="2" class="text-right">
+                  <v-col cols="3" class="text-right">
                     <v-card-subtitle class="me-1">${{ order.subtotal.toFixed(2) }}</v-card-subtitle>
                   </v-col>
                 </v-row>
@@ -115,14 +116,14 @@
                 <v-divider></v-divider>
 
                 <v-row>
-                  <v-col cols="9">
+                  <v-col cols="5">
                     <br>
                     <v-card-subtitle>Total</v-card-subtitle>
                     <v-card-subtitle>Paid by</v-card-subtitle>
                     <!-- <v-card-subtitle>Pickup Time and Date</v-card-subtitle> -->
                     <v-card-subtitle>Pickup Location</v-card-subtitle>
                   </v-col>
-                  <v-col cols="3" class="text-right">
+                  <v-col cols="7" class="text-right">
                     <br>
                     <v-card-subtitle class="me-1">${{ selected_reservation.total.toFixed(2) }}</v-card-subtitle>
                     <v-card-subtitle class="me-1">In-store payment</v-card-subtitle>
@@ -132,7 +133,8 @@
                 </v-row>
                 <br>
                 <v-divider></v-divider>
-                <v-btn rounded="lg" color="red" @click="cancelReservation(selected_reservation.reservationNo)"> Cancel Reservation</v-btn>
+                <v-btn rounded="lg" color="red"                  
+@click="cancelReservation(selected_reservation.reservationNo)"> Cancel Reservation</v-btn>
 
 
               </v-card-item>
@@ -296,7 +298,7 @@ export default {
     async cancelReservation(reservationNo) {
         this.$swal.fire({
             title: 'Are you sure?',
-            text: "Please confirm that you are removing the item from the cart?",
+            text: "Please confirm that you are cancelling the reservations?",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
