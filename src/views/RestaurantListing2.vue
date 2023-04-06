@@ -2,7 +2,8 @@
     <NavigationBar1/>
 
       <div className="banner">
-        <img src="../assets/bg1.png">
+        <img :src="bgImageUrl">
+        <!-- :src="bgImageUrl" -->
       </div>
 
         <!-- <img id = "restaurantimg" src="@/assets/macdonaldbanner.jpeg" alt = ""> -->
@@ -75,6 +76,7 @@ export default {
   data() {
     return {
       restaurants: [],
+      bgImageUrl: "https://firebasestorage.googleapis.com/v0/b/bt3103-project-8c8a0.appspot.com/o/images%2Ffinal_banner.png?alt=media&token=9746cd21-22c2-462a-adb1-c65163fa75b9",
       searchRestaurant: [],
       searchValue: "",
       searchOn: false,
