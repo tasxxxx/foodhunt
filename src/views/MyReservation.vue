@@ -1,26 +1,21 @@
 <template>  
+  <v-parallax
+      :src="vendorImageURL2"
+    >
     <NavigationBar1/>
     <div v-if="reservations.length === 0 && !showPlaceholder">
       <div class="loader"></div>
         <h1 id="loadingmessage" >Loading your reservations...</h1>
       </div>
-    <!-- <div class="empty-cart-container" v-if="reservations.length === 0">
-      <img id ="emptycart" src="@/assets/preview.png" alt = "">
-      <h1 id="message">Oops! You have no current reservations. Time to add some items and fill it up!</h1>
-      <v-breadcrumbs-item :to="{ name: 'restaurantlisting'}">
-        <v-btn rounded="lg" color="primary"> Start Hunting!</v-btn>
-      </v-breadcrumbs-item>
-      <img id ="emojisad" src="@/assets/emoji.webp" alt = "">
-    </div> -->
     <EmptyReservation v-else-if="reservations.length === 0 && showPlaceholder"/>
     <div v-else>
   
       <v-card
-        class="mx-auto" 
+        class="mx-auto rounded-card" 
         max-width=1230
-        max-height="640"
+        
       >
-      <div class="text-h5 pa-5"> All orders at a glance...</div>
+      <div class="text-h5 pa-5"> All reservations at a glance...</div>
       <v-divider></v-divider> 
       <v-row>
         <v-col cols="4">
@@ -29,13 +24,14 @@
               v-for="reservation in reservations" 
               key="reservation.id" 
               @click="selectReservation(reservation)"
+              :color="reservation === selected_reservation ? 'primary' : undefined"
               min-height="150"
             >
               <br>
               <v-row>
                 <v-col cols="4">
                   <v-avatar class="mx-auto d-flex" size="100">
-                    <v-img :src="reservation.ImageURL" contain class="white--text"></v-img>
+                    <v-img :src="reservation.vendor.ProfileURL" contain class="white--text"></v-img>
                   </v-avatar>
                 </v-col>
                 <v-col cols="8">
@@ -43,6 +39,9 @@
                     <div class="text-h6 mb-1">{{ reservation.reservationNo }}</div>
                   </v-row>
                   <v-row>
+                    <v-col cols="5">
+                    <div class="text-subtitle-2 mb-1">{{ reservation.cart[0].restaurant }}</div>
+                    </v-col>
                     <v-col cols="5">
                     <div class="text-subtitle-2 mb-1">{{ reservation.createdAt.toDate().toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }) }}</div>
                     </v-col>
@@ -53,8 +52,6 @@
                   <v-row>
                       <v-chip>{{ reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</v-chip>  
                   </v-row>
-
-                  <!-- <div class="text-body-1">{{ item.Category }}</div> -->
                 </v-col>
               </v-row>
             </v-card>
@@ -76,114 +73,89 @@
                   indeterminate
                 ></v-progress-linear>
               </template>
-              
-              <!-- <v-img
+              <v-img
                 cover
                 height="300"
-                :src= "items[selectedItem].ImageURL"
-              ></v-img> -->
-
-              <v-card-item>
-                <!-- <v-card-title>{{ items[selectedItem].Name }}</v-card-title> -->
-
-                <v-card-subtitle>
-                  <!-- <span class="me-1">{{ 'Completed'}}</span> -->
-
-                  <span class="me-1">{{ selected_reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</span>
-
-                  
-                </v-card-subtitle>
-              </v-card-item>
-
-              <v-card-text>
+                :src= defaultVendorImg
+                onerror="this.src='defaultVendorImg'"
                 
+              ></v-img>
+              <v-card-item>
+                <v-row>
+                  <v-col cols="9">
+                    
+                    <v-card-title>{{ selected_reservation.reservationNo }}</v-card-title>
+                    <!-- <v-card-subtitle>Sold to Customer</v-card-subtitle> -->
+                    <br>
+                    <v-card-subtitle>Order from</v-card-subtitle>
+                    <v-card-subtitle>Order Time and Date</v-card-subtitle>
+      
+                  </v-col>
+                  <v-col cols="3" class="text-right">
+                    <v-card-subtitle>{{ selected_reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</v-card-subtitle>
+                    <br>
+                    <v-card-subtitle class="me-1">{{ selected_reservation.vendor.Name}}</v-card-subtitle>
+                    <v-card-subtitle class="me-1">{{ selected_reservation.createdAt.toDate().toLocaleString('en-SG', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) }}</v-card-subtitle>
+                  </v-col>
+                </v-row>
+                <v-divider></v-divider>
+                <v-divider></v-divider>
+                <v-divider></v-divider>
+                <!-- {{selected_reservation.vendor}} -->
+                <v-row v-for="order in selected_reservation.cart" :key="order.id">
+                  <v-col cols="9" class="text-left"> 
+                    <v-card-subtitle> {{ order.quantity }} X {{ order.item }}</v-card-subtitle>
+                  </v-col>
+                  <v-col cols="2" class="text-right">
+                    <v-card-subtitle class="me-1">${{ order.subtotal.toFixed(2) }}</v-card-subtitle>
+                  </v-col>
+                </v-row>
+                <v-divider></v-divider>
+                <v-divider></v-divider>
+                <v-divider></v-divider>
 
-                <div class="my-4 text-subtitle-1">
-                  <!-- Order Time and Date: today -->
+                <v-row>
+                  <v-col cols="9">
+                    <br>
+                    <v-card-subtitle>Total</v-card-subtitle>
+                    <v-card-subtitle>Paid by</v-card-subtitle>
+                    <!-- <v-card-subtitle>Pickup Time and Date</v-card-subtitle> -->
+                    <v-card-subtitle>Pickup Location</v-card-subtitle>
+                  </v-col>
+                  <v-col cols="3" class="text-right">
+                    <br>
+                    <v-card-subtitle class="me-1">${{ selected_reservation.total.toFixed(2) }}</v-card-subtitle>
+                    <v-card-subtitle class="me-1">In-store payment</v-card-subtitle>
+                    <!-- <v-card-subtitle class="me-1">{{ items[selectedIndex].collectBy }}</v-card-subtitle> -->
+                    <v-card-subtitle class="me-1">{{ selected_reservation.vendor.Address }}</v-card-subtitle>
+                  </v-col>
+                </v-row>
+                <br>
+                <v-divider></v-divider>
+                <v-btn rounded="lg" color="red" @click="cancelReservation(selected_reservation.reservationNo)"> Cancel Reservation</v-btn>
 
-                  Order Time and Date: {{ selected_reservation.createdAt.toDate().toLocaleString('en-SG', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) }}
-                </div>
 
-                <!-- <div>{{ items[selectedItem].Description }}</div> -->
-              </v-card-text>
+              </v-card-item>
+            
 
-              <v-divider class="mx-4 mb-1"></v-divider>
-                <v-card-text>
-                  <div v-for="(orders, restaurant) in ordersByRestaurant" :key="restaurant">
-                    <h3>{{ restaurant }}</h3>
-                    <div v-for="order in orders" :key="order.id">
-                      <p>{{ order.quantity }}x {{ order.item }} ${{ order.subtotal.toFixed(2) }}</p>
-                    </div>
-                  </div>
-                </v-card-text>
-              <v-divider class="mx-4 mb-1"></v-divider>
-              <v-card-text>
-                <!-- Total: hello -->
-                Total: ${{ selected_reservation.total.toFixed(2) }}
-              </v-card-text>
-              <v-card-text>
-                Payment By: In Store Payment
-              </v-card-text>
-              <v-divider class="mx-4 mb-1"></v-divider>
 
-              <!-- <v-card-title>Tonight's availability</v-card-title> -->
 
-              <v-btn rounded="lg" color="red" @click="cancelReservation(selected_reservation.reservationNo)"> Cancel Reservation</v-btn>
-              <!-- <v-card-actions>
-                <v-btn
-                  color="red"
-                  variant="text"
-                  @click="showDialog = true"
-                >
-                  Cancel Reservation
-                </v-btn>
-              </v-card-actions>
-              <v-dialog v-model="showDialog" max-width="500">
-                <v-card>
-                  <v-card-title>Confirm Cancel</v-card-title>
-                  <v-card-text>Are you sure you want to cancel your reservation?</v-card-text>
-                  <v-card-actions>
-                    <v-btn color="red" text @click="showDialog = false">No</v-btn>
-                    <v-btn color="green" text @click="cancelReservation(selected_reservation.reservationNo)">Yes</v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-dialog> -->
+              
+
+              
+
+              
+
+
+
             </v-card>
         </v-col>
       </v-row> 
       </v-card>
     </div>
 
-
-    
-    <!-- <h3>All orders at a glance</h3>
-    <div class="reservation-panel">
-      <div class="left-panel">
-        <div v-for="reservation in reservations" :key="reservation.id" className='restaurant' @click="selectReservation(reservation)">
-          <p>{{ reservation.reservationNo }}</p>
-          <p>{{ reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</p>
-          <p>${{ reservation.total }}</p>
-          <p>{{ reservation.createdAt.toDate().toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }) }}</p>
-        </div>
-      </div>
-      <div class="right-panel">
-        <div v-if="selected_reservation">
-          <p>{{ selected_reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</p>
-          <p>{{ selected_reservation.createdAt.toDate().toLocaleString('en-SG', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) }}</p>
-          <hr>
-            <div v-for="(orders, restaurant) in ordersByRestaurant" :key="restaurant">
-              <h3>{{ restaurant }}</h3>
-              <div v-for="order in orders" :key="order.id">
-                <p>{{ order.quantity }}x {{ order.item }} ${{ order.subtotal }}</p>
-              </div>
-            </div>
-          <hr>
-          <p>Total: ${{ selected_reservation.total }}</p>
-          <button>Cancel reservation</button>
-        </div>
-      </div>
-    </div> -->
-    
+    <br><br><br>
+  </v-parallax>
 </template>
 
 <script> 
@@ -209,6 +181,9 @@ export default {
       selected_reservation: null,
       showDialog: false,
       showPlaceholder: false,
+      vendorImageURL2: "https://firebasestorage.googleapis.com/v0/b/bt3103-project-8c8a0.appspot.com/o/VendorBackground3.jpg?alt=media&token=b39dfd4b-eb7e-4164-977e-39a8498bcfbd",
+
+      defaultVendorImg: "https://firebasestorage.googleapis.com/v0/b/bt3103-project-8c8a0.appspot.com/o/vendorProfilePic%2F30624445_2031384813783830_665928700650323968_n-copy.jpegnu9X4EMLI8PpMPJdUvTLGsmEOLr2?alt=media&token=6b94b427-eb0c-4d8e-98e6-e2226c2f5e7c",
 
     }
   },
@@ -254,14 +229,52 @@ export default {
 
     if (this.reservations.length > 0) {
       this.selected_reservation = this.reservations[0]
+      // const foodID = this.selected_reservation.cart[0].foodID
+      // const itemRef = doc(db, "food_listings", foodID);
+      // const itemDoc = await getDoc(itemRef);
+      // const restaurantID = itemDoc.data().Restaurant_PersonalisationId
+      // const restaurantRef = doc(db, "restaurant_personalisation", restaurantID);
+      // const restaurantDoc = await getDoc(restaurantRef);
+      // this.vendor = restaurantDoc.data()
+      this.vendor = getVendor(this.selected_reservation)
     }
   },
   methods: {
+    async getVendor(reservation) {
+      const foodID = reservation.cart[0].foodID
+      const itemRef = doc(db, "food_listings", foodID);
+      const itemDoc = await getDoc(itemRef);
+      const restaurantID = itemDoc.data().Restaurant_PersonalisationId
+      const restaurantRef = doc(db, "restaurant_personalisation", restaurantID);
+      const restaurantDoc = await getDoc(restaurantRef);
+      console.log("data")
+      console.log(restaurantDoc.data())
+      return restaurantDoc.data()
+    },
     async getReservations() {
       const querySnapshot = await getDocs(collection(db, "reservation_orders"))
       console.log("printing data")
       const allReservations = querySnapshot.docs.filter(doc => doc.data().user === this.useremail);
-      this.reservations = allReservations.map(doc => doc.data());
+      // for (Object res in allReservations) {
+      //   console.log("res")
+      //   console.log(res)
+      // }
+      const modifiedReservations = await Promise.all(allReservations.map(async reservation => {
+        console.log("reservation")
+        console.log(reservation.data())
+        const vendorData = await this.getVendor(reservation.data());
+        console.log("vendor data!!")
+        console.log(vendorData)
+        const updatedReservation = { ...reservation.data(), vendor: vendorData };
+        reservation.vendor = vendorData;
+        console.log("new reservation??")
+        console.log(updatedReservation)
+        console.log(reservation.data())
+        return updatedReservation;
+      }));
+      console.log('modified data')
+      console.log(modifiedReservations)
+      this.reservations = modifiedReservations.map(doc => doc);
 
       // allReservations.forEach(doc => {
       //   const reservation = doc.data();
@@ -271,6 +284,13 @@ export default {
       // })
       if (this.reservations.length > 0) {
         this.selected_reservation = this.reservations[0]
+        const foodID = this.selected_reservation.cart[0].foodID
+        const itemRef = doc(db, "food_listings", foodID);
+        const itemDoc = await getDoc(itemRef);
+        const restaurantID = itemDoc.data().Restaurant_PersonalisationId
+        const restaurantRef = doc(db, "restaurant_personalisation", restaurantID);
+        const restaurantDoc = await getDoc(restaurantRef);
+        this.vendor = restaurantDoc.data()
       };
     },
     async cancelReservation(reservationNo) {
@@ -328,8 +348,19 @@ export default {
           })
       //remove from reservations, add qty back to vendors
     },
-    selectReservation(reservation) {
+    async selectReservation(reservation) {
       this.selected_reservation = reservation;
+      const foodID = reservation.cart[0].foodID
+      const itemRef = doc(db, "food_listings", foodID);
+      const itemDoc = await getDoc(itemRef);
+      const restaurantID = itemDoc.data().Restaurant_PersonalisationId
+      const restaurantRef = doc(db, "restaurant_personalisation", restaurantID);
+      const restaurantDoc = await getDoc(restaurantRef);
+      this.vendor = restaurantDoc.data()
+      console.log("vendor")
+      console.log(this.vendor)
+
+;
     }
   },
   computed: {
@@ -349,53 +380,180 @@ export default {
 
 <style scoped> 
 
-.restaurant {
-  border: 1px solid #d3cdcd;
-  width: 300px;
-  /* height: 250px; */
-  /* border-radius: 20px; */
-  margin: 20px;
-  /* box-shadow: 2px 2px grey; */
-  box-shadow: 0 3px #d3cdcd;
-  border-radius: 15px;
-  overflow: hidden;
-  position: relative;
+.list-container {
+  height: 820px; /* set a fixed height */
+  overflow-y: scroll; /* make the container scrollable */
 }
-.reservation-panel {
-  display: flex;
-  flex-direction: row;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+
+* {
+box-sizing: border-box;
+}
+
+.shopping-cart {
+width: 720px;
+height: auto;
+margin: 5vh auto;
+background: #FFFFFF;
+box-shadow: 1px 2px 3px 0px rgba(0,0,0,0.10);
+border-radius: 6px;
+display: flex;
+flex-direction: column;
+}
+.title {
+  height: 80px;
+  border-bottom: 1px solid #E1E8EE;
+  padding: 20px;
+  color: black;
+  font-family: Nunito; 
+}
+
+.total {
+  height: 110px;
+  border-bottom: 1px solid #E1E8EE;
+  padding: 20px;
+  color: black;
+  font-family: Nunito; 
+  text-align: right;
+}
+
+.item {
+padding: 20px;
+width: 50vw;
+display: flex;
+font-family: Lato; 
+}
+/* 
+.item:nth-child(2) {
+border-top:  1px solid #E1E8EE;
+border-bottom:  1px solid #E1E8EE;
+} */
+
+.buttons {
+position: relative;
+padding-top: 30px;
+margin-right: 30px;
+}
+
+.checkout-btn {
+  background-color: #E1E8EE;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+.delete-btn {
+width: 18px;
+height: 17px;
+background: no-repeat center;
+display: inline-block;
+Cursor: pointer;
+background-color: #E1E8EE;
+border-radius: 6px;
+border: none;
+cursor: pointer;
+}
+
+.image {
+margin-right: 30px;
+}
+
+#imageIter{
+width: 150px;
+}
+
+.description {
+width: 260px;
+}
+
+.description span {
+display: block;
+font-size: 16px;
+font-weight: 400;
+}
+
+.description span:first-child {
+margin-bottom: 5px;
+}
+
+.description span:last-child {
+margin-top: 5px;
+}
+
+.quantity {
+padding-top: 25px;
+margin-right: 12px;
+}
+
+.delete-btn, 
+.minus-btn,
+.plus-btn  {
+width: 30px;
+height: 30px;
+background-color: #E1E8EE;
+border-radius: 6px;
+border: none;
+cursor: pointer;
+}
+
+.minus-btn img {
+margin-bottom: 3px;
+}
+.plus-btn img {
+margin-top: 2px;
+}
+
+button:focus,
+input:focus {
+outline:0;
+}
+
+.total-price {
+width: 83px;
+padding-top: 27px;
+padding-left: 20px;
+text-align: right;
+font-size: 16px;
+font-weight: 300;
+}
+
+.plus-btn:hover {
+  background-color: green;
+  color: white;
+}
+
+.minus-btn:hover,
+.delete-btn:hover {
+  background-color: #dc3545;
+  color: white;
+}
+.swal2-popup {
+  font-family:Nunito;
+}
+
+
+@media (max-width: 800px) {
+.shopping-cart {
   width: 100%;
-  max-width: 800px;
-}
-.left-panel {
-  width: 50%;
-}
-.right-panel {
-  width: 50%;
-  border: 1px solid #d3cdcd;
-  /* height: 250px; */
-  /* border-radius: 20px; */
-  margin: 20px;
-  /* box-shadow: 2px 2px grey; */
-  box-shadow: 0 3px #d3cdcd;
-  border-radius: 15px;
+  height: auto;
   overflow: hidden;
-  position: relative;
 }
-.reservation {
-  border: 1px solid #d3cdcd;
-  width: 300px;
-  height: 250px;
-  /* border-radius: 20px; */
-  margin: 20px;
-  /* box-shadow: 2px 2px grey; */
-  box-shadow: 0 3px #d3cdcd;
-  border-radius: 15px;
-  overflow: hidden;
-  position: relative;
+.item {
+  height: auto;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.image img {
+  width: 10%;
+}
+.image,
+.quantity,
+.description {
+  width: 100%;
+  text-align: center;
+  margin: 6px 0;
+}
+.buttons {
+  margin-right: 20px;
+}
 }
 
 .loader-container {
@@ -428,6 +586,10 @@ export default {
   left: 49%;
   transform: translate(-50%, -50%);
   font-family: Nunito; 
-  
 }
+
+.rounded-card{
+    border-radius:20px;
+}
+
 </style>
