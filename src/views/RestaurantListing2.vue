@@ -1,5 +1,8 @@
 <template>  
-    <NavigationBar1/>
+    <div class="navigation-bar">
+      <NavigationBar1 v-if="isLoggedIn" />
+      <NavigationBar2 v-else />
+    </div>
 
       <div className="banner">
         <img :src="bgImageUrl">
@@ -56,8 +59,10 @@
   </div>
 </template>
   
-  <script> 
+<script> 
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import NavigationBar1 from '@/components/NavigationBar1.vue'
+import NavigationBar2 from '@/components/NavigationBar2.vue'
 import SearchBarAndFilter from '@/components/SearchBarAndFilter.vue'
 import firebaseApp from "../firebase";
 import { getFirestore } from 'firebase/firestore';
@@ -71,12 +76,14 @@ export default {
   name: "RestaurantListing",
   components:{
     NavigationBar1,
+    NavigationBar2,
     SearchBarAndFilter,
     EmptyRestaurant,
   },
 
   data() {
     return {
+      isLoggedIn: false,
       restaurants: [],
       bgImageUrl: "https://firebasestorage.googleapis.com/v0/b/bt3103-project-8c8a0.appspot.com/o/images%2Ffinal_banner.png?alt=media&token=9746cd21-22c2-462a-adb1-c65163fa75b9",
       searchRestaurant: [],
@@ -119,8 +126,17 @@ export default {
     }
   },
 
+  created() {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        this.isLoggedIn = true;
+      } else {
+        this.isLoggedIn = false;
+      }
+    }
+  )},
   computed: {
-    
     closingTimes() {
       return restaurant => {
         const now = new Date()
@@ -155,24 +171,7 @@ export default {
           } else {
             return " Closing at " + closingTime
           }
-
-          
-
-          // const closingTime = restaurant[currentDay].split(' - ')[1]
-          // const closing = new Date(now)
-          // const [hours, minutes] = closingTime.split(':')
-          // closing.setHours(hours)
-          // closing.setMinutes(minutes)
-          // if (now > closing) {
-          //   return "Closed" 
-          // }
-          // const timeDiff = closing - now
-          // if (timeDiff <= 60 * 60 * 1000 && timeDiff > 0) {
-          //   return `Closing in ${Math.floor(timeDiff / 1000 / 60)} minutes`
-          // } else {
-          //   return " Closing at " + closingTime
-          //   }
-          }
+        }
       }
     },
 
@@ -189,7 +188,6 @@ export default {
   emits: ["clearFilters"],
 
   methods: {
-
     handleSearch(value) {
       if (value && value.length > 0 && this.needOriginalSearch) {
         this.searchValue = value
@@ -356,6 +354,11 @@ export default {
   display: none;
 }
 
+.navigation-bar {
+  position: relative;
+  z-index: 1;
+}
+
 a {
     text-decoration: none;
 }
@@ -426,11 +429,13 @@ a {
 }
 .banner {
   text-align: center;
+  top: -30px;
+  position: relative;
   /* width: 500px; */
 }
 
 .banner img {
-  height: 200px;
+  height: 250px;
   width: 90%;
 }
 
@@ -449,6 +454,7 @@ a {
   border-radius: 15px;
   overflow: hidden;
   position: relative;
+  padding-left: 5px;
 }
 
 .information {

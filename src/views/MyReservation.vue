@@ -9,11 +9,9 @@
       </div>
     <EmptyReservation v-else-if="reservations.length === 0 && showPlaceholder"/>
     <div v-else>
-  
       <v-card
         class="mx-auto rounded-card" 
         max-width=1230
-        
       >
       <div class="text-h5 pa-5"> All reservations at a glance...</div>
       <v-divider></v-divider> 
@@ -38,7 +36,6 @@
                   <v-row>
                     <div class="text-h6 mb-1">{{ reservation.reservationNo }}</div>
                   </v-row>
-
                   <v-row>
                     <div class="text-subtitle-2 mb-1">{{ reservation.cart[0].restaurant }}</div>
                   </v-row>
@@ -49,33 +46,8 @@
                     <div class="text-subtitle-2 mb-1">{{ reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</div>
                   </v-row>
                   <v-row>
-                    <!-- <div class="text-subtitle-2 mb-1">${{ reservation.total.toFixed(2) }}</div> -->
                     <v-chip>${{ reservation.total.toFixed(2) }}</v-chip>
                   </v-row>
-                  <!-- <v-row>
-                    <div class="text-subtitle-2 mb-1">{{ reservation.createdAt.toDate().toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }) }}</div>
-                  </v-row> -->
-                  <!-- <v-row>
-                    <v-col cols="4">
-                    <div class="text-subtitle-2 mb-1">{{ reservation.cart[0].restaurant }}</div>
-                    </v-col>
-                    <v-col cols="4">
-                    <div class="text-subtitle-2 mb-1">{{ reservation.createdAt.toDate().toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }) }}</div>
-                    </v-col>
-                    <v-col cols="4">
-                      <div class="text-h6 mb-1">${{ reservation.total.toFixed(2) }}</div>
-                    </v-col>
-                  </v-row> -->
-                  
-                    <!-- <v-col cols="9">
-                      <v-chip>{{ reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</v-chip>  
-                    </v-col> -->
-                    <!-- <v-col cols="3">
-                      <div class="text-subtitle-2 mb-1">${{ reservation.total.toFixed(2) }}</div>
-                    </v-col> -->
-                      <!-- <v-chip>{{ reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</v-chip>  
-                      <div class="text-subtitle-2 mb-1">${{ reservation.total.toFixed(2) }}</div> -->
-                  
                 </v-col>
               </v-row>
             </v-card>
@@ -84,10 +56,8 @@
         <v-col cols="8">     
             <v-card
               :loading="loading"
-              
               height="100%"
               width="100%"
-
             >
               <template v-slot:loader="{ isActive }">
                 <v-progress-linear
@@ -102,19 +72,14 @@
                 height="300"
                 :src= defaultVendorImg
                 onerror="this.src='defaultVendorImg'"
-                
               ></v-img>
               <v-card-item>
                 <v-row>
                   <v-col cols="8">
-                    
                     <v-card-title>{{ selected_reservation.reservationNo }}</v-card-title>
-                    <!-- <v-card-subtitle>Sold to Customer</v-card-subtitle> -->
                     <br>
                     <v-card-subtitle>Order Time and Date</v-card-subtitle>
-                    <v-card-subtitle>Order from</v-card-subtitle>
-                    <!-- <v-card-subtitle>Order Time and Date</v-card-subtitle> -->
-      
+                    <v-card-subtitle>Order from</v-card-subtitle>      
                   </v-col>
                   <v-col cols="4" class="text-right">
                     <v-card-subtitle>{{ selected_reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</v-card-subtitle>
@@ -126,7 +91,6 @@
                 </v-row>
                 <br>
                 <v-divider class='mb-1'></v-divider>
-                <!-- {{selected_reservation.vendor}} -->
                 <v-row v-for="order in selected_reservation.cart" :key="order.id" class="my-1">
                   <v-col cols="9" class="text-left"> 
                     <v-card-subtitle> {{ order.quantity }} X {{ order.item }}</v-card-subtitle>
@@ -136,48 +100,29 @@
                   </v-col>
                 </v-row>
                 <v-divider class="mb-1"></v-divider>
-                
-
                 <v-row>
                   <v-col cols="5">
                     <br>
                     <v-card-subtitle>Total</v-card-subtitle>
                     <v-card-subtitle>Paid by</v-card-subtitle>
-                    <!-- <v-card-subtitle>Pickup Time and Date</v-card-subtitle> -->
                     <v-card-subtitle>Pickup Location</v-card-subtitle>
                   </v-col>
                   <v-col cols="7" class="text-right">
                     <br>
                     <v-card-subtitle class="me-1">${{ selected_reservation.total.toFixed(2) }}</v-card-subtitle>
                     <v-card-subtitle class="me-1">In-store payment</v-card-subtitle>
-                    <!-- <v-card-subtitle class="me-1">{{ items[selectedIndex].collectBy }}</v-card-subtitle> -->
                     <v-card-subtitle class="me-1 no-wrap">{{ selected_reservation.vendor.Address }}</v-card-subtitle>
                   </v-col>
                 </v-row>
                 <v-divider></v-divider>
                 <br>
-                <v-btn rounded="lg" color="red" @click="cancelReservation(selected_reservation.reservationNo)"> Cancel Reservation</v-btn>
-
-
+                <v-btn v-if="!selected_reservation.isPickedUp" rounded="lg" color="red" @click="cancelReservation(selected_reservation.reservationNo)"> Cancel Reservation</v-btn>
               </v-card-item>
-            
-
-
-
-              
-
-              
-
-              
-
-
-
             </v-card>
         </v-col>
       </v-row> 
       </v-card>
     </div>
-
     <br><br><br>
   </v-parallax>
 </template>
@@ -206,22 +151,16 @@ export default {
       showDialog: false,
       showPlaceholder: false,
       vendorImageURL2: "https://firebasestorage.googleapis.com/v0/b/bt3103-project-8c8a0.appspot.com/o/VendorBackground3.jpg?alt=media&token=b39dfd4b-eb7e-4164-977e-39a8498bcfbd",
-
       defaultVendorImg: "https://firebasestorage.googleapis.com/v0/b/bt3103-project-8c8a0.appspot.com/o/vendorProfilePic%2F30624445_2031384813783830_665928700650323968_n-copy.jpegnu9X4EMLI8PpMPJdUvTLGsmEOLr2?alt=media&token=6b94b427-eb0c-4d8e-98e6-e2226c2f5e7c",
-
     }
   },
 
   async mounted() {
     setTimeout(() => {
         this.showPlaceholder = true;
-      }, 750);
-      // const querySnapshot = await getDocs(collection(db, "reservation_orders"))
-      // const allReservations = querySnapshot.docs.filter(doc => doc.data().user === this.useremail);
-      // this.reservations = allReservations.map(doc => doc.data());
+      }, 1000);
   },
   
-
   created() {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
@@ -250,18 +189,6 @@ export default {
         }
       }
     });
-
-    if (this.reservations.length > 0) {
-      this.selected_reservation = this.reservations[0]
-      // const foodID = this.selected_reservation.cart[0].foodID
-      // const itemRef = doc(db, "food_listings", foodID);
-      // const itemDoc = await getDoc(itemRef);
-      // const restaurantID = itemDoc.data().Restaurant_PersonalisationId
-      // const restaurantRef = doc(db, "restaurant_personalisation", restaurantID);
-      // const restaurantDoc = await getDoc(restaurantRef);
-      // this.vendor = restaurantDoc.data()
-      // this.vendor = getVendor(this.selected_reservation)
-    }
   },
   methods: {
     async getVendor(reservation) {
@@ -271,51 +198,34 @@ export default {
       const restaurantID = itemDoc.data().Restaurant_PersonalisationId
       const restaurantRef = doc(db, "restaurant_personalisation", restaurantID);
       const restaurantDoc = await getDoc(restaurantRef);
-      console.log("data")
-      console.log(restaurantDoc.data())
       return restaurantDoc.data()
     },
     async getReservations() {
       const querySnapshot = await getDocs(collection(db, "reservation_orders"))
-      console.log("printing data")
-      console.log(querySnapshot)
-      const allReservations = querySnapshot.docs.filter(doc => doc.data().user === this.useremail && doc.data().confirmed);
-      // for (Object res in allReservations) {
-      //   console.log("res")
-      //   console.log(res)
-      // }
+      const allReservations = querySnapshot.docs
+        .filter(doc => doc.data().user === this.useremail && doc.data().confirmed)
+        .sort((a, b) => {
+          if (a.data().isPickedUp && !b.data().isPickedUp) {
+            return 1;
+          } else if (!a.data().isPickedUp && b.data().isPickedUp) {
+            return -1;
+          } else {
+            const dateA = a.data().createdAt.toDate();
+            const dateB = b.data().createdAt.toDate();
+            return dateB - dateA;
+          }
+        });
+
       const modifiedReservations = await Promise.all(allReservations.map(async reservation => {
-        console.log("reservation")
-        console.log(reservation.data())
         const vendorData = await this.getVendor(reservation.data());
-        console.log("vendor data!!")
-        console.log(vendorData)
         const updatedReservation = { ...reservation.data(), vendor: vendorData };
         reservation.vendor = vendorData;
-        console.log("new reservation??")
-        console.log(updatedReservation)
-        console.log(reservation.data())
         return updatedReservation;
       }));
-      console.log('modified data')
-      console.log(modifiedReservations)
       this.reservations = modifiedReservations.map(doc => doc);
 
-      // allReservations.forEach(doc => {
-      //   const reservation = doc.data();
-      //   console.log(reservation)
-      //   this.reservations.push(reservation);
-        
-      // })
       if (this.reservations.length > 0) {
         this.selected_reservation = this.reservations[0]
-        // const foodID = this.selected_reservation.cart[0].foodID
-        // const itemRef = doc(db, "food_listings", foodID);
-        // const itemDoc = await getDoc(itemRef);
-        // const restaurantID = itemDoc.data().Restaurant_PersonalisationId
-        // const restaurantRef = doc(db, "restaurant_personalisation", restaurantID);
-        // const restaurantDoc = await getDoc(restaurantRef);
-        // this.vendor = restaurantDoc.data()
       };
     },
     async cancelReservation(reservationNo) {
@@ -330,28 +240,16 @@ export default {
           }).then(async (result) => {
             if (result.isConfirmed) {
               this.showDialog = false;
-              console.log("db")
-              console.log(db)
               const deleted_reservation = doc(db, "reservation_orders", reservationNo);
               const deleted_reservation_data = await getDoc(deleted_reservation);
-              console.log("deleted reservation")
-              console.log(deleted_reservation_data.data())
               const products = deleted_reservation_data.data().cart  
-              console.log(products)
-              // const deletedItems = products.map(product => product.foodID);
               const deletedItems = products.map(product => ({foodID: product.foodID, quantity: product.quantity}));
-
-              console.log(deletedItems)
 
               for (const item of deletedItems) {
                 const itemRef = doc(db, "food_listings", item.foodID);
-                // const itemRef = doc(foodListingsRef, item);
                 const itemDoc = await getDoc(itemRef);
-                console.log("item doc")
-                console.log(itemDoc)
                 const availableQty = itemDoc.data().AvailableQty;
                 await updateDoc(itemRef, { AvailableQty: availableQty + item.quantity });
-                // await updateDoc(itemRef, { AvailableQty: availableQty + 1 });
               }
               await deleteDoc(doc(db, "reservation_orders", reservationNo));
               await this.getReservations();
@@ -371,33 +269,9 @@ export default {
                       });      
             }
           })
-      //remove from reservations, add qty back to vendors
     },
     async selectReservation(reservation) {
       this.selected_reservation = reservation;
-      // const foodID = reservation.cart[0].foodID
-      // const itemRef = doc(db, "food_listings", foodID);
-      // const itemDoc = await getDoc(itemRef);
-      // const restaurantID = itemDoc.data().Restaurant_PersonalisationId
-      // const restaurantRef = doc(db, "restaurant_personalisation", restaurantID);
-      // const restaurantDoc = await getDoc(restaurantRef);
-      // this.vendor = restaurantDoc.data()
-      // console.log("vendor")
-      // console.log(this.vendor)
-
-;
-    }
-  },
-  computed: {
-    ordersByRestaurant() {
-      const ordersByRestaurant = {}
-      this.selected_reservation.cart.forEach(order => {
-        if (!ordersByRestaurant[order.restaurant]) {
-          ordersByRestaurant[order.restaurant] = []
-        }
-        ordersByRestaurant[order.restaurant].push(order)
-      })
-      return ordersByRestaurant
     }
   }
 }
@@ -452,11 +326,6 @@ width: 50vw;
 display: flex;
 font-family: Lato; 
 }
-/* 
-.item:nth-child(2) {
-border-top:  1px solid #E1E8EE;
-border-bottom:  1px solid #E1E8EE;
-} */
 
 .buttons {
 position: relative;
