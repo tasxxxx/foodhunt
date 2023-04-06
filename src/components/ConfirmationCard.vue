@@ -1,10 +1,10 @@
 <template>
-    <v-col cols="9">     
+    <v-col cols="6">     
       <v-card
           :loading="loading" 
           height="100%"
           width="100%"
-          style="margin-left:15%"
+          style="margin-left:50% ; border-radius:15px"
 
         >
               
@@ -16,57 +16,49 @@
 
           <v-card-item>
             <v-row>
-              <v-col cols="9">
+              <v-col cols="7">
                 <v-card-title style="font-family:Nunito; font-size: 2em;">{{ this.reservationNumber }}</v-card-title>
                 <v-card-subtitle style="font-family:Nunito; font-size: 1.em;">Order from</v-card-subtitle>
                 <v-card-subtitle style="font-family:Nunito; font-size: 1.em;">Order Time and Date</v-card-subtitle>
               </v-col>
-              <v-col cols="3">
+              <v-col cols="5">
                 <br>
                 <v-card-subtitle style="font-family:Nunito; text-align:right">{{ this.details.name }}</v-card-subtitle>
                 <v-card-subtitle style="font-family:Nunito; text-align:right">{{ this.details.dateTimeString }}</v-card-subtitle>
               </v-col>
             </v-row>
             <v-divider></v-divider>
-
-            <v-row>
-              <v-col cols="12">
-                <v-card 
-                  v-for="prod in details.cart" 
+            <v-row
+            v-for="prod in details.cart" 
                   :key="prod.item" 
                   min-height="auto" 
-                >
-                <v-row>
-                  <v-col cols="0">
-                    <v-card-subtitle style="font-family:Nunito; text-align:left">
-                      {{ prod.quantity }}X
-                    </v-card-subtitle>
-                  </v-col>
-                  <v-col cols="10">
-                    <v-card-subtitle style="font-family:Nunito; text-align:left">
-                      {{ prod.item }}
-                    </v-card-subtitle>
-                    </v-col>
-                  <v-col cols="0">
-                    <v-card-subtitle style="font-family:Nunito; text-align:right">
-                      ${{ prod.subtotal ? prod.subtotal.toFixed(2) : '' }}
-                    </v-card-subtitle>
-                    </v-col>
-                </v-row>
-                </v-card>
-              </v-col>
-            </v-row>
+            >
+            <v-col cols="1">
+              <v-img
+                      :src="prod.ImageURL"
+                      contain
+                      style="width:100px"
+            ></v-img>
+            </v-col>
+            <v-col cols="6"> 
+              <v-card-subtitle style="font-family:Nunito; text-align:left; align-self:center;">     
+                            
+                  {{ prod.quantity }}X {{ prod.item }}</v-card-subtitle>
+            </v-col>
+            <v-col cols="5">
+                <v-card-subtitle style="font-family:Nunito; text-align:right;  align-self:center;">${{ parseInt(prod.subtotal).toFixed(2) }}</v-card-subtitle>
+            </v-col>
             <v-divider></v-divider>
+            </v-row>
 
             <v-row>
-              <v-col cols="8">
-                <br>
+              <v-col cols="3">
                 <v-card-subtitle style="font-family:Nunito; font-size: 1.em;">Total</v-card-subtitle>
                 <v-card-subtitle style="font-family:Nunito; font-size: 1.em;">Payment by</v-card-subtitle>
                 <v-card-subtitle style="font-family:Nunito; font-size: 1.em;">Pickup By</v-card-subtitle>
                 <v-card-subtitle style="font-family:Nunito; font-size: 1.em;">Pickup Location</v-card-subtitle>
               </v-col>
-              <v-col cols="4">
+              <v-col cols="9">
                 <br>
                 <v-card-subtitle style="font-family:Nunito; font-size: 1.em; text-align:right">${{this.details.total ? this.details.total.toFixed(2) : ''}}</v-card-subtitle>
                 <v-card-subtitle style="font-family:Nunito; font-size: 1.em; text-align:right">In store payment</v-card-subtitle>
@@ -74,12 +66,13 @@
                 <v-card-subtitle style="font-family:Nunito; font-size: 1.em;text-align:right">{{ this.details.address }}</v-card-subtitle>
               </v-col>
             </v-row>
-            <v-divider></v-divider>
+            <v-divider inset></v-divider>
           </v-card-item>
           <v-btn 
             color="primary" 
             width="5000"
             @click="confirm"
+            style="border-radius:10px"
           >
             Confirm Reservation
           </v-btn>

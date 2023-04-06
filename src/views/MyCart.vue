@@ -13,11 +13,15 @@
         <div class="item" v-for="(item, index) in cart" :key="index">
           <div class="buttons">
             <span class="delete-btn">
-              <button @click="deleteItem(item.foodID, item.item, item.restaurant, item.price )" class="delete-btn">X</button>
+              <button @click="deleteItem(item.foodID, item.ImageURL, item.item, item.restaurant, item.price )" class="delete-btn">X</button>
             </span>
           </div>
           <div class="image">
-            <img id="imageIter" src="@/assets/macs.jpg" alt="" />
+            <v-img
+              :src="item.ImageURL"
+              contain
+              id="imageIter"
+            ></v-img>
           </div>
           <div class="description">
             <span>{{ item.restaurant }}</span>
@@ -25,11 +29,11 @@
             <span>${{ item.price }}</span>
           </div>
           <div class="quantity">
-            <button class="minus-btn" @click="minusItem(item.foodID, item.item, item.restaurant, item.price)">
+            <button class="minus-btn" @click="minusItem(item.foodID, item.ImageURL, item.item, item.restaurant, item.price)">
               -
             </button>
             {{ item.quantity }}
-            <button class="plus-btn" @click="addItem(item.foodID, item.item, item.restaurant, item.price)">
+            <button class="plus-btn" @click="addItem(item.foodID, item.ImageURL, item.item, item.restaurant, item.price)">
               +             
             </button>
           </div>
@@ -114,10 +118,10 @@ export default {
       const items = cartData.data().products;
       let tempArray = []
       tempArray = Object.entries(items).map(async ([key, value]) => {
-        const [foodID, restaurant, item, price] = key.split(",");
+        const [foodID, ImageURL, restaurant, item, price] = key.split(",");
         const quantity = value;
         const subtotal = price * quantity;
-        return { foodID, restaurant, item, price, quantity, subtotal };
+        return { foodID, ImageURL, restaurant, item, price, quantity, subtotal };
     });
 
       let tempResult = await Promise.all(tempArray);
@@ -180,23 +184,23 @@ export default {
       this.cart = [];
 
       this.cart = Object.entries(products).map(async ([key, value]) => {
-        const [foodID, restaurant, item, price] = key.split(",");
+        const [foodID, ImageURL,restaurant, item, price] = key.split(",");
         const quantity = value;
         const subtotal = price * quantity;
-        return { foodID, restaurant, item, price, quantity, subtotal };
+        return { foodID, ImageURL,restaurant, item, price, quantity, subtotal };
     });
       // sort the cart by id
       this.cart = await Promise.all(this.cart);
       this.cart.sort((a, b) => a.foodID.localeCompare(b.foodID));
     }, 
 
-    async addItem(foodID, item, restaurant, price) {
+    async addItem(foodID, ImageURL, item, restaurant, price) {
         const cartRef = doc(db, "shopping_carts", this.useremail);
         const cartData = await getDoc(cartRef);
         // products refer to the product inside the cart.
         const products = cartData.data().products       
         const thisProduct = await doc(db, "food_listings",foodID); 
-        const productKey = `${foodID},${restaurant},${item},${price}`;
+        const productKey = `${foodID},${ImageURL},${restaurant},${item},${price}`;
         const thisProductData = await getDoc(thisProduct);
         // this.availableQty refers to the product itself.
         this.availableQty = thisProductData.data().AvailableQty
@@ -253,19 +257,19 @@ export default {
         // }
       },
 
-      async minusItem(foodID, item, restaurant, price) {
+      async minusItem(foodID, ImageURL, item, restaurant, price) {
         const cartRef = doc(db, "shopping_carts", this.useremail);
         const cartData = await getDoc(cartRef);
         // products refer to the product inside the cart.
         const products = cartData.data().products       
         const thisProduct = await doc(db, "food_listings",foodID); 
         const thisProductData = await getDoc(thisProduct);
-        const productKey = `${foodID},${restaurant},${item},${price}`;
+        const productKey = `${foodID},${ImageURL},${restaurant},${item},${price}`;
         // this.availableQty refers to the product itself.
         this.availableQty = thisProductData.data().AvailableQty
         const productQuantity = products[productKey];
         if (productQuantity === 1) {
-          await this.deleteItem(foodID, item, restaurant, price);
+          await this.deleteItem(foodID,ImageURL, item, restaurant, price);
         } else {
           // Otherwise, decrease the quantity by 1
           products[productKey]--;
@@ -300,7 +304,7 @@ export default {
         // }
       },
 
-      async deleteItem(foodID, item, restaurant, price) {
+      async deleteItem(foodID, ImageURL,item, restaurant, price) {
          this.$swal.fire({
           title: 'Are you sure?',
           text: "Please confirm that you are removing the item from the cart?",
@@ -314,7 +318,7 @@ export default {
             const cartRef = doc(db, "shopping_carts", this.useremail);
             const cartData = await getDoc(cartRef);
             const products = cartData.data().products
-            const productKey = `${foodID},${restaurant},${item},${price}`;
+            const productKey = `${foodID},${ImageURL},${restaurant},${item},${price}`;
             // remove the product from the products object
             delete products[productKey];      
             // update the cart data in Firestore

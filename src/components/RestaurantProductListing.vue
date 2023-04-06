@@ -30,7 +30,11 @@
             <div class="category">
                 <div class="product-wrapper">
                 <div v-for="prod in products" :key="prod.name" class="product">
-                    <img src="@/assets/mcdonalds.jpg" alt="Restaurant Image" class="product-img">
+                    <v-img
+                      :src="prod.ImageURL"
+                      contain
+                      class="product-img"
+                    ></v-img>
                     <div class="product-name">
                     {{ prod.Name }}
                     </div>

@@ -75,7 +75,7 @@
               this.tempCart = null;
 
               this.tempCart = Object.entries(products).map(async ([key, value]) => {
-                const [foodID, restaurant, item, price] = key.split(",");
+                const [foodID, imageURL, restaurant, item, price] = key.split(",");
                 return restaurant;
               });
               // sort the cart by id
@@ -83,7 +83,7 @@
               console.log(this.tempCart)
             
               if (this.tempCart.length === 0 || (this.tempCart[0] === this.prodID.VendorName)) {
-                const productKey = `${this.prodID.Food_listingID},${this.prodID.VendorName},${this.prodID.Name},${this.prodID.Price}`
+                const productKey = `${this.prodID.Food_listingID},${this.prodID.ImageURL},${this.prodID.VendorName},${this.prodID.Name},${this.prodID.Price}`
                 // get maxQuantity 
                   const productRef = await getDocs(collection(db, "food_listings"));
                   productRef.forEach((doc) => {
@@ -115,10 +115,10 @@
                     rtl: false
                     });   
                   } else {
-                    if (products.hasOwnProperty([this.prodID.Food_listingID, this.prodID.VendorName, this.prodID.Name, this.prodID.Price])) {
-                    products[[this.prodID.Food_listingID, this.prodID.VendorName, this.prodID.Name, this.prodID.Price]] += this.quantity;
+                    if (products.hasOwnProperty([this.prodID.Food_listingID, this.prodID.ImageURL, this.prodID.VendorName, this.prodID.Name, this.prodID.Price])) {
+                    products[[this.prodID.Food_listingID, this.prodID.ImageURL, this.prodID.VendorName, this.prodID.Name, this.prodID.Price]] += this.quantity;
                     } else {
-                    products[[this.prodID.Food_listingID, this.prodID.VendorName, this.prodID.Name, this.prodID.Price]] = this.quantity;
+                    products[[this.prodID.Food_listingID, this.prodID.ImageURL, this.prodID.VendorName, this.prodID.Name, this.prodID.Price]] = this.quantity;
                     }
                     await setDoc(cartRef, { products: products });
                     
