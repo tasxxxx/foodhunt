@@ -1,8 +1,10 @@
 <template>
+  <v-parallax
+    :src="vendorImageURL2"
+  >
   <VendorBreadCrumbs/>
-
   <v-card 
-    class="mx-auto" 
+    class="mx-auto rounded-card" 
     max-width=1230
   >
     <div class="text-h5 pa-5"> Create your next listing! </div>
@@ -104,6 +106,8 @@
       </v-form>
     </v-card-text>
   </v-card>
+  <br><br><br>
+</v-parallax>
 </template>
 
 <script>
@@ -131,6 +135,7 @@ export default {
         quantity: '',
         file: null,
         imageUrl: 'https://firebasestorage.googleapis.com/v0/b/bt3103-project-8c8a0.appspot.com/o/Default.png?alt=media&token=f058916d-bc50-47de-a8eb-81c0194d22ad',
+        vendorImageURL2: "https://firebasestorage.googleapis.com/v0/b/bt3103-project-8c8a0.appspot.com/o/VendorBackground3.jpg?alt=media&token=b39dfd4b-eb7e-4164-977e-39a8498bcfbd",
         image: null,
         imageFirebase: null,
         formErrors: {},
@@ -256,4 +261,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.rounded-card{
+    border-radius:20px;
+}
+</style>
 

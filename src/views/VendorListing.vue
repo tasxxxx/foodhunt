@@ -1,4 +1,7 @@
 <template>
+  <v-parallax
+    :src="vendorImageURL2"
+  >
   <VendorBreadCrumbs />
   <div v-if="noListing && !showPlaceholder"> 
     <div class="loader"></div>
@@ -6,7 +9,10 @@
   </div>
   <EmptyVendorListing v-else-if="noListing && showPlaceholder"/>
   <div v-else>
-    <v-card class="mx-auto" max-width="1230">
+    <v-card 
+      class="mx-auto rounded-card" 
+      max-width="1230"
+    >
       <div class="text-h5 pa-5">All listings at a glance...</div>
       <v-divider></v-divider>
       <v-row>
@@ -166,6 +172,8 @@
       </v-row>
     </v-card>
   </div>
+  <br><br><br>
+</v-parallax>
 </template>
 
 <script>
@@ -210,6 +218,7 @@ export default {
       quantity: "",
       file: null,
       imageUrl: "https://via.placeholder.com/500",
+      vendorImageURL2: "https://firebasestorage.googleapis.com/v0/b/bt3103-project-8c8a0.appspot.com/o/VendorBackground3.jpg?alt=media&token=b39dfd4b-eb7e-4164-977e-39a8498bcfbd",
       image: null,
       imageFirebase: null,
       formErrors: {},
@@ -607,7 +616,10 @@ font-weight: 300;
   left: 49%;
   transform: translate(-50%, -50%);
   font-family: Nunito; 
-  
+}
+
+.rounded-card{
+    border-radius:20px;
 }
 
 </style>
