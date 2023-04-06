@@ -119,6 +119,7 @@
                   <v-col cols="4" class="text-right">
                     <v-card-subtitle>{{ selected_reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</v-card-subtitle>
                     <br>
+                    <!-- {{ selected_reservation.createdAt }} -->
                     <v-card-subtitle class="me-1">{{ selected_reservation.createdAt.toDate().toLocaleString('en-SG', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) }}</v-card-subtitle>
                     <v-card-subtitle class="me-1 no-wrap">{{ selected_reservation.vendor.Name}}</v-card-subtitle>
 
@@ -279,22 +280,28 @@ export default {
       const querySnapshot = await getDocs(collection(db, "reservation_orders"))
       console.log("printing data")
       console.log(querySnapshot)
-      const allReservations = querySnapshot.docs.filter(doc => doc.data().user === this.useremail && doc.data().confirmed);
-      // for (Object res in allReservations) {
-      //   console.log("res")
-      //   console.log(res)
-      // }
+      const allReservations = querySnapshot.docs
+        .filter(doc => doc.data().user === this.useremail && doc.data().confirmed)
+        .sort((a, b) => {
+          console.log("data for a and b")
+          console.log(a.data())
+          console.log(b.data())
+          if (a.data().isPickedUp && !b.data().isPickedUp) {
+            return 1;
+          } else if (!a.data().isPickedUp && b.data().isPickedUp) {
+            return -1;
+          } else {
+            const dateA = a.data().createdAt.toDate();
+            const dateB = b.data().createdAt.toDate();
+            return dateB - dateA;
+          }
+        });
+
+        console.log(allReservations)
       const modifiedReservations = await Promise.all(allReservations.map(async reservation => {
-        console.log("reservation")
-        console.log(reservation.data())
         const vendorData = await this.getVendor(reservation.data());
-        console.log("vendor data!!")
-        console.log(vendorData)
         const updatedReservation = { ...reservation.data(), vendor: vendorData };
         reservation.vendor = vendorData;
-        console.log("new reservation??")
-        console.log(updatedReservation)
-        console.log(reservation.data())
         return updatedReservation;
       }));
       console.log('modified data')
@@ -452,11 +459,6 @@ width: 50vw;
 display: flex;
 font-family: Lato; 
 }
-/* 
-.item:nth-child(2) {
-border-top:  1px solid #E1E8EE;
-border-bottom:  1px solid #E1E8EE;
-} */
 
 .buttons {
 position: relative;
