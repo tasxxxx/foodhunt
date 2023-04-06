@@ -1,10 +1,10 @@
 <template>
-    <v-col cols="6">     
+    <v-col cols="7">     
       <v-card
           :loading="loading" 
           height="100%"
           width="100%"
-          style="margin-left:50% ; border-radius:15px"
+          style="margin-left:33% ; border-radius:15px"
 
         >
               
@@ -33,14 +33,14 @@
                   :key="prod.item" 
                   min-height="auto" 
             >
-            <v-col cols="1">
+            <!-- <v-col cols="1">
               <v-img
                       :src="prod.ImageURL"
                       contain
                       style="width:100px"
             ></v-img>
-            </v-col>
-            <v-col cols="6"> 
+            </v-col> -->
+            <v-col cols="7"> 
               <v-card-subtitle style="font-family:Nunito; text-align:left; align-self:center;">     
                             
                   {{ prod.quantity }}X {{ prod.item }}</v-card-subtitle>
@@ -59,7 +59,6 @@
                 <v-card-subtitle style="font-family:Nunito; font-size: 1.em;">Pickup Location</v-card-subtitle>
               </v-col>
               <v-col cols="9">
-                <br>
                 <v-card-subtitle style="font-family:Nunito; font-size: 1.em; text-align:right">${{this.details.total ? this.details.total.toFixed(2) : ''}}</v-card-subtitle>
                 <v-card-subtitle style="font-family:Nunito; font-size: 1.em; text-align:right">In store payment</v-card-subtitle>
                 <v-card-subtitle style="font-family:Nunito; font-size: 1.em; text-align:right">{{ this.details.pickUpTime }}</v-card-subtitle>
