@@ -1,4 +1,7 @@
 <template>
+  <v-parallax
+    :src="vendorImageURL2"
+  >
   <VendorBreadCrumbs/>
   <div v-if="noReserve && !showPlaceholder"> 
     <div class="loader"></div>
@@ -7,7 +10,7 @@
   <EmptyVendorReservation v-else-if="noReserve && showPlaceholder"/>
   <div v-else>
     <v-card
-      class="mx-auto" 
+      class="mx-auto rounded-card" 
       max-width=1230
     >
       <div class="text-h5 pa-5"> All Reservations at a glance...</div>
@@ -170,12 +173,14 @@
       </v-row>
     </v-card>
   </div>
+  <br><br><br>
+  </v-parallax>
 </template>
 
 <script>
 import VendorBreadCrumbs from '@/components/VendorBreadCrumbs.vue';
 import firebaseApp from "../firebase";
-import { getDoc, getDocs, collection, doc, updateDoc, setDoc} from 'firebase/firestore';
+import { getDoc, getDocs, collection, doc, updateDoc, setDoc, deleteDoc} from 'firebase/firestore';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged} from "@firebase/auth";
 import { useToast } from 'vue-toastification';
@@ -199,6 +204,7 @@ export default {
       selection: "",
       selectedItem: null,
       vendorImageURL: 'https://firebasestorage.googleapis.com/v0/b/bt3103-project-8c8a0.appspot.com/o/Default.png?alt=media&token=f058916d-bc50-47de-a8eb-81c0194d22ad',
+      vendorImageURL2: "https://firebasestorage.googleapis.com/v0/b/bt3103-project-8c8a0.appspot.com/o/VendorBackground3.jpg?alt=media&token=b39dfd4b-eb7e-4164-977e-39a8498bcfbd",
       vendorLocation: "test",
       //vendorTotal: 0,
       noReserve: true,
@@ -316,13 +322,10 @@ export default {
             
             //console.log("currName: " + cartItem.restaurant);
             if (userName == cartItem.restaurant) { //This listing is by the current vendor
-              console.log("Test:" + this.noReserve)
 
               this.noReserve = false;
               reservationHasVendor = true;
-              console.log("iteration")
-              //const userDocument = await getDoc(doc(db, "food_listings", prod.id));
-              console.log(resObject.VendorItems)       
+              //const userDocument = await getDoc(doc(db, "food_listings", prod.id));     
               //console.log(cartItem)
               const vendorItems = resObject.VendorItems;
               vendorItems.push(cartItem);
@@ -400,21 +403,68 @@ export default {
       }
     },
     async cancelReservation() {
-      toast.success("Reservation has been cancelled", {
-        position: "top-right",
-        timeout: 2019,
-        closeOnClick: true,
-        pauseOnFocusLoss: false,
-        pauseOnHover: false,
-        draggable: true,
-        draggablePercent: 2,
-        showCloseButtonOnHover: false,
-        hideProgressBar: false,
-        closeButton: "button",
-        icon: true,
-        rtl: false
-      });       
-      this.$router.push('/vendor-dashboard');
+      //const reserveDoc = await getDoc(reserveRef);
+      console.log("Cancelling reservation")
+      try {
+        const reservationNo = this.items[this.selectedIndex].reservationNo;
+        const deleted_reservation = doc(db, "reservation_orders", reservationNo);
+        const deleted_reservation_data = await getDoc(deleted_reservation);
+        console.log("deleted reservation")
+        console.log(deleted_reservation_data.data())
+        const products = deleted_reservation_data.data().cart  
+        console.log(products)
+        // const deletedItems = products.map(product => product.foodID);
+        const deletedItems = products.map(product => ({foodID: product.foodID, quantity: product.quantity}));
+
+        console.log(deletedItems)
+
+        for (const item of deletedItems) {
+          const itemRef = doc(db, "food_listings", item.foodID);
+          // const itemRef = doc(foodListingsRef, item);
+          const itemDoc = await getDoc(itemRef);
+          console.log("item doc")
+          console.log(itemDoc)
+          const availableQty = itemDoc.data().AvailableQty;
+          await updateDoc(itemRef, { AvailableQty: availableQty + item.quantity });
+          // await updateDoc(itemRef, { AvailableQty: availableQty + 1 });
+        }
+        await deleteDoc(doc(db, "reservation_orders", reservationNo));
+        this.$router.push('/vendor-dashboard');
+
+        toast.success("Reservation has been cancelled", {
+          position: "top-right",
+          timeout: 2019,
+          closeOnClick: true,
+          pauseOnFocusLoss: false,
+          pauseOnHover: false,
+          draggable: true,
+          draggablePercent: 2,
+          showCloseButtonOnHover: false,
+          hideProgressBar: false,
+          closeButton: "button",
+          icon: true,
+          rtl: false
+        });       
+        
+      } catch {
+        toast.error("Unsuccessful: Reservation cannot be cancelled", {
+          position: "top-right",
+          timeout: 2019,
+          closeOnClick: true,
+          pauseOnFocusLoss: false,
+          pauseOnHover: false,
+          draggable: true,
+          draggablePercent: 2,
+          showCloseButtonOnHover: false,
+          hideProgressBar: false,
+          closeButton: "button",
+          icon: true,
+          rtl: false
+        });
+      }
+      
+
+      
     }
   },
   created() {
@@ -632,6 +682,10 @@ font-weight: 300;
   left: 49%;
   transform: translate(-50%, -50%);
   font-family: Nunito; 
+}
+
+.rounded-card{
+    border-radius:20px;
 }
 
 </style>
