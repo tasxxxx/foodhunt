@@ -27,9 +27,11 @@
     <div class="restaurants">       
       <div v-for="restaurant in searchRestaurant" :key="restaurant.id" className="restaurant">
         <router-link :to="{ name: 'restaurant', params: { id: restaurant.Restaurant_PersonalisationId }}">
-          <div>
-            <img src="../assets/macs.jpg" alt="Restaurant Image" className="restaurant-img">
-          </div>
+          <v-img
+                      :src="restaurant.ProfileURL"
+                      contain
+                      class="restaurant-img"
+                    ></v-img>
           <div className="restaurant-name">
             {{ restaurant.Name }}
           </div>
@@ -413,7 +415,7 @@ a {
 }
 .restaurant-name {
   font-size: 22px;
-  margin-top: -6px;
+  /* margin-top: -6px; */
   color: black;
   font-family:Nunito;
   margin-left: 5px;

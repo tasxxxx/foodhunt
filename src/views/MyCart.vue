@@ -1,4 +1,7 @@
 <template>
+  <v-parallax
+    :src="backgroundImg"
+  >
   <NavigationBar1/>
   <div v-if="cart.length === 0 && !showPlaceholder"> 
     <div class="loader"></div>
@@ -45,6 +48,8 @@
           </div>
     </div>
   </div>
+</v-parallax>
+
 </template>
 
 <script>
@@ -69,7 +74,8 @@ export default {
       cart: [],
       totalCost: 0,
       availableQty:0,
-      showPlaceholder: false // Add a boolean data property
+      showPlaceholder: false, // Add a boolean data property
+      backgroundImg: "https://firebasestorage.googleapis.com/v0/b/bt3103-project-8c8a0.appspot.com/o/VendorBackground3.jpg?alt=media&token=b39dfd4b-eb7e-4164-977e-39a8498bcfbd"
     }
   },
   async mounted() {
@@ -362,12 +368,12 @@ box-sizing: border-box;
 }
 
 .shopping-cart {
-width: 720px;
+width: 900px;
 height: auto;
 margin: 5vh auto;
 background: #FFFFFF;
 box-shadow: 1px 2px 3px 0px rgba(0,0,0,0.10);
-border-radius: 6px;
+border-radius: 15px;
 display: flex;
 flex-direction: column;
 }
@@ -433,7 +439,7 @@ width: 150px;
 }
 
 .description {
-width: 260px;
+width: 400px;
 }
 
 .description span {
@@ -452,7 +458,7 @@ margin-top: 5px;
 
 .quantity {
 padding-top: 25px;
-margin-right: 12px;
+margin-right: 30px;
 }
 
 .delete-btn, 
@@ -481,7 +487,7 @@ outline:0;
 .total-price {
 width: 83px;
 padding-top: 27px;
-padding-left: 20px;
+padding-left: 50px;
 text-align: right;
 font-size: 16px;
 font-weight: 300;

@@ -1,4 +1,7 @@
 <template>
+    <v-parallax
+      :src="backgroundImg"
+    >
     <div class="container">
       <VendorBreadCrumbs/>
       <div class="pa-6-wrapper">
@@ -137,7 +140,8 @@
     
       </div>
     </div>
-    
+    </v-parallax>
+
     </template>
       
     <script>
@@ -166,6 +170,8 @@
           formErrors: {},
           isLoading: false,
           showPWSuccess: false,
+          backgroundImg: "https://firebasestorage.googleapis.com/v0/b/bt3103-project-8c8a0.appspot.com/o/VendorBackground3.jpg?alt=media&token=b39dfd4b-eb7e-4164-977e-39a8498bcfbd"
+
         };
       },
       //To display information form firebase in v-fields

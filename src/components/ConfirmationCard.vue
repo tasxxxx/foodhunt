@@ -4,15 +4,14 @@
           :loading="loading" 
           height="100%"
           width="100%"
-          style="margin-left:33% ; border-radius:15px"
-
+          style="margin-left:36% ; margin-top: 25px; border-radius:15px"
         >
-              
-          <v-img
-            cover
-            height="200"
-            :src= "vendorImageURL"
-          ></v-img>
+        <v-img
+          cover
+          height="300"
+          :src= defaultVendorImg
+          onerror="this.src='defaultVendorImg'"      
+        ></v-img>
 
           <v-card-item>
             <v-row>
@@ -46,7 +45,7 @@
                   {{ prod.quantity }}X {{ prod.item }}</v-card-subtitle>
             </v-col>
             <v-col cols="5">
-                <v-card-subtitle style="font-family:Nunito; text-align:right;  align-self:center;">${{ parseInt(prod.subtotal).toFixed(2) }}</v-card-subtitle>
+                <v-card-subtitle style="font-family:Nunito; text-align:right;  align-self:center;">${{ prod.subtotal ? prod.subtotal.toFixed(2) : '' }}</v-card-subtitle>
             </v-col>
             <v-divider></v-divider>
             </v-row>
@@ -103,6 +102,7 @@ data() {
     details: [],
     useremail: '',
     vendorImageURL: null,
+    defaultVendorImg: "https://firebasestorage.googleapis.com/v0/b/bt3103-project-8c8a0.appspot.com/o/vendorProfilePic%2F30624445_2031384813783830_665928700650323968_n-copy.jpegnu9X4EMLI8PpMPJdUvTLGsmEOLr2?alt=media&token=6b94b427-eb0c-4d8e-98e6-e2226c2f5e7c",
   }
 },    
 async mounted() {

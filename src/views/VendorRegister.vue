@@ -152,8 +152,8 @@
               this.$router.push('/vendor-personalisation')
               // You can use your backend API to handle the signup process here
             } catch(error) {
-              console.log(error.message);
-              this.formErrors.email = [error.message];
+              console.log(error.message)
+              this.formErrors.companyemail = [error.message];
             }
           }
         },
