@@ -421,10 +421,12 @@
                 this.formErrors.sun = ['Operating hours required'];
             }
             if (Object.keys(this.formErrors).length === 0) {
-                //delete original pic from storage
-                await this.removePic() 
-                //settle pics in storage first
-                await this.updatePic()
+                if (this.file != null) {
+                    //delete original pic from storage
+                    await this.removePic() 
+                    //settle pics in storage first
+                    await this.updatePic()
+                }
                 //settle other updates
                 await this.updatePerson()
             }
