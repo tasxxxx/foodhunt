@@ -14,9 +14,9 @@
             <center>
                 <h4 style="font-family:Nunito">Company Profile Image</h4> 
                 <v-img 
-                :src="image" 
-                :width="100" 
-                :height="100" 
+                :src="imageURL" 
+                :width="150" 
+                :height="150" 
                 contain class="ma-4"
                 accept="image/png, image/gif, image/jpeg"
                 ></v-img>          
@@ -26,9 +26,10 @@
             <div id = 'imagePicker'>
 
                 <v-file-input 
+                @change="previewImage"
                 prepend-icon="mdi-camera" 
                 v-model="file" 
-                label="Select Image"
+                label="Select new image"
                 style="font-family:Nunito"
                 ></v-file-input>
             </div>
@@ -68,11 +69,11 @@
                         ></v-list-item>
                     </template>
 
-                    <v-item-group mandatory v-model="selectedCuisines" selected-class="bg-grey">
+                    <v-item-group mandatory v-model="selectedCuisines" selected-class="bg-primary">
                         <v-item v-for="cuisine in cuisiness" :key="cuisine" :selected="selectedCuisines"
                             v-slot="{ selectedClass, toggle }">
 
-                            <v-chip :class="selectedClass" @click="toggle" v-text = "cuisine" style="font-family:Nunito"></v-chip>
+                            <v-chip :class="selectedClass" @click="toggle" v-text = "cuisine" style="font-family:Nunito; margin-left: 10px; padding: 8px;"></v-chip>
                         </v-item>
                     </v-item-group>
                 </v-list-group>
@@ -85,11 +86,11 @@
                         style="font-family:Nunito"
                         ></v-list-item>
                     </template>
-                    <v-item-group mandatory v-model="selectedPriceRanges" selected-class="bg-grey">
+                    <v-item-group mandatory v-model="selectedPriceRanges" selected-class="bg-primary">
                         <v-item v-for="pr in pricerange" :key="pr" :selected="selectedPriceRanges"
                             v-slot="{ selectedClass, toggle }">
 
-                            <v-chip :class="selectedClass" @click="toggle" v-text = "pr" style="font-family:Nunito"></v-chip>
+                            <v-chip :class="selectedClass" @click="toggle" v-text = "pr" style="font-family:Nunito; margin-left: 10px; padding: 8px;"></v-chip>
                         </v-item>
                     </v-item-group>
                 </v-list-group>
@@ -102,11 +103,11 @@
                         style="font-family:Nunito"
                         ></v-list-item>
                     </template>
-                    <v-item-group mandatory v-model="selectedTowns" selected-class="bg-grey">
+                    <v-item-group mandatory v-model="selectedTowns" selected-class="bg-primary">
                         <v-item v-for="town in townss" :key="town.type" :selected="selectedTowns"
                             v-slot="{ selectedClass, toggle }">
 
-                            <v-chip :class="selectedClass" @click="toggle" v-text = "town" style="font-family:Nunito"></v-chip>
+                            <v-chip :class="selectedClass" @click="toggle" v-text = "town" style="font-family:Nunito; margin-left: 10px; padding: 8px;"></v-chip>
                         </v-item>
                     </v-item-group>
                 </v-list-group>
@@ -278,6 +279,11 @@
     import { doc, setDoc, getDoc } from "firebase/firestore";
     import { getAuth, onAuthStateChanged } from "firebase/auth";
     const db = getFirestore(firebaseApp);
+
+    //Imaging tools
+    import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+    const storage = getStorage(firebaseApp)
+
     
     export default {
       data() {
@@ -295,6 +301,10 @@
             sun: '',
             remarks:''
           },
+
+          file: null,
+          imageURL: null,
+          oldURL: null,
 
           cuisiness: ['Chinese',  'Indian',  'Malay', 'Café'],
           selectedCuisines: '',
@@ -354,6 +364,8 @@
                 this.selectedCuisines = this.cuisiness.indexOf(userData.Cuisines);
                 this.selectedPriceRanges = this.pricerange.indexOf(userData.Price_Range);
                 this.selectedTowns = this.townss.indexOf(userData.Town);
+                this.imageURL = userData.ProfileURL;
+                this.oldURL = userData.ProfileURL;
             } else {
                 console.log("User document not found");
             }
@@ -363,18 +375,10 @@
       components:{
         VendorBreadCrumbs
       },
-      computed: {
-        image() {
-        if (this.file) {
-            console.log("Got image");
-            return URL.createObjectURL(this.file); 
-        }  else {
-            console.log("NOO image");
-            return 'https://via.placeholder.com/500';
-        }
-        }
-       },
       methods: {
+        previewImage() {
+          this.imageURL = URL.createObjectURL(this.file[0])
+        },
         async checkerrors() {
             this.formErrors = {};
             if (!this.form.address) {
@@ -417,8 +421,46 @@
                 this.formErrors.sun = ['Operating hours required'];
             }
             if (Object.keys(this.formErrors).length === 0) {
+                //delete original pic from storage
+                await this.removePic() 
+                //settle pics in storage first
+                await this.updatePic()
+                //settle other updates
                 await this.updatePerson()
             }
+        },
+        async removePic() {
+            try {
+                const storageRef = ref(storage, this.oldURL);
+                await deleteObject(storageRef);
+                console.log('File deleted successfully!');
+            } catch (error) {
+                console.error('Error deleting file:', error);
+            }
+        },
+        async updatePic() {
+            console.log(this.oldURL)
+            //Imaging upload to storage
+            const curr_email = getAuth().currentUser.email;
+            const db = getFirestore();
+            const docRef2 = doc(db, "Users", curr_email);
+            const docSnap = await getDoc(docRef2)
+            const Docdata = docSnap.data();
+            const vendor_id = Docdata.VendorID;
+            const storageRef = ref(storage, `vendorProfilePic/${this.file[0].name + vendor_id}`);
+            await uploadBytes(storageRef, this.file[0]);
+            const url = await getDownloadURL(storageRef);
+
+            const auth = getAuth();
+            onAuthStateChanged(auth, user => {
+                if(user) {
+                    //Profile image update to colletion in firebase
+                    const docRef = doc(db, "restaurant_personalisation", this.vendorDocId)
+                    updateDoc(docRef, {
+                        ProfileURL: url
+                    })
+                }
+            })
         },
         async updatePerson() {
             const auth = getAuth();
