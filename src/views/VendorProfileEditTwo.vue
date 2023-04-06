@@ -1,4 +1,7 @@
 <template>
+    <v-parallax
+      :src="backgroundImg"
+    >
     <div class="container">
       <VendorBreadCrumbs/>
       <div class="pa-6-wrapper">
@@ -268,8 +271,8 @@
       </v-container>
     
       </div>
-    </div>
-    
+    </div>  
+    </v-parallax>
     </template>
       
     <script>
@@ -320,7 +323,8 @@
           formErrors: {},
           showPISuccess: false,
           isLoading: false,
-          vendorDocId: ''
+          vendorDocId: '',
+          backgroundImg: "https://firebasestorage.googleapis.com/v0/b/bt3103-project-8c8a0.appspot.com/o/slashio-photography-1JruuClwZmc-unsplash.jpg?alt=media&token=62a8e88c-482a-4318-82ba-bc9736095c5d"
         };
       },
       async mounted() {
