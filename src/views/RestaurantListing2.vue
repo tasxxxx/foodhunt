@@ -154,6 +154,8 @@ export default {
             return " Closing at " + closingTime
           }
 
+          
+
           // const closingTime = restaurant[currentDay].split(' - ')[1]
           // const closing = new Date(now)
           // const [hours, minutes] = closingTime.split(':')
@@ -356,7 +358,7 @@ a {
     text-decoration: none;
 }
 .closingTime {
-  margin-top:20px;
+  margin-top:22px;
   float:right;
   position: absolute;
   right: 0;
@@ -392,6 +394,7 @@ a {
 
 .description {
   display:flex;
+  font-family:Nunito;
 }
 
 .location img{
@@ -409,13 +412,15 @@ a {
   margin-top: 20px;
 }
 .restaurant-name {
-  font-size: 20px;
-  margin-top: -10px;
+  font-size: 22px;
+  margin-top: -6px;
   color: black;
+  font-family:Nunito;
+  margin-left: 5px;
 }
 .restaurant-img {
   width: 100%;
-  height: 150px;
+  height: 200px;
 }
 .banner {
   text-align: center;
@@ -433,8 +438,8 @@ a {
 }
 .restaurant{
   border: 1px solid #d3cdcd;
-  width: 300px;
-  height: 250px;
+  width: 400px;
+  height: 300px;
   /* border-radius: 20px; */
   margin: 20px;
   /* box-shadow: 2px 2px grey; */

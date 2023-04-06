@@ -39,19 +39,42 @@
                     <div class="text-h6 mb-1">{{ reservation.reservationNo }}</div>
                   </v-row>
                   <v-row>
-                    <v-col cols="5">
                     <div class="text-subtitle-2 mb-1">{{ reservation.cart[0].restaurant }}</div>
-                    </v-col>
-                    <v-col cols="5">
-                    <div class="text-subtitle-2 mb-1">{{ reservation.createdAt.toDate().toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }) }}</div>
-                    </v-col>
-                    <v-col cols="5">
-                      <div class="text-h6 mb-1">${{ reservation.total.toFixed(2) }}</div>
-                    </v-col>
                   </v-row>
                   <v-row>
-                      <v-chip>{{ reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</v-chip>  
+                    <div class="text-subtitle-2 mb-1">{{ reservation.createdAt.toDate().toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }) }}</div>
                   </v-row>
+                  <v-row>
+                    <div class="text-subtitle-2 mb-1">{{ reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</div>
+                  </v-row>
+                  <v-row>
+                    <!-- <div class="text-subtitle-2 mb-1">${{ reservation.total.toFixed(2) }}</div> -->
+                    <v-chip>${{ reservation.total.toFixed(2) }}</v-chip>
+                  </v-row>
+                  <!-- <v-row>
+                    <div class="text-subtitle-2 mb-1">{{ reservation.createdAt.toDate().toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }) }}</div>
+                  </v-row> -->
+                  <!-- <v-row>
+                    <v-col cols="4">
+                    <div class="text-subtitle-2 mb-1">{{ reservation.cart[0].restaurant }}</div>
+                    </v-col>
+                    <v-col cols="4">
+                    <div class="text-subtitle-2 mb-1">{{ reservation.createdAt.toDate().toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }) }}</div>
+                    </v-col>
+                    <v-col cols="4">
+                      <div class="text-h6 mb-1">${{ reservation.total.toFixed(2) }}</div>
+                    </v-col>
+                  </v-row> -->
+                  
+                    <!-- <v-col cols="9">
+                      <v-chip>{{ reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</v-chip>  
+                    </v-col> -->
+                    <!-- <v-col cols="3">
+                      <div class="text-subtitle-2 mb-1">${{ reservation.total.toFixed(2) }}</div>
+                    </v-col> -->
+                      <!-- <v-chip>{{ reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</v-chip>  
+                      <div class="text-subtitle-2 mb-1">${{ reservation.total.toFixed(2) }}</div> -->
+                  
                 </v-col>
               </v-row>
             </v-card>
@@ -82,37 +105,37 @@
               ></v-img>
               <v-card-item>
                 <v-row>
-                  <v-col cols="9">
+                  <v-col cols="8">
                     
                     <v-card-title>{{ selected_reservation.reservationNo }}</v-card-title>
                     <!-- <v-card-subtitle>Sold to Customer</v-card-subtitle> -->
                     <br>
-                    <v-card-subtitle>Order from</v-card-subtitle>
                     <v-card-subtitle>Order Time and Date</v-card-subtitle>
+                    <v-card-subtitle>Order from</v-card-subtitle>
+                    <!-- <v-card-subtitle>Order Time and Date</v-card-subtitle> -->
       
                   </v-col>
-                  <v-col cols="3" class="text-right">
+                  <v-col cols="4" class="text-right">
                     <v-card-subtitle>{{ selected_reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</v-card-subtitle>
                     <br>
-                    <v-card-subtitle class="me-1">{{ selected_reservation.vendor.Name}}</v-card-subtitle>
                     <v-card-subtitle class="me-1">{{ selected_reservation.createdAt.toDate().toLocaleString('en-SG', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) }}</v-card-subtitle>
+                    <v-card-subtitle class="me-1 no-wrap">{{ selected_reservation.vendor.Name}}</v-card-subtitle>
+
                   </v-col>
                 </v-row>
-                <v-divider></v-divider>
-                <v-divider></v-divider>
-                <v-divider></v-divider>
+                <br>
+                <v-divider class='mb-1'></v-divider>
                 <!-- {{selected_reservation.vendor}} -->
-                <v-row v-for="order in selected_reservation.cart" :key="order.id">
+                <v-row v-for="order in selected_reservation.cart" :key="order.id" class="my-1">
                   <v-col cols="9" class="text-left"> 
                     <v-card-subtitle> {{ order.quantity }} X {{ order.item }}</v-card-subtitle>
                   </v-col>
-                  <v-col cols="2" class="text-right">
-                    <v-card-subtitle class="me-1">${{ order.subtotal.toFixed(2) }}</v-card-subtitle>
+                  <v-col cols="3" class="text-right">
+                    <v-card-subtitle class="me-1 text-right">${{ order.subtotal.toFixed(2) }}</v-card-subtitle>
                   </v-col>
                 </v-row>
-                <v-divider></v-divider>
-                <v-divider></v-divider>
-                <v-divider></v-divider>
+                <v-divider class="mb-1"></v-divider>
+                
 
                 <v-row>
                   <v-col cols="9">
@@ -127,11 +150,11 @@
                     <v-card-subtitle class="me-1">${{ selected_reservation.total.toFixed(2) }}</v-card-subtitle>
                     <v-card-subtitle class="me-1">In-store payment</v-card-subtitle>
                     <!-- <v-card-subtitle class="me-1">{{ items[selectedIndex].collectBy }}</v-card-subtitle> -->
-                    <v-card-subtitle class="me-1">{{ selected_reservation.vendor.Address }}</v-card-subtitle>
+                    <v-card-subtitle class="me-1 no-wrap">{{ selected_reservation.vendor.Address }}</v-card-subtitle>
                   </v-col>
                 </v-row>
-                <br>
                 <v-divider></v-divider>
+                <br>
                 <v-btn rounded="lg" color="red" @click="cancelReservation(selected_reservation.reservationNo)"> Cancel Reservation</v-btn>
 
 
@@ -236,7 +259,7 @@ export default {
       // const restaurantRef = doc(db, "restaurant_personalisation", restaurantID);
       // const restaurantDoc = await getDoc(restaurantRef);
       // this.vendor = restaurantDoc.data()
-      this.vendor = getVendor(this.selected_reservation)
+      // this.vendor = getVendor(this.selected_reservation)
     }
   },
   methods: {
@@ -254,7 +277,8 @@ export default {
     async getReservations() {
       const querySnapshot = await getDocs(collection(db, "reservation_orders"))
       console.log("printing data")
-      const allReservations = querySnapshot.docs.filter(doc => doc.data().user === this.useremail);
+      console.log(querySnapshot)
+      const allReservations = querySnapshot.docs.filter(doc => doc.data().user === this.useremail && doc.data().confirmed);
       // for (Object res in allReservations) {
       //   console.log("res")
       //   console.log(res)
@@ -284,13 +308,13 @@ export default {
       // })
       if (this.reservations.length > 0) {
         this.selected_reservation = this.reservations[0]
-        const foodID = this.selected_reservation.cart[0].foodID
-        const itemRef = doc(db, "food_listings", foodID);
-        const itemDoc = await getDoc(itemRef);
-        const restaurantID = itemDoc.data().Restaurant_PersonalisationId
-        const restaurantRef = doc(db, "restaurant_personalisation", restaurantID);
-        const restaurantDoc = await getDoc(restaurantRef);
-        this.vendor = restaurantDoc.data()
+        // const foodID = this.selected_reservation.cart[0].foodID
+        // const itemRef = doc(db, "food_listings", foodID);
+        // const itemDoc = await getDoc(itemRef);
+        // const restaurantID = itemDoc.data().Restaurant_PersonalisationId
+        // const restaurantRef = doc(db, "restaurant_personalisation", restaurantID);
+        // const restaurantDoc = await getDoc(restaurantRef);
+        // this.vendor = restaurantDoc.data()
       };
     },
     async cancelReservation(reservationNo) {
@@ -350,15 +374,15 @@ export default {
     },
     async selectReservation(reservation) {
       this.selected_reservation = reservation;
-      const foodID = reservation.cart[0].foodID
-      const itemRef = doc(db, "food_listings", foodID);
-      const itemDoc = await getDoc(itemRef);
-      const restaurantID = itemDoc.data().Restaurant_PersonalisationId
-      const restaurantRef = doc(db, "restaurant_personalisation", restaurantID);
-      const restaurantDoc = await getDoc(restaurantRef);
-      this.vendor = restaurantDoc.data()
-      console.log("vendor")
-      console.log(this.vendor)
+      // const foodID = reservation.cart[0].foodID
+      // const itemRef = doc(db, "food_listings", foodID);
+      // const itemDoc = await getDoc(itemRef);
+      // const restaurantID = itemDoc.data().Restaurant_PersonalisationId
+      // const restaurantRef = doc(db, "restaurant_personalisation", restaurantID);
+      // const restaurantDoc = await getDoc(restaurantRef);
+      // this.vendor = restaurantDoc.data()
+      // console.log("vendor")
+      // console.log(this.vendor)
 
 ;
     }
@@ -379,7 +403,12 @@ export default {
 </script>
 
 <style scoped> 
-
+.v-card-subtitle {
+  opacity: 1;
+}
+.v-card-subtitle.me-1.no-wrap {
+  white-space:normal;
+}
 .list-container {
   height: 820px; /* set a fixed height */
   overflow-y: scroll; /* make the container scrollable */
