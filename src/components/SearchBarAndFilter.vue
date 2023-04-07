@@ -41,119 +41,102 @@
         <v-toolbar-title style="font-family:Nunito">Tags</v-toolbar-title>
       </v-toolbar>
         <v-card-text>
-        <h2 class="text-h6 mb-2">
+        <h3 class="mb-2" style="font-family:Nunito">
           Cuisines
-        </h2>
+        </h3>
         <v-chip-group
           v-model="cuisines"
           column
           multiple
+          style="font-family:Nunito; color:rgba(109,93,36,1);"
         >
           <v-chip
             filter
-            variant="outlined"
           >
             American
           </v-chip>
           <v-chip
             filter
-            variant="outlined"
           >
             Bakery
           </v-chip>
           <v-chip
             filter
-            variant="outlined"
           >
             Café
           </v-chip>
           <v-chip
             filter
-            variant="outlined"
           >
             Cakes
           </v-chip>
           <v-chip
             filter
-            variant="outlined"
           >
             Chinese
           </v-chip>
           <v-chip
             filter
-            variant="outlined"
           >
             Coffee
           </v-chip>
           <v-chip
             filter
-            variant="outlined"
           >
             Dessert
           </v-chip>
           <v-chip
             filter
-            variant="outlined"
           >
             Fast Food
           </v-chip>
           <v-chip
             filter
-            variant="outlined"
           >
             Hawker
           </v-chip>
           <v-chip
             filter
-            variant="outlined"
           >
             Ice Cream
           </v-chip>
           <v-chip
             filter
-            variant="outlined"
           >
             Indian
           </v-chip>
           <v-chip
             filter
-            variant="outlined"
           >
             Italian
           </v-chip>
           <v-chip
             filter
-            variant="outlined"
           >
             Japanese
           </v-chip>
           <v-chip
             filter
-            variant="outlined"
           >
             Korean
           </v-chip>
           <v-chip
             filter
-            variant="outlined"
           >
             Malay
           </v-chip>
           <v-chip
             filter
-            variant="outlined"
           >
             Taiwanese
           </v-chip>
           <v-chip
             filter
-            variant="outlined"
           >
             Thai
           </v-chip>
           <v-chip
             filter
-            variant="outlined"
           >
             Vietnamese
           </v-chip>
@@ -161,29 +144,27 @@
       </v-card-text>
   
       <v-card-text>
-        <h2 class="text-h6 mb-2">
+        <h3 class="mb-2" style="font-family:Nunito">
           Price range
-        </h2>
+        </h3>
         <v-chip-group
           v-model="price"
           column
           multiple
+          style="font-family:Nunito; color:rgba(109,93,36,1);"
         >
           <v-chip
             filter
-            variant="outlined"
           >
             $
           </v-chip>
           <v-chip
             filter
-            variant="outlined"
           >
             $$
           </v-chip>
           <v-chip
             filter
-            variant="outlined"
           >
             $$$
           </v-chip>
@@ -191,9 +172,9 @@
       </v-card-text>
 
       <v-card-text>
-        <h2 class="text-h6 mb-2">
+        <h3 class="mb-2" style="font-family:Nunito">
           Postal code
-        </h2>
+        </h3>
         <v-text-field
           v-model="postalcode"
           variant="underlined"
@@ -201,6 +182,7 @@
           @change="postalCodeChange"
           @keyup="postalCodeChange"
           maxlength="6"
+          style="font-family:Nunito"
         ></v-text-field>
       </v-card-text>
     </v-card>
@@ -214,7 +196,6 @@
   <v-chip
   v-for="(item) in cuisines"
   :key="item"
-  variant="outlined"
   style="font-family:Nunito;"
   color="rgba(109,93,36,1)"
 >
@@ -224,7 +205,6 @@
   <v-chip
   v-for="(item) in price"
   :key="item"
-  variant="outlined"
   style="font-family:Nunito;"
   color="rgba(109,93,36,1)"
 >
@@ -233,7 +213,6 @@
 
   <v-chip
     v-if="postalcode && postalcode.length == 6"
-    variant="outlined"
     style="font-family:Nunito;"
     color="rgba(109,93,36,1)"
   >
@@ -329,4 +308,5 @@ export default {
   flex-wrap: wrap;
   margin-left: 5vw;
 }
+
 </style>
