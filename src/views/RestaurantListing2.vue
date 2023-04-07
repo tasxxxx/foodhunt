@@ -113,7 +113,7 @@ export default {
     }
   },
 
-  emits: ["clearFilters", "updatePostalCode"],
+  emits: ["clearFilters", "selectedPostalCode"],
 
   async mounted() {
     try {
@@ -128,21 +128,11 @@ export default {
       console.log(error)
     }
 
-    console.log("inside mounted")
-    this.emitter.on("landingPostalCode", (value) => {
-    console.log(value)
-    console.log('hi')
-    this.selectedPostalCode = value
-    })
-
-    // this.handlePostalCode(this.selectedPostalCode)
-     // this.emitter.emit("updatePostalCode", this.selectedPostalCode)
-    // if (this.$route.query.data.length != 0) {
-    //   this.selectedPostalCode = this.$route.query.data
-    //   console.log(this.selectedPostalCode)
-    //   // this.handlePostalCode(this.selectedPostalCode)
-    //   this.emitter.emit("updatePostalCode", this.selectedPostalCode)
-    // }
+    if (this.$route.query.postalcode) {
+      this.selectedPostalCode = this.$route.query.postalcode
+      this.handlePostalCode(this.selectedPostalCode)
+      this.emitter.emit("selectedPostalCode", this.selectedPostalCode)
+    }
   },
 
   created() {
@@ -202,26 +192,6 @@ export default {
     },
 
   },
-
-  // created() {
-  //   console.log("inside created")
-  //   this.emitter.on("landingPostalCode", (value) => {
-  //   console.log(value)
-  //   console.log('hi')
-  //   this.selectedPostalCode = value
-  //     // this.handlePostalCode(this.selectedPostalCode)
-  //     // this.emitter.emit("updatePostalCode", this.selectedPostalCode)
-  //   })
-  // },
-
-  // watch: {
-  //   landingPostalCode(val) {
-  //     this.selectedPostalCode = val
-  //     console.log(this.selectedPostalCode)
-  //     handleSearch(this.selectedPostalCode)
-  //     this.emitter.emit("updatePostalCode", this.selectedPostalCode)
-  //   }
-  // },
 
   methods: {
 
