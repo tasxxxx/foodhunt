@@ -70,7 +70,6 @@ export default {
       } else {
         console.log("in landing.vue")
         console.log(this.postalcode)
-        console.log(" ")
         this.$router.push({name: 'restaurantlisting', query: { postalcode: this.postalcode }})
 
       }

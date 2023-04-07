@@ -131,20 +131,11 @@ export default {
       console.log(error)
     }
 
-    if (this.$route.query.postalcode.length > 0) {
+    if (this.$route.query.postalcode) {
       this.selectedPostalCode = this.$route.query.postalcode
       this.handlePostalCode(this.selectedPostalCode)
       this.emitter.emit("selectedPostalCode", this.selectedPostalCode)
     }
-  },
-
-  beforeRouteUpdate(to, from, next) {
-    this.$router.replace({ query: null });
-    next();
-  },
-  beforeRouteLeave(to, from, next) {
-    this.$router.replace({ query: null });
-    next();
   },
 
   created() {
