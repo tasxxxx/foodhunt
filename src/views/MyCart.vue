@@ -157,13 +157,11 @@ export default {
           confirmed: false,
           isPickedUp: false,
         });
-        this.cart = [];
         await deleteDoc(cartRef);
         const orderNumberWithPrefix = `FH-${randNum}`;
         this.$router.push({ name: 'Confirmation', params: { reservationNumber: orderNumberWithPrefix }});
         this.cart = [];
       } else {
-        this.cart = [];
         await deleteDoc(cartRef);
         toast.error("Product quantity is not available, please try again!", {
           position: "top-right",

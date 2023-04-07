@@ -8,7 +8,9 @@
         <h1 id="loadingmessage" >Loading your reservations...</h1>
       </div>
     <EmptyReservation v-else-if="reservations.length === 0 && showPlaceholder"/>
-    <div v-else>
+    <div v-else style="margin-left:250px;">
+      <br>
+      <br>
       <v-card
         class="mx-auto rounded-card" 
         max-width=1230
@@ -23,7 +25,7 @@
               key="reservation.id" 
               @click="selectReservation(reservation)"
               :color="reservation === selected_reservation ? 'primary' : undefined"
-              min-height="200"
+              min-height="190"
             >
               <br>
               <v-row>
@@ -43,10 +45,11 @@
                     <div class="text-subtitle-2 mb-1">{{ reservation.createdAt.toDate().toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }) }}</div>
                   </v-row>
                   <v-row>
-                    <div class="text-subtitle-2 mb-1">{{ reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}</div>
+                    <div class="text-h5 mb-1" >${{ reservation.total.toFixed(2) }}</div>
                   </v-row>
                   <v-row>
-                    <v-chip>${{ reservation.total.toFixed(2) }}</v-chip>
+                    <v-chip>{{ reservation.isPickedUp ? 'Completed' : 'Pending Pickup' }}
+                      </v-chip>
                   </v-row>
                 </v-col>
               </v-row>
@@ -285,14 +288,14 @@ export default {
   white-space:normal;
 }
 .list-container {
-  height: 820px; /* set a fixed height */
+  height: auto; /* set a fixed height */
   overflow-y: scroll; /* make the container scrollable */
 }
 
 * {
 box-sizing: border-box;
 }
-
+/* 
 .shopping-cart {
 width: 720px;
 height: auto;
@@ -453,7 +456,7 @@ font-weight: 300;
 .buttons {
   margin-right: 20px;
 }
-}
+} */
 
 .loader-container {
   position: relative;

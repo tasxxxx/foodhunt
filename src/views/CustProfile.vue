@@ -14,7 +14,6 @@
             v-model="form.email"
             type="email"
             style="font-family:Nunito"
-            variant="solo"
             :readonly="isReadOnly"
           ></v-text-field>
           <h3 style="font-family:Nunito;" class="text-left mb-7">Phone number</h3>
@@ -23,6 +22,7 @@
             type="text"
             hint="Enter your new SG phone number"
             style="font-family:Nunito"
+            variant="solo"
             :error-messages="formErrors.phoneNo"
           ></v-text-field>
           <v-alert
@@ -215,7 +215,5 @@
   .pa-7-wrapper {
     padding:15vh;
     margin-top:-50px;
-    padding-left: 30vw;
-    padding-right: 30vw;
   }
 </style>
