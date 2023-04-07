@@ -134,23 +134,22 @@ export default {
 
 #searchbutton {
   border-radius: 10px;
-  top: 31vh;
-  left: 39vw;
-  height: 7.0%;
-  font-size: 1.0vw;
+  top: 29.5%;
+  left: 71%;
+  height: 6.3%;
+  font-size: 20px;
   position: relative;
   color: black;
 }
 
 .text-field-wrapper {
-  margin-top: 23.1vh; 
-  margin-left: 3vw; 
+  margin-top: 19.5%; 
+  margin-left: 5.7%; 
   margin-right: 30%;
 }
 
 #PostalField { 
   height: 7.0%;
-  
 }
 
 </style>
