@@ -11,7 +11,7 @@
 
         <!-- <img id = "restaurantimg" src="@/assets/macdonaldbanner.jpeg" alt = ""> -->
       <div className="text">
-        <h2 style="font-family:Nunito; margin-left: 5vw;">Around the island..</h2>
+        <h2 style="font-family:Nunito; margin-left: 5vw;">Around the island...</h2>
       </div>
 
       <SearchBarAndFilter 
@@ -280,11 +280,11 @@ export default {
     },
 
     handlePostalCode(value) {
-      if (value && value.length >= 2 && this.searchOn) {
+      if (value && value.length == 6 && this.searchOn) {
         this.needOriginalSearch = true
         this.postalCodeFilter = true
         this.selectedPostalCode = value
-      } else if (value && value.length >= 2) {
+      } else if (value && value.length == 6) {
         this.postalCodeFilter = true
         this.selectedPostalCode = value
       } else if (this.searchOn) {
