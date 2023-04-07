@@ -1,7 +1,6 @@
 <template>
     <div class="container">
-      <!-- This looks super weird atm with the background image so let's just comment this out first :)-->
-      <img id = "backgroundimg" src="@/assets/brooke-lark-V4MBq8kue3U-unsplash.jpg" alt = "">
+      <img id = "backgroundimg" src="@/assets/slashio-photography-1JruuClwZmc-unsplash.jpg" alt = "">
 
       <div class="pa-6-wrapper">
     
@@ -487,12 +486,15 @@
         width:10vw;
       }
       .pa-6-wrapper {
-        padding:10vh;
+        /* padding:10vh;
         padding-left: 30vw;
         padding-right: 30vw;
         margin-left: 5vh;
         position: absolute;
         top: 140%;
-        transform: translateY(-50%)
+        transform: translateY(-50%) */
+        padding:15vh;
+        padding-left: 30vw;
+        padding-right: 30vw;
       }
     </style>
