@@ -4,25 +4,39 @@
     <v-layout>
         <v-main>
             <v-row>
-            <v-col cols="12">
+            <v-col cols="12" class="d-flex justify-end align-end">
             <v-parallax
                 :src="imageURL"
                 height="300"
-            >
-
+                class="banner-container"
+            >  
                     <div class="d-flex flex-column fill-height justify-center align-center text-white">
                     <div class="text-h1 font-weight-thin mb-4">
                         Welcome Back!
                     </div>
-                    <div class="text-h3 font-weight-thin mb-4">
+
+                    <div class="d-flex align-items-center profile-container">
+                        <div class="text-h3 font-weight-thin mb-4 ml-2">
                         {{ name }}
+                        </div>
+                        <div class = "image-container">
+                            <v-img 
+                            :src="profilepic" 
+                            contain 
+                            class="profile-picture profile-picture--right"
+                            accept="image/png, image/gif, image/jpeg"
+                            width="100"
+                            height="100"
+                        ></v-img>  
+                        </div>
                     </div>
+
                     <!-- <v-card class="translucent-card">
                         <v-card-text>
                             {{ name }}
                         </v-card-text>
                     </v-card> -->
-                    </div>
+                </div>
 
             </v-parallax>
             </v-col>
@@ -101,6 +115,7 @@ export default {
         name: "",
         totalListings: 0,
         totalEarnings: 0,
+        profilepic: null,
       }
     },
     components:{
@@ -148,6 +163,16 @@ export default {
                         this.totalEarnings = (this.totalEarnings + resObject.total);
                     }
                 }
+                //get profile picture
+                const vendor_id = userRef.data().VendorID;
+                const vendor_doc_id = (userRef.data().Name + vendor_id.substring(0,5)).replace(/\s+/g, '')
+                const docRef2 = doc(db, "restaurant_personalisation", vendor_doc_id)
+                const userDocument = await getDoc(docRef2);
+                if (userDocument.exists()) {
+                    const userData = userDocument.data();
+                    this.profilepic = userData.ProfileURL;
+                }
+                //console.log(this.profilepic)
                 /*
                 const userRestaurant_PersonalisationId = userRef.data().Restaurant_PersonalisationId;
                 const personalisationRef = await getDoc(doc(db, "restaurant_personalisation", userRestaurant_PersonalisationId));
@@ -190,7 +215,25 @@ export default {
     line-height: 2;
     opacity: 0.73;
 }
-.translucent-card {
-  background-color: rgba(255, 255, 255, 0.5);
+
+.profile-picture--right {
+    --gradient-color: rgb(0, 0, 0); 
+    --gradient-start: 0%; 
+    --gradient-stop: 100%; 
+    -webkit-mask-image: linear-gradient(to right, transparent var(--gradient-start), var(--gradient-color) var(--gradient-stop));
+    display: flex;
+    align-items: center;
+}
+.image-container {
+    margin-left: 10px;
+}
+
+.banner-container {
+  position: relative;
+}
+
+.text-h3 {
+    top: 20%;
+    position: relative;
 }
 </style>
