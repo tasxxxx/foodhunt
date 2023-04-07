@@ -14,7 +14,12 @@
         <h2 style="font-family:Nunito; margin-left: 5vw;">Around the island..</h2>
       </div>
 
-      <SearchBarAndFilter @search="handleSearch" @filterCuisine="handleCuisine" @filterPrice="handlePrice" @filterPostalCode="handlePostalCode"/>
+      <SearchBarAndFilter 
+        @search="handleSearch"
+        @filterCuisine="handleCuisine" 
+        @filterPrice="handlePrice" 
+        @filterPostalCode="handlePostalCode"
+      />
 
       <!-- <v-breadcrumbs-item :to="{ name: 'restaurant'}">
         <v-icon icon="mdi-shopping"></v-icon>
@@ -108,12 +113,13 @@ export default {
     }
   },
 
+  emits: ["clearFilters", "updatePostalCode"],
+
   async mounted() {
     try {
       const querySnapshot = await getDocs(collection(db, "restaurant_personalisation"))
       this.restaurants = querySnapshot.docs.map(doc => doc.data())
       this.searchRestaurant = querySnapshot.docs.map(doc => doc.data())
-      console.log(this.restaurants)
       // Set showPlaceholder to true after a delay of 3 seconds
       setTimeout(() => {
         this.showPlaceholder = true;
@@ -121,6 +127,22 @@ export default {
     } catch (error) {
       console.log(error)
     }
+
+    console.log("inside mounted")
+    this.emitter.on("landingPostalCode", (value) => {
+    console.log(value)
+    console.log('hi')
+    this.selectedPostalCode = value
+    })
+
+    // this.handlePostalCode(this.selectedPostalCode)
+     // this.emitter.emit("updatePostalCode", this.selectedPostalCode)
+    // if (this.$route.query.data.length != 0) {
+    //   this.selectedPostalCode = this.$route.query.data
+    //   console.log(this.selectedPostalCode)
+    //   // this.handlePostalCode(this.selectedPostalCode)
+    //   this.emitter.emit("updatePostalCode", this.selectedPostalCode)
+    // }
   },
 
   created() {
@@ -142,7 +164,6 @@ export default {
         const closingTime = restaurant[currentDay] 
         const regex = /^(?!(\d{2}:\d{2} - \d{2}:\d{2})$).*/;
         const isMatch = regex.test(closingTime); 
-        console.log(closingTime + isMatch)
         if (isMatch) {
           return "Closed" 
         } else { 
@@ -182,9 +203,37 @@ export default {
 
   },
 
-  emits: ["clearFilters"],
+  // created() {
+  //   console.log("inside created")
+  //   this.emitter.on("landingPostalCode", (value) => {
+  //   console.log(value)
+  //   console.log('hi')
+  //   this.selectedPostalCode = value
+  //     // this.handlePostalCode(this.selectedPostalCode)
+  //     // this.emitter.emit("updatePostalCode", this.selectedPostalCode)
+  //   })
+  // },
+
+  // watch: {
+  //   landingPostalCode(val) {
+  //     this.selectedPostalCode = val
+  //     console.log(this.selectedPostalCode)
+  //     handleSearch(this.selectedPostalCode)
+  //     this.emitter.emit("updatePostalCode", this.selectedPostalCode)
+  //   }
+  // },
 
   methods: {
+
+    handleLandingPostalCode(value) {
+      console.log("in restaurantlisting2,vue")
+      console.log(value)
+      console.log(" ")
+      this.selectedPostalCode = value
+      this.emitter.emit("updatePostalCode", this.selectedPostalCode)
+      this.handlePostalCode(this.selectedPostalCode)
+    },
+
     handleSearch(value) {
       if (value && value.length > 0 && this.needOriginalSearch) {
         this.searchValue = value
@@ -227,9 +276,16 @@ export default {
     },
 
     handleCuisine(value) {
-      if (value.length > 0) {
+      if (value.length > 0 && this.searchOn) {
+        this.needOriginalSearch = true
         this.cuisineFilter = true
         this.selectedCuisineTags = value
+      } else if (value.length > 0) {
+        this.cuisineFilter = true
+        this.selectedCuisineTags = value
+      } else if (this.searchOn) {
+        this.needOriginalSearch = true
+        this.cuisineFilter = false
       } else {
         this.cuisineFilter = false
       }
@@ -237,10 +293,16 @@ export default {
     },
 
     handlePrice(value) {
-      if (value.length > 0) {
-        console.log(value)
+      if (value.length > 0 && this.searchOn) {
+        this.needOriginalSearch = true
         this.priceFilter = true
         this.selectedPriceTags = value
+      } else if (value.length > 0) {
+        this.priceFilter = true
+        this.selectedPriceTags = value
+      } else if (this.searchOn){
+        this.needOriginalSearch = true
+        this.priceFilter = false
       } else {
         this.priceFilter = false
       }
@@ -248,9 +310,16 @@ export default {
     },
 
     handlePostalCode(value) {
-      if (value && value.length >= 2) {
+      if (value && value.length >= 2 && this.searchOn) {
+        this.needOriginalSearch = true
         this.postalCodeFilter = true
         this.selectedPostalCode = value
+      } else if (value && value.length >= 2) {
+        this.postalCodeFilter = true
+        this.selectedPostalCode = value
+      } else if (this.searchOn) {
+        this.needOriginalSearch = true
+        this.postalCodeFilter = false
       } else {
         this.postalCodeFilter = false
       }
@@ -261,6 +330,10 @@ export default {
       if (this.cuisineFilter || this.priceFilter || this.postalCodeFilter) {
 
         this.showTagline = true;
+
+        if (this.searchOn) {
+          this.handleSearch(this.searchValue)
+        }
 
         if (this.cuisineFilter && (this.searchOn) ) {
           this.searchRestaurant = this.searchRestaurant.filter(r => {
@@ -288,7 +361,6 @@ export default {
           this.searchRestaurant = this.searchRestaurant.filter(r => {
           for (let i = 0; i < this.selectedPriceTags.length; i++) {
             const index = this.selectedPriceTags[i]
-            console.log(r.Price_Range === this.pricerange[index])
               if (r.Price_Range === this.pricerange[index]) {
                 return true
               }
@@ -299,7 +371,7 @@ export default {
           this.searchRestaurant = this.restaurants.filter(r => {
           for (let i = 0; i < this.selectedPriceTags.length; i++) {
             const index = this.selectedPriceTags[i]
-            console.log(r.Price_Range === this.pricerange[index])
+
               if (r.Price_Range === this.pricerange[index]) {
                 return true
               }
