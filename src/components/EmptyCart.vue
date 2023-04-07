@@ -26,24 +26,21 @@
 }
 
 #emptycart {
-  margin-top:-150px;
-  margin-left:-30px;
+  margin-top: -150px;
+  margin-left:425px;
   width: 500px;
 }
 
-#emojisad {
-  width: 320px;
-}
-
 #message {
-  margin-top: -55px;
+  margin-top: -25px;
+  margin-left:450px;
   margin-bottom: 25px;
   font-family: Nunito; 
   text-align: center;
 }
 
 #btn {
-  margin-left: -15px;
+  margin-left:425px;
 }
 
 </style>

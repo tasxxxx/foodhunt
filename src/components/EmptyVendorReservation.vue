@@ -1,7 +1,7 @@
 <template>
     <div class="empty-cart-container">
-      <img id ="emptycart" src="@/assets/ae8ac2fa217d23aadcc913989fcc34a2.png" alt = "">
-      <h1 id="message">Oops! You have no current reservations. Check back again!</h1>
+      <img id ="emptycart" src="@/assets/ae8ac2fa217d23aadcc913989fcc34a2-removebg-preview.png" alt = "">
+      <h1 id="message">Oops! You have no current reservations. <br> Check back again!</h1>
       <v-breadcrumbs-item :to="{ name: 'vendor-dashboard'}">
         <v-btn rounded="lg" color="primary"> Back to Dashboard </v-btn>
       </v-breadcrumbs-item>
@@ -23,13 +23,19 @@
 }
 
 #emptycart {
+  margin-top:-150px;
   width: 500px;
 }
 
 #message {
-  margin-top: -15px;
+  margin-top: -35px;
   margin-bottom: 25px;
   font-family: Nunito; 
+  text-align: center;
+}
+
+#btn {
+  margin-left: -15px;
 }
 
 </style>

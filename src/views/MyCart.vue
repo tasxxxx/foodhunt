@@ -548,7 +548,7 @@ font-weight: 300;
   animation: spin 2s linear infinite;
   position: absolute;
   top: 40%;
-  left: 45%;
+  left: 50%;
   transform: translate(-50%, -50%);
 }
 
@@ -561,7 +561,7 @@ font-weight: 300;
   text-align: center;
   position: absolute;
   top: 60%;
-  left: 49%;
+  left: 53%;
   transform: translate(-50%, -50%);
   font-family: Nunito; 
   

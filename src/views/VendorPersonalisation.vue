@@ -311,11 +311,11 @@
           //if no image selected display this by default
           url: 'https://i.imgur.com/cbERxrb.png',
 
-          cuisines: ['Chinese',  'Indian',  'Malay', 'Café'],
+          cuisines: ['Chinese',  'Indian',  'Malay', 'Café', 'American', 'Thai', 'Taiwanese', 'Dessert', 'Japanese', 'Korean', 'Vietnamese', 'Fast Food', 'Coffee', 'Cakes', 'Ice Cream', 'Hawker', 'Italian', 'Bakery'].sort(),
 
           priceranges: ['$', '$$', '$$$'],
 
-          towns: ['AMK', 'Orchard','Tampines'],
+          towns: ['AMK', 'Orchard','Tampines', 'CBD', 'Tiong Bahru', 'Clementi', 'Bugis', 'Toa Payoh', 'Serangoon', 'Geylang','Bedok', 'Pasir Ris', 'Hougang', 'Sengkang', 'Bishan', 'Jurong', 'CCK', 'Yishun'].sort(),
 
           selectedCuisines: null,
           selectedPriceRanges: null,

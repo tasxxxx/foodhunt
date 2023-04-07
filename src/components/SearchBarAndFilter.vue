@@ -54,7 +54,61 @@
             filter
             variant="outlined"
           >
+            American
+          </v-chip>
+          <v-chip
+            filter
+            variant="outlined"
+          >
+            Bakery
+          </v-chip>
+          <v-chip
+            filter
+            variant="outlined"
+          >
+            Café
+          </v-chip>
+          <v-chip
+            filter
+            variant="outlined"
+          >
+            Cakes
+          </v-chip>
+          <v-chip
+            filter
+            variant="outlined"
+          >
             Chinese
+          </v-chip>
+          <v-chip
+            filter
+            variant="outlined"
+          >
+            Coffee
+          </v-chip>
+          <v-chip
+            filter
+            variant="outlined"
+          >
+            Dessert
+          </v-chip>
+          <v-chip
+            filter
+            variant="outlined"
+          >
+            Fast Food
+          </v-chip>
+          <v-chip
+            filter
+            variant="outlined"
+          >
+            Hawker
+          </v-chip>
+          <v-chip
+            filter
+            variant="outlined"
+          >
+            Ice Cream
           </v-chip>
           <v-chip
             filter
@@ -66,13 +120,43 @@
             filter
             variant="outlined"
           >
+            Italian
+          </v-chip>
+          <v-chip
+            filter
+            variant="outlined"
+          >
+            Japanese
+          </v-chip>
+          <v-chip
+            filter
+            variant="outlined"
+          >
+            Korean
+          </v-chip>
+          <v-chip
+            filter
+            variant="outlined"
+          >
             Malay
           </v-chip>
           <v-chip
             filter
             variant="outlined"
           >
-            Café
+            Taiwanese
+          </v-chip>
+          <v-chip
+            filter
+            variant="outlined"
+          >
+            Thai
+          </v-chip>
+          <v-chip
+            filter
+            variant="outlined"
+          >
+            Vietnamese
           </v-chip>
         </v-chip-group>
       </v-card-text>

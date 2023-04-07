@@ -90,11 +90,8 @@ export default {
       searchValue: "",
       searchOn: false,
       cuisines: [ //hardcoded and order matches SearchBarAndFilter.vue same for pricerange
-        "Chinese",
-        "Indian",
-        "Malay",
-        "Café",
-      ],
+      'Chinese',  'Indian',  'Malay', 'Café', 'American', 'Thai', 'Taiwanese', 'Dessert', 'Japanese', 'Korean', 'Vietnamese', 'Fast Food', 'Coffee', 'Cakes', 'Ice Cream', 'Hawker', 'Italian', 'Bakery'].sort(),
+      // [,
       pricerange: [
         "$",
         "$$",
@@ -474,6 +471,15 @@ a {
   display:flex;
   flex-wrap: wrap;
   margin-left: 3.5%;
+}
+
+.searchtagline {
+  position: relative;
+  text-align: center;
+  margin-top:20px;
+  color:rgba(109,93,36,1);  
+  font-family:Nunito;
+  font-style: italic;
 }
 
 .loader-container {
