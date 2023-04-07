@@ -1,6 +1,11 @@
 <template>
     <div class="restaurant-info">
-        <img id = "restaurantimg" src="@/assets/macdonaldbanner.jpeg" alt = "">
+        <v-img
+            :src="restaurant.ProfileURL"
+              contain
+                  class="restaurantimg"
+                    ></v-img>
+        <!-- <img id = "restaurantimg" src="@/assets/macdonaldbanner.jpeg" alt = ""> -->
         <h1 id="restaurantname">{{ restaurant.name }}</h1>       
         <div class = "tags">
         <v-chip color="rgba(109,93,36,1)"> {{ restaurant.cuisine }} </v-chip>
@@ -109,6 +114,7 @@
         const remarks = documentData.Remarks.split(',').join("<br>");
         const pricerange = documentData.Price_Range; 
         const cuisine = documentData.Cuisines; 
+        const ProfileURL= documentData.ProfileURL
 
         this.restaurant = {
         name,
@@ -122,7 +128,8 @@
         sunday, 
         remarks,
         pricerange, 
-        cuisine
+        cuisine, 
+        ProfileURL
         };
 
         this.imageurl = documentData.imageID;
@@ -135,9 +142,11 @@
 
 <style scoped>
 
-#restaurantimg {
+.restaurantimg {
 width: 100%;
-height: 400px;
+height: 500px;
+object-fit: fill;
+overflow: hidden;
 }
 
 #restaurantname {

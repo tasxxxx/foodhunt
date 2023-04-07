@@ -313,7 +313,9 @@ export default {
           const cust_email = resObject.user;
           const custRef = await getDoc(doc(db, "Users", cust_email));
           const custObj = custRef.data();
-          resObject.phoneNo = custObj.PhoneNo;
+          if (custObj) {
+              resObject.phoneNo = custObj.PhoneNo;
+          }
           
           const cart = resObject.cart;
           // For each item in cart

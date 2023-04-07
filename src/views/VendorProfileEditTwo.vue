@@ -309,13 +309,14 @@
           imageURL: null,
           oldURL: null,
 
-          cuisiness: ['Chinese',  'Indian',  'Malay', 'Café'],
+          cuisiness: ['Chinese',  'Indian',  'Malay', 'Café', 'American', 'Thai', 'Taiwanese', 'Dessert', 'Japanese', 'Korean', 'Vietnamese', 'Fast Food', 'Coffee', 'Cakes', 'Ice Cream', 'Hawker', 'Italian', 'Bakery'].sort(),
+
           selectedCuisines: '',
 
           pricerange: ['$', '$$', '$$$'],
           selectedPriceRanges: '',
 
-          townss: ['AMK', 'Orchard','Tampines'],
+          townss: ['AMK', 'Orchard','Tampines', 'CBD', 'Tiong Bahru', 'Clementi', 'Bugis', 'Toa Payoh', 'Serangoon', 'Geylang','Bedok', 'Pasir Ris', 'Hougang', 'Sengkang', 'Bishan', 'Jurong', 'CCK', 'Yishun'].sort(),
           selectedTowns: '',
 
           open: ['Cuisines'],
