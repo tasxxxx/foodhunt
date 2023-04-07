@@ -206,6 +206,43 @@
     </v-card>
     </v-menu>
 </div>
+<div v-if="this.cuisines.length != 0 || this.price.length != 0 || this.postalcode.length == 6" class="filter">
+  <h2 style="font-family:Nunito; margin-left: 5vw;">Your filtered results...</h2>
+  <p></p>
+
+  <div class="chips">
+  <v-chip
+  v-for="(item) in cuisines"
+  :key="item"
+  variant="outlined"
+  style="font-family:Nunito;"
+  color="rgba(109,93,36,1)"
+>
+  {{ this.allcuisines[item] }}
+  </v-chip>
+
+  <v-chip
+  v-for="(item) in price"
+  :key="item"
+  variant="outlined"
+  style="font-family:Nunito;"
+  color="rgba(109,93,36,1)"
+>
+  {{ this.allpricerange[item] }}
+  </v-chip>
+
+  <v-chip
+    v-if="postalcode && postalcode.length == 6"
+    variant="outlined"
+    style="font-family:Nunito;"
+    color="rgba(109,93,36,1)"
+  >
+    {{ this.postalcode }}
+  </v-chip>
+
+  </div>
+
+</div>
 </template>
 
 <script>
@@ -217,8 +254,15 @@ export default {
         cuisines: [],
         price: [],
         postalcode: '',
-
-        }
+        allcuisines: [ //hardcoded and order matches SearchBarAndFilter.vue same for pricerange
+        'Chinese',  'Indian',  'Malay', 'Café', 'American', 'Thai', 'Taiwanese', 'Dessert', 'Japanese', 'Korean', 'Vietnamese', 'Fast Food', 'Coffee', 'Cakes', 'Ice Cream', 'Hawker', 'Italian', 'Bakery'].sort(),
+      // [,
+      allpricerange: [
+        "$",
+        "$$",
+        "$$$",
+      ],
+    }
     },
 
     emits: ["search", "filterCuisine", "filterPrice", "filterPostalCode"],
@@ -256,7 +300,7 @@ export default {
 
       price(val) {
         this.$emit("filterPrice", this.price)
-      }
+      },
     }
 }
 
@@ -273,5 +317,16 @@ export default {
 
 .v-btn {
     top: -10px;
+}
+
+/* .filter {
+  display:flex;
+  flex-wrap: wrap;
+} */
+
+.chips {
+  display:flex;
+  flex-wrap: wrap;
+  margin-left: 5vw;
 }
 </style>
