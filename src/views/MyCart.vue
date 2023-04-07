@@ -376,6 +376,8 @@ box-shadow: 1px 2px 3px 0px rgba(0,0,0,0.10);
 border-radius: 15px;
 display: flex;
 flex-direction: column;
+margin-top:6%;
+margin-left:27%;
 }
 .title {
   height: 80px;

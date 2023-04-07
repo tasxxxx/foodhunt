@@ -145,7 +145,7 @@
 .restaurantimg {
 width: 100%;
 height: 500px;
-object-fit: fill;
+object-fit: cover;
 overflow: hidden;
 }
 
