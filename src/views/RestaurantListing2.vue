@@ -11,7 +11,12 @@
         <h2 style="font-family:Nunito; margin-left: 5vw;">Around the island..</h2>
       </div>
 
-      <SearchBarAndFilter @search="handleSearch" @filterCuisine="handleCuisine" @filterPrice="handlePrice" @filterPostalCode="handlePostalCode"/>
+      <SearchBarAndFilter 
+        @search="handleSearch"
+        @filterCuisine="handleCuisine" 
+        @filterPrice="handlePrice" 
+        @filterPostalCode="handlePostalCode"
+      />
 
       <!-- <v-breadcrumbs-item :to="{ name: 'restaurant'}">
         <v-icon icon="mdi-shopping"></v-icon>
@@ -102,12 +107,13 @@ export default {
     }
   },
 
+  emits: ["clearFilters", "updatePostalCode"],
+
   async mounted() {
     try {
       const querySnapshot = await getDocs(collection(db, "restaurant_personalisation"))
       this.restaurants = querySnapshot.docs.map(doc => doc.data())
       this.searchRestaurant = querySnapshot.docs.map(doc => doc.data())
-      console.log(this.restaurants)
       // Set showPlaceholder to true after a delay of 3 seconds
       setTimeout(() => {
         this.showPlaceholder = true;
@@ -115,6 +121,22 @@ export default {
     } catch (error) {
       console.log(error)
     }
+
+    console.log("inside mounted")
+    this.emitter.on("landingPostalCode", (value) => {
+    console.log(value)
+    console.log('hi')
+    this.selectedPostalCode = value
+    })
+
+    // this.handlePostalCode(this.selectedPostalCode)
+     // this.emitter.emit("updatePostalCode", this.selectedPostalCode)
+    // if (this.$route.query.data.length != 0) {
+    //   this.selectedPostalCode = this.$route.query.data
+    //   console.log(this.selectedPostalCode)
+    //   // this.handlePostalCode(this.selectedPostalCode)
+    //   this.emitter.emit("updatePostalCode", this.selectedPostalCode)
+    // }
   },
 
   computed: {
@@ -127,7 +149,6 @@ export default {
         const closingTime = restaurant[currentDay] 
         const regex = /^(?!(\d{2}:\d{2} - \d{2}:\d{2})$).*/;
         const isMatch = regex.test(closingTime); 
-        console.log(closingTime + isMatch)
         if (isMatch) {
           return "Closed" 
         } else { 
@@ -182,9 +203,36 @@ export default {
 
   },
 
-  emits: ["clearFilters"],
+  // created() {
+  //   console.log("inside created")
+  //   this.emitter.on("landingPostalCode", (value) => {
+  //   console.log(value)
+  //   console.log('hi')
+  //   this.selectedPostalCode = value
+  //     // this.handlePostalCode(this.selectedPostalCode)
+  //     // this.emitter.emit("updatePostalCode", this.selectedPostalCode)
+  //   })
+  // },
+
+  // watch: {
+  //   landingPostalCode(val) {
+  //     this.selectedPostalCode = val
+  //     console.log(this.selectedPostalCode)
+  //     handleSearch(this.selectedPostalCode)
+  //     this.emitter.emit("updatePostalCode", this.selectedPostalCode)
+  //   }
+  // },
 
   methods: {
+
+    handleLandingPostalCode(value) {
+      console.log("in restaurantlisting2,vue")
+      console.log(value)
+      console.log(" ")
+      this.selectedPostalCode = value
+      this.emitter.emit("updatePostalCode", this.selectedPostalCode)
+      this.handlePostalCode(this.selectedPostalCode)
+    },
 
     handleSearch(value) {
       if (value && value.length > 0 && this.needOriginalSearch) {

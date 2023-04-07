@@ -25,10 +25,23 @@
     </v-breadcrumbs>
 
     <span id="tagline">Late-night deals that make a difference.</span>
-    <v-btn id = 'searchbutton' variant="outlined">Search Nearby</v-btn> 
+    <v-btn 
+    id = 'searchbutton' 
+    color="primary" 
+    style="font-family:Nunito;" 
+    @click="search"
+    >Search Nearby</v-btn> 
 
     <div class="text-field-wrapper">
-      <v-text-field id = 'PostalField' label="Enter Postal Code" variant="solo"></v-text-field>
+      <v-text-field 
+      id = 'PostalField' 
+      v-model="postalcode" 
+      label="Enter Postal Code" 
+      variant="solo" 
+      maxlength="6" 
+      style="font-family:Nunito;"
+      :error-messages="errors"
+      ></v-text-field>
     </div>
 
   </div>
@@ -37,7 +50,35 @@
 
 <script>
 export default {
-  name: "Landing"
+  name: "Landing",
+  components: {
+
+  },
+  data() {
+    return {
+      postalcode: '',
+      errors: [],
+    }
+  },
+
+  emits:["landingPostalCode"],
+
+  methods: {
+    search() {
+      if (this.postalcode.length == 0) {
+        this.errors = ["Postal code is required"]
+      } else if (/[a-zA-Z]/.test(this.postalcode) || this.postalcode.length < 6) {
+        this.errors = ["Please enter a valid postal code"]
+      } else {
+        console.log("in landing.vue")
+        console.log(this.postalcode)
+        console.log(" ")
+        this.$router.push('/restaurantlisting')
+        this.emitter.emit("landingPostalCode", this.postalcode) 
+
+      }
+    }
+  }
 }
 </script>
 
@@ -93,7 +134,7 @@ export default {
 
 #searchbutton {
   border-radius: 10px;
-  top: 30vh;
+  top: 31vh;
   left: 39vw;
   height: 7.0%;
   font-size: 1.0vw;

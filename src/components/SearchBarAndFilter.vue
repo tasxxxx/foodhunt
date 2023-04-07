@@ -118,6 +118,7 @@
           @change="postalCodeChange"
           @keyup="postalCodeChange"
           maxlength="6"
+          @updatePostalCode="handleUpdatePostalCode"
         ></v-text-field>
       </v-card-text>
     </v-card>
@@ -142,7 +143,7 @@ export default {
 
     methods: {
         onChange() {
-            this.$emit("search", this.searchText)
+          this.$emit("search", this.searchText)
         },
         postalCodeChange() {
           this.$emit("filterPostalCode", this.postalcode)
@@ -156,6 +157,10 @@ export default {
         this.price = []
         this.postalcode = ''
         console.log("clearFilters event received")
+      })
+
+      this.emitter.on("handleUpdatePostalCode", (value) => {
+        this.postalcode = value
       })
     },
 
