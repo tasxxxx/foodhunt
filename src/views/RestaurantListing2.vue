@@ -236,6 +236,7 @@ export default {
       this.emitter.emit("updatePostalCode", this.selectedPostalCode)
       this.handlePostalCode(this.selectedPostalCode)
     },
+
     handleSearch(value) {
       if (value && value.length > 0 && this.needOriginalSearch) {
         this.searchValue = value
@@ -278,9 +279,16 @@ export default {
     },
 
     handleCuisine(value) {
-      if (value.length > 0) {
+      if (value.length > 0 && this.searchOn) {
+        this.needOriginalSearch = true
         this.cuisineFilter = true
         this.selectedCuisineTags = value
+      } else if (value.length > 0) {
+        this.cuisineFilter = true
+        this.selectedCuisineTags = value
+      } else if (this.searchOn) {
+        this.needOriginalSearch = true
+        this.cuisineFilter = false
       } else {
         this.cuisineFilter = false
       }
@@ -288,10 +296,16 @@ export default {
     },
 
     handlePrice(value) {
-      if (value.length > 0) {
-        console.log(value)
+      if (value.length > 0 && this.searchOn) {
+        this.needOriginalSearch = true
         this.priceFilter = true
         this.selectedPriceTags = value
+      } else if (value.length > 0) {
+        this.priceFilter = true
+        this.selectedPriceTags = value
+      } else if (this.searchOn){
+        this.needOriginalSearch = true
+        this.priceFilter = false
       } else {
         this.priceFilter = false
       }
@@ -299,9 +313,16 @@ export default {
     },
 
     handlePostalCode(value) {
-      if (value && value.length >= 2) {
+      if (value && value.length >= 2 && this.searchOn) {
+        this.needOriginalSearch = true
         this.postalCodeFilter = true
         this.selectedPostalCode = value
+      } else if (value && value.length >= 2) {
+        this.postalCodeFilter = true
+        this.selectedPostalCode = value
+      } else if (this.searchOn) {
+        this.needOriginalSearch = true
+        this.postalCodeFilter = false
       } else {
         this.postalCodeFilter = false
       }
@@ -312,6 +333,10 @@ export default {
       if (this.cuisineFilter || this.priceFilter || this.postalCodeFilter) {
 
         this.showTagline = true;
+
+        if (this.searchOn) {
+          this.handleSearch(this.searchValue)
+        }
 
         if (this.cuisineFilter && (this.searchOn) ) {
           this.searchRestaurant = this.searchRestaurant.filter(r => {
@@ -339,7 +364,6 @@ export default {
           this.searchRestaurant = this.searchRestaurant.filter(r => {
           for (let i = 0; i < this.selectedPriceTags.length; i++) {
             const index = this.selectedPriceTags[i]
-            console.log(r.Price_Range === this.pricerange[index])
               if (r.Price_Range === this.pricerange[index]) {
                 return true
               }
@@ -350,7 +374,7 @@ export default {
           this.searchRestaurant = this.restaurants.filter(r => {
           for (let i = 0; i < this.selectedPriceTags.length; i++) {
             const index = this.selectedPriceTags[i]
-            console.log(r.Price_Range === this.pricerange[index])
+
               if (r.Price_Range === this.pricerange[index]) {
                 return true
               }
