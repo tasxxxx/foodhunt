@@ -7,10 +7,12 @@
         </v-breadcrumbs>
         <v-breadcrumbs id= "lpbreadcrumbs">
             <v-breadcrumbs-item :to="{ name: 'register'}">
-                Register / 
+                <v-icon icon="mdi-account-plus"></v-icon>
+                Register | 
             </v-breadcrumbs-item>
             <v-breadcrumbs-item :to="{ name: 'login'}">
-                Login
+                <v-icon icon="mdi-login"></v-icon>
+                Login 
             </v-breadcrumbs-item>
         </v-breadcrumbs>
     </div>
@@ -63,7 +65,7 @@
       top: -2.5vh; */
       /* left: 77vw; */
       font-family: Nunito; 
-      /* font-size: 1.1vw; */
+      font-size: 1.1vw;
       text-align: right;
       display: flex;
       float: right;

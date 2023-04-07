@@ -100,7 +100,7 @@
       top: -2.5vh; */
       /* left: 77vw; */
       font-family: Nunito; 
-      /* font-size: 1.1vw; */
+      font-size: 1.1vw;
       text-align: right;
       display: flex;
       float: right;
