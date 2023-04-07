@@ -61,8 +61,6 @@ export default {
     }
   },
 
-  emits:["landingPostalCode"],
-
   methods: {
     search() {
       if (this.postalcode.length == 0) {
@@ -73,8 +71,7 @@ export default {
         console.log("in landing.vue")
         console.log(this.postalcode)
         console.log(" ")
-        this.$router.push('/restaurantlisting')
-        this.emitter.emit("landingPostalCode", this.postalcode) 
+        this.$router.push({name: 'restaurantlisting', params: { postalcode: this.postalcode }})
 
       }
     }

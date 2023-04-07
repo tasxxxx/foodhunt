@@ -48,7 +48,6 @@
           v-model="cuisines"
           column
           multiple
-          @clearFilters="handleClearFilters"
         >
           <v-chip
             filter
@@ -118,7 +117,6 @@
           @change="postalCodeChange"
           @keyup="postalCodeChange"
           maxlength="6"
-          @updatePostalCode="handleUpdatePostalCode"
         ></v-text-field>
       </v-card-text>
     </v-card>
@@ -151,16 +149,19 @@ export default {
 
     },
 
+    mounted() {
+      this.emitter.on("selectedPostalCode", (value) => {
+        console.log("postal code event handled")
+        this.postalcode = value
+      })
+    },
+
     created() {
       this.emitter.on("clearFilters", () => {
         this.cuisines = []
         this.price = []
         this.postalcode = ''
         console.log("clearFilters event received")
-      })
-
-      this.emitter.on("handleUpdatePostalCode", (value) => {
-        this.postalcode = value
       })
     },
 
