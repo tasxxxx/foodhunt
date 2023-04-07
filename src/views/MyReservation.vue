@@ -8,7 +8,7 @@
         <h1 id="loadingmessage" >Loading your reservations...</h1>
       </div>
     <EmptyReservation v-else-if="reservations.length === 0 && showPlaceholder"/>
-    <div v-else style="margin-left:250px;">
+    <div v-else>
       <br>
       <br>
       <v-card

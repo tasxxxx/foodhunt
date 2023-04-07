@@ -493,7 +493,7 @@ a {
   border-radius: 15px;
   overflow: hidden;
   position: relative;
-  padding-left: 5px;
+  /* padding-left: 5px; */
 }
 
 .information {
