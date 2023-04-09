@@ -110,6 +110,7 @@ export default {
       postalCodeFilter: false,
       selectedPostalCode: '',
       showTagline: false,
+      showPlaceholder: false, // added this line
     }
   },
 

@@ -45,8 +45,8 @@
         >
           Log In
         </v-btn>
-        <router-link to="/restaurantlisting"  style= "font-family:Nunito"> Bypass Login </router-link> <br>
-        <router-link to="/vendor-dashboard"  style= "font-family:Nunito"> Bypass Login to vendor</router-link>
+        <!-- <router-link to="/restaurantlisting"  style= "font-family:Nunito"> Bypass Login </router-link> <br>
+        <router-link to="/vendor-dashboard"  style= "font-family:Nunito"> Bypass Login to vendor</router-link> -->
       </v-form>
       <div class="text-center mt-6" style="font-family:Nunito">
         <span>Don't have an account?</span>
