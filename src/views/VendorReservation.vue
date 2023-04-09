@@ -79,7 +79,7 @@
 
               <v-card-item>
                 <v-row>
-                  <v-col cols="9">
+                  <v-col cols="8">
                     <v-card-title>{{ items[selectedIndex].reservationNo }}</v-card-title>
                     <!-- <v-card-subtitle>Sold to Customer</v-card-subtitle> -->
                     <br>
@@ -93,7 +93,7 @@
                       ></v-icon>
                     </v-card-subtitle>
                   </v-col>
-                  <v-col cols="3" class="text-right">
+                  <v-col cols="4" class="text-right">
                     <v-card-subtitle>{{ items[selectedIndex].isPickedUp }}</v-card-subtitle>
                     <br>
                     <v-card-subtitle class="me-1">{{ items[selectedIndex].phoneNo }}</v-card-subtitle>
@@ -142,7 +142,7 @@
                 <br>
                 <v-divider></v-divider>
               </v-card-item>
-              <v-row>
+              <v-row v-show="items[selectedIndex].isPickedUp === 'Pending Pickup'">
                 <v-col cols="8">
                   <v-btn 
                     color="secondary" 
@@ -159,11 +159,13 @@
                     class="mt-6"
                     width="230"
                     @click="confirmPickup"
+                    
                   >
                     Confirm Pickup
                   </v-btn>
                 </v-col>
               </v-row>
+              
               <br>
               <br>
               
@@ -253,7 +255,9 @@ export default {
         const personalisationRef = await getDoc(doc(db, "restaurant_personalisation", userRestaurant_PersonalisationId));
         this.vendorLocation = personalisationRef.data().Address;
         this.vendorImageURL = personalisationRef.data().ProfileURL;
-        
+
+
+
         /*
         const restPersID = userRef.data().Restaurant_PersonalisationId; 
         console.log(restPersID)
@@ -263,7 +267,20 @@ export default {
         */
         
         const reservationRef = await getDocs(collection(db, "reservation_orders"));
-        const reservation = reservationRef.docs;
+        const reservation = reservationRef.docs
+        .sort((a, b) => {
+          if (a.data().isPickedUp && !b.data().isPickedUp) {
+            return 1;
+          } else if (!a.data().isPickedUp && b.data().isPickedUp) {
+            return -1;
+          } else {
+            const dateA = a.data().createdAt.toDate();
+            const dateB = b.data().createdAt.toDate();
+            return dateB - dateA;
+          }
+        });
+
+
         let items = [];
         for (const res of reservation) {
           let reservationHasVendor = false;
@@ -274,6 +291,17 @@ export default {
           let array = [];
           resObject.VendorItems = array;
           resObject.reservationTotal = 0;
+          const now = new Date()
+          const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+          const currentDay = days[now.getDay()]
+          const closingTime = personalisationRef.data()[currentDay].split(' - ')[1]        
+          const timestamp = resObject.createdAt;
+          const date0 = timestamp.toDate();
+          const dateString = date0.toDateString();
+          const timeString = date0.toLocaleTimeString();
+          const dateTimeString = dateString + ' ' + timeString;
+          const pickUpTime = dateString +", " + closingTime
+          resObject.collectBy = pickUpTime
 
           
           const date = new Date(resObject.createdAt.seconds*1000);
@@ -282,26 +310,25 @@ export default {
           const year = date.getFullYear();
           //const time = date.getTime();
           const time = date.toLocaleTimeString(undefined, {
-              hour:   '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
+            hour:   '2-digit',
+            minute: '2-digit',
+            hour12: false // Set hour12 option to false to display time in 24-hour format
           });
-          const formattedDate = `${dayOfMonth}/${month}/${year}, ${time} `;
+          const formattedDate = dateString + ", " + time;
           resObject.createdAt = formattedDate
           const formattedDateShort = `${dayOfMonth}/${month}/${year}`;
           resObject.createdAtShort = formattedDateShort;
           
-          const newDate = new Date(date.getTime() + 30 * 60000);
-          const dayOfMonth2 = date.getDate();
-          const month2 = date.getMonth() + 1; // Adding 1 because getMonth() returns zero-based month index
-          const year2 = date.getFullYear();
-          const time2 = newDate.toLocaleTimeString(undefined, {
-              hour:   '2-digit',
-              minute: '2-digit',
-              second: '2-digit',
-          });
-          const formattedDate2 = `${dayOfMonth2}/${month2}/${year2}, ${time2}`;
-          resObject.collectBy = formattedDate2
+          // const newDate = new Date(date.getTime() + 30 * 60000);
+          // const dayOfMonth2 = date.getDate();
+          // const month2 = date.getMonth() + 1; // Adding 1 because getMonth() returns zero-based month index
+          // const year2 = date.getFullYear();
+          // const time2 = newDate.toLocaleTimeString(undefined, {
+          //     hour:   '2-digit',
+          //     minute: '2-digit',
+          //     second: '2-digit',
+          // });
+          // const formattedDate2 = `${dayOfMonth2}/${month2}/${year2}, ${time2}`;
 
           if (resObject.isPickedUp) {
             resObject.isPickedUp = "Completed"
@@ -406,8 +433,16 @@ export default {
     },
     async cancelReservation() {
       //const reserveDoc = await getDoc(reserveRef);
-      console.log("Cancelling reservation")
-      try {
+      this.$swal.fire({
+          title: 'Are you sure?',
+          text: "Please confirm that you are cancelling the reservations?",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Confirm'
+        }).then(async (result) => {
+          if (result.isConfirmed) { try {
         const reservationNo = this.items[this.selectedIndex].reservationNo;
         const deleted_reservation = doc(db, "reservation_orders", reservationNo);
         const deleted_reservation_data = await getDoc(deleted_reservation);
@@ -448,7 +483,9 @@ export default {
           rtl: false
         });       
         
-      } catch {
+      } 
+      
+      catch {
         toast.error("Unsuccessful: Reservation cannot be cancelled", {
           position: "top-right",
           timeout: 2019,
@@ -464,17 +501,16 @@ export default {
           rtl: false
         });
       }
-      
-
-      
-    }
+          }
+    })
   },
   created() {
     setTimeout(() => {
       this.showPlaceholder = true;
-    }, 750);
+    }, 3750);
   },
-};
+} 
+}
 </script>
 
 <style scoped>

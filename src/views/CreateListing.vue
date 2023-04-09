@@ -59,7 +59,7 @@
           </v-col>
         </v-row>
 
-        <h3>Food Name</h3> <br>
+        <h3>Food Category</h3> <br>
         <v-text-field 
             v-model="category" 
             label="Food Category" 

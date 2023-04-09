@@ -122,7 +122,7 @@
                   </v-col>
                 </v-row>
 
-                <h3>Food Name</h3>
+                <h3>Food Category</h3>
                 <br />
                 <v-text-field
                   v-model="items[selectedIndex].Category"
