@@ -118,7 +118,7 @@
                     <v-card-subtitle> {{ vendorItem.quantity }} X {{ vendorItem.item }}</v-card-subtitle>
                   </v-col>
                   <v-col cols="2" class="text-right">
-                    <v-card-subtitle class="me-1">${{ parseInt(vendorItem.price).toFixed(2) }}</v-card-subtitle>
+                    <v-card-subtitle class="me-1">${{ vendorItem.subtotal.toFixed(2) }}</v-card-subtitle>
                   </v-col>
                   <v-divider inset></v-divider>
                 </v-row>
@@ -150,7 +150,7 @@
                     width="230"
                     @click="cancelReservation"
                   >
-                    Cancel Reservations
+                    Cancel Reservation
                   </v-btn>
                 </v-col>
                 <v-col cols="4">
@@ -312,7 +312,6 @@ export default {
           const time = date.toLocaleTimeString(undefined, {
             hour:   '2-digit',
             minute: '2-digit',
-            hour12: false // Set hour12 option to false to display time in 24-hour format
           });
           const formattedDate = dateString + ", " + time;
           resObject.createdAt = formattedDate
