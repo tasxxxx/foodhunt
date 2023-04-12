@@ -403,7 +403,7 @@ export default {
   created() {
     setTimeout(() => {
       this.showPlaceholder = true;
-    }, 750);
+    }, 3750);
   },
 };
 </script>

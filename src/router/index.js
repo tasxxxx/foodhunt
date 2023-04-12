@@ -20,8 +20,15 @@ import RestaurantListing from '../views/RestaurantListing2.vue';
 import VendorListing from '../views/VendorListing.vue';
 import Confirmation from '../views/confirmation.vue';
 import VendorReservation from '../views/VendorReservation.vue';
+import Error404 from '@/components/Error404.vue'
+
 
 const routes = [
+  {
+    path: '/:catchAll(.*)',
+    name: 'Error404',
+    component: Error404, 
+  },      
   {
     path: '/',
     name: 'landing',

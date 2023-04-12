@@ -218,7 +218,7 @@
         width:10vw;
       }
       .pa-6-wrapper {
-        padding:10vh;
+        padding:20vh;
         padding-left: 30vw;
         padding-right: 30vw;
       }

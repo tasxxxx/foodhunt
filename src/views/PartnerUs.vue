@@ -44,8 +44,8 @@ components:{
 }
 
 #box {
-    margin-top: 45vh;
-    margin-left: 28vw;
+    margin-top: 42vh;
+    margin-left: 31.5vw;
     width:700px;
     height:500px;
     padding-left: 20px;
