@@ -145,10 +145,12 @@ export default {
                 const userName = userRef.data().Name;
                 this.name = userRef.data().Name;
 
+                
                 const listingRef = await getDocs(collection(db, "food_listings"));
                 const listing = listingRef.docs;
                 for (const lis of listing) {
                     const lisObject = lis.data();
+                    // console.log(lisObject.VendorID + " = " + vendorID)
                     if (lisObject.VendorID === vendorID) {
                         this.totalListings = this.totalListings + 1;
                     }

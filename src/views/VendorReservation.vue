@@ -212,34 +212,9 @@ export default {
       noReserve: true,
       showPlaceholder: false, // Add a boolean data property
       selected: false,
-  
-
-      /*
-      items: [
-        {
-          title: "Item 1",
-          description: "This is item 1",
-          number: 1,
-          image: "https://picsum.photos/id/237/200/300"
-        },
-        {
-          title: "Item 2",
-          description: "This is item 2",
-          number: 2,
-          image: "https://picsum.photos/id/238/200/300"
-        },
-        {
-          title: "Item 3",
-          description: "This is item 3",
-          number: 3,
-          image: "https://picsum.photos/id/239/200/300"
-        },
-      */
     };
   },
   async mounted() {
-    // KIV
-    //this.vendorImageURL = "https://picsum.photos/id/237/200/300";
     console.log("Mounted is run")
     onAuthStateChanged(auth, async (user) => {
       if (user) {
@@ -250,21 +225,10 @@ export default {
         const userRef = await getDoc(doc(db, "Users", curr_email));
         const userName = userRef.data().Name;
 
-
         const userRestaurant_PersonalisationId = userRef.data().Restaurant_PersonalisationId;
         const personalisationRef = await getDoc(doc(db, "restaurant_personalisation", userRestaurant_PersonalisationId));
         this.vendorLocation = personalisationRef.data().Address;
         this.vendorImageURL = personalisationRef.data().ProfileURL;
-
-
-
-        /*
-        const restPersID = userRef.data().Restaurant_PersonalisationId; 
-        console.log(restPersID)
-        const personalisationRef = await getDoc(doc(db, "restaurant_personalisation", restPersID));
-        const personalisation = personalisationRef.data();
-        this.vendorLocation = personalisation.Address;
-        */
         
         const reservationRef = await getDocs(collection(db, "reservation_orders"));
         const reservation = reservationRef.docs
@@ -280,93 +244,71 @@ export default {
           }
         });
 
-
         let items = [];
         for (const res of reservation) {
           let reservationHasVendor = false;
           const resObject = res.data();
-          // const userRef = await getDoc(doc(db, "Users", resObject.user));
-          // this.CustName = userRef.data().Name;
-          
-          let array = [];
-          resObject.VendorItems = array;
-          resObject.reservationTotal = 0;
-          const now = new Date()
-          const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-          const currentDay = days[now.getDay()]
-          const closingTime = personalisationRef.data()[currentDay].split(' - ')[1]        
-          const timestamp = resObject.createdAt;
-          const date0 = timestamp.toDate();
-          const dateString = date0.toDateString();
-          const timeString = date0.toLocaleTimeString();
-          const dateTimeString = dateString + ' ' + timeString;
-          const pickUpTime = dateString +", " + closingTime
-          resObject.collectBy = pickUpTime
+          const isConfirmed = resObject.confirmed;
+          if (isConfirmed) {
+            let array = [];
+            resObject.VendorItems = array;
+            resObject.reservationTotal = 0;
+            const now = new Date()
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+            const currentDay = days[now.getDay()]
+            const closingTime = personalisationRef.data()[currentDay].split(' - ')[1]        
+            const timestamp = resObject.createdAt;
+            const date0 = timestamp.toDate();
+            const dateString = date0.toDateString();
+            const timeString = date0.toLocaleTimeString();
+            const dateTimeString = dateString + ' ' + timeString;
+            const pickUpTime = dateString +", " + closingTime
+            resObject.collectBy = pickUpTime
 
-          
-          const date = new Date(resObject.createdAt.seconds*1000);
-          const dayOfMonth = date.getDate();
-          const month = date.getMonth() + 1; // Adding 1 because getMonth() returns zero-based month index
-          const year = date.getFullYear();
-          //const time = date.getTime();
-          const time = date.toLocaleTimeString(undefined, {
-            hour:   '2-digit',
-            minute: '2-digit',
-          });
-          const formattedDate = dateString + ", " + time;
-          resObject.createdAt = formattedDate
-          const formattedDateShort = `${dayOfMonth}/${month}/${year}`;
-          resObject.createdAtShort = formattedDateShort;
-          
-          // const newDate = new Date(date.getTime() + 30 * 60000);
-          // const dayOfMonth2 = date.getDate();
-          // const month2 = date.getMonth() + 1; // Adding 1 because getMonth() returns zero-based month index
-          // const year2 = date.getFullYear();
-          // const time2 = newDate.toLocaleTimeString(undefined, {
-          //     hour:   '2-digit',
-          //     minute: '2-digit',
-          //     second: '2-digit',
-          // });
-          // const formattedDate2 = `${dayOfMonth2}/${month2}/${year2}, ${time2}`;
-
-          if (resObject.isPickedUp) {
-            resObject.isPickedUp = "Completed"
-          } else {
-            resObject.isPickedUp = "Pending Pickup"
-          }
-
-          //get User of this reservation
-          const cust_email = resObject.user;
-          const custRef = await getDoc(doc(db, "Users", cust_email));
-          const custObj = custRef.data();
-          if (custObj) {
-              resObject.phoneNo = custObj.PhoneNo;
-          }
-          
-          const cart = resObject.cart;
-          // For each item in cart
-          for (const cartItem of cart) {
-          //console.log(vendorID + " - " + prod.data().VendorID)
             
-            //console.log("currName: " + cartItem.restaurant);
-            if (userName == cartItem.restaurant) { //This listing is by the current vendor
-
-              this.noReserve = false;
-              reservationHasVendor = true;
-              //const userDocument = await getDoc(doc(db, "food_listings", prod.id));     
-              //console.log(cartItem)
-              const vendorItems = resObject.VendorItems;
-              vendorItems.push(cartItem);
-              //console.log("curre: ")
-              //this.vendorTotal = this.vendorTotal + cartItem.subtotal;
-              //resObject.reservationTotal = resObject.reservationTotal + cartItem.subtotal;
-              
-              resObject.VendorItems = vendorItems
-              
+            const date = new Date(resObject.createdAt.seconds*1000);
+            const dayOfMonth = date.getDate();
+            const month = date.getMonth() + 1; // Adding 1 because getMonth() returns zero-based month index
+            const year = date.getFullYear();
+            //const time = date.getTime();
+            const time = date.toLocaleTimeString(undefined, {
+              hour:   '2-digit',
+              minute: '2-digit',
+            });
+            const formattedDate = dateString + ", " + time;
+            resObject.createdAt = formattedDate
+            const formattedDateShort = `${dayOfMonth}/${month}/${year}`;
+            resObject.createdAtShort = formattedDateShort;
+            
+            if (resObject.isPickedUp) {
+              resObject.isPickedUp = "Completed"
+            } else {
+              resObject.isPickedUp = "Pending Pickup"
             }
-          }
-          if (reservationHasVendor) {
-            items.push(resObject);
+
+            //get User of this reservation
+            const cust_email = resObject.user;
+            const custRef = await getDoc(doc(db, "Users", cust_email));
+            const custObj = custRef.data();
+            if (custObj) {
+                resObject.phoneNo = custObj.PhoneNo;
+            }
+            
+            const cart = resObject.cart;
+            // For each item in cart
+            for (const cartItem of cart) {
+              if (userName == cartItem.restaurant) { //This listing is by the current vendor
+                this.noReserve = false;
+                reservationHasVendor = true;
+                const vendorItems = resObject.VendorItems;
+                vendorItems.push(cartItem);
+                resObject.VendorItems = vendorItems
+                
+              }
+            }
+            if (reservationHasVendor) {
+              items.push(resObject);
+            }
           }
         }   
         this.items = items;
@@ -380,13 +322,17 @@ export default {
       } else {
         console.log("No user")
       }
-    });
-      
+    });  
   },
   computed: {
     selectedCard() {
       return this.items[this.selectedIndex];
     }
+  },
+  created() {
+    setTimeout(() => {
+      this.showPlaceholder = true;
+    }, 3750);
   },
   methods: {
     async confirmPickup() {
@@ -431,84 +377,76 @@ export default {
       }
     },
     async cancelReservation() {
-      //const reserveDoc = await getDoc(reserveRef);
       this.$swal.fire({
-          title: 'Are you sure?',
-          text: "Please confirm that you are cancelling the reservations?",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Confirm'
-        }).then(async (result) => {
-          if (result.isConfirmed) { try {
-        const reservationNo = this.items[this.selectedIndex].reservationNo;
-        const deleted_reservation = doc(db, "reservation_orders", reservationNo);
-        const deleted_reservation_data = await getDoc(deleted_reservation);
-        console.log("deleted reservation")
-        console.log(deleted_reservation_data.data())
-        const products = deleted_reservation_data.data().cart  
-        console.log(products)
-        // const deletedItems = products.map(product => product.foodID);
-        const deletedItems = products.map(product => ({foodID: product.foodID, quantity: product.quantity}));
+        title: 'Are you sure?',
+        text: "Please confirm that you are cancelling the reservations?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Confirm'
+      }).then(async (result) => {
+        if (result.isConfirmed) { 
+          try {
+            const reservationNo = this.items[this.selectedIndex].reservationNo;
+            const deleted_reservation = doc(db, "reservation_orders", reservationNo);
+            const deleted_reservation_data = await getDoc(deleted_reservation);
+            console.log("deleted reservation")
+            console.log(deleted_reservation_data.data())
+            const products = deleted_reservation_data.data().cart  
+            console.log(products)
+            // const deletedItems = products.map(product => product.foodID);
+            const deletedItems = products.map(product => ({foodID: product.foodID, quantity: product.quantity}));
 
-        console.log(deletedItems)
+            console.log(deletedItems)
 
-        for (const item of deletedItems) {
-          const itemRef = doc(db, "food_listings", item.foodID);
-          // const itemRef = doc(foodListingsRef, item);
-          const itemDoc = await getDoc(itemRef);
-          console.log("item doc")
-          console.log(itemDoc)
-          const availableQty = itemDoc.data().AvailableQty;
-          await updateDoc(itemRef, { AvailableQty: availableQty + item.quantity });
-          // await updateDoc(itemRef, { AvailableQty: availableQty + 1 });
-        }
-        await deleteDoc(doc(db, "reservation_orders", reservationNo));
-        this.$router.push('/vendor-dashboard');
+            for (const item of deletedItems) {
+              const itemRef = doc(db, "food_listings", item.foodID);
+              // const itemRef = doc(foodListingsRef, item);
+              const itemDoc = await getDoc(itemRef);
+              console.log("item doc")
+              console.log(itemDoc)
+              const availableQty = itemDoc.data().AvailableQty;
+              await updateDoc(itemRef, { AvailableQty: availableQty + item.quantity });
+              // await updateDoc(itemRef, { AvailableQty: availableQty + 1 });
+            }
+            await deleteDoc(doc(db, "reservation_orders", reservationNo));
+            this.$router.push('/vendor-dashboard');
 
-        toast.success("Reservation has been cancelled", {
-          position: "top-right",
-          timeout: 2019,
-          closeOnClick: true,
-          pauseOnFocusLoss: false,
-          pauseOnHover: false,
-          draggable: true,
-          draggablePercent: 2,
-          showCloseButtonOnHover: false,
-          hideProgressBar: false,
-          closeButton: "button",
-          icon: true,
-          rtl: false
-        });       
-        
-      } 
-      
-      catch {
-        toast.error("Unsuccessful: Reservation cannot be cancelled", {
-          position: "top-right",
-          timeout: 2019,
-          closeOnClick: true,
-          pauseOnFocusLoss: false,
-          pauseOnHover: false,
-          draggable: true,
-          draggablePercent: 2,
-          showCloseButtonOnHover: false,
-          hideProgressBar: false,
-          closeButton: "button",
-          icon: true,
-          rtl: false
-        });
-      }
+            toast.success("Reservation has been cancelled", {
+              position: "top-right",
+              timeout: 2019,
+              closeOnClick: true,
+              pauseOnFocusLoss: false,
+              pauseOnHover: false,
+              draggable: true,
+              draggablePercent: 2,
+              showCloseButtonOnHover: false,
+              hideProgressBar: false,
+              closeButton: "button",
+              icon: true,
+              rtl: false
+            });       
+          } catch {
+            toast.error("Unsuccessful: Reservation cannot be cancelled", {
+              position: "top-right",
+              timeout: 2019,
+              closeOnClick: true,
+              pauseOnFocusLoss: false,
+              pauseOnHover: false,
+              draggable: true,
+              draggablePercent: 2,
+              showCloseButtonOnHover: false,
+              hideProgressBar: false,
+              closeButton: "button",
+              icon: true,
+              rtl: false
+            });
           }
-    })
+        }
+      })
+    },
   },
-  created() {
-    setTimeout(() => {
-      this.showPlaceholder = true;
-    }, 3750);
-  },
-} 
 }
 </script>
 

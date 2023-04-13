@@ -257,7 +257,7 @@ export default {
         this.loading = false;
         // this.selectedItem = this.items[0];
         // console.log(this.selectedCard)
-        console.log(this.items[this.selectedIndex].ImageURL);
+        //console.log(this.items[this.selectedIndex].ImageURL);
       } else {
         console.log("No user");
       }
