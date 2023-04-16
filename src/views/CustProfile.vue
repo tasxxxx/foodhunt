@@ -23,6 +23,7 @@
             hint="Enter your new SG phone number"
             style="font-family:Nunito"
             variant="solo"
+            :readonly="isReadOnly"
             :error-messages="formErrors.phoneNo"
           ></v-text-field>
           <v-alert
