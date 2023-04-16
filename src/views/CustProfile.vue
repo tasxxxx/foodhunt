@@ -22,7 +22,6 @@
             type="text"
             hint="Enter your new SG phone number"
             style="font-family:Nunito"
-            variant="solo"
             :readonly="isReadOnly"
             :error-messages="formErrors.phoneNo"
           ></v-text-field>
@@ -33,9 +32,9 @@
             v-if="showPISuccess"
             closable
           ></v-alert>
-          <br>
+          <!-- <br>
           <v-btn id="pibtn" type="submit" color="primary" block style="font-family:Nunito;">Save changes</v-btn>
-          <br>
+          <br> -->
         </v-form>
         <v-form ref="form2" @submit.prevent="updatePW">
           <h2 style="font-family:Nunito;" class="text-center mb-7">Password</h2>
@@ -156,25 +155,25 @@
       // return regex.test(email.trim());
       // },
 
-      validPhoneNo(phoneNo) {
-        const SGNo = ["6", "8", "9"];
-        if (phoneNo.length != 8) {
-          return false;
-        }
-        if (! SGNo.includes(phoneNo.substring(0, 1))) {
-          return false;
-        }
-        return true;
-      },
+      // validPhoneNo(phoneNo) {
+      //   const SGNo = ["6", "8", "9"];
+      //   if (phoneNo.length != 8) {
+      //     return false;
+      //   }
+      //   if (! SGNo.includes(phoneNo.substring(0, 1))) {
+      //     return false;
+      //   }
+      //   return true;
+      // },
 
-      async PhoneNoUsed(phoneNo) {
-      this.allphoneNo = []; // Reset the array at the beginning
-      const userRef = await getDocs(collection(db, "Users"));
-      userRef.forEach((doc) => {
-        this.allphoneNo.push(doc.data().PhoneNo)
-      });
-      return this.allphoneNo.includes(phoneNo); 
-      },
+      // async PhoneNoUsed(phoneNo) {
+      // this.allphoneNo = []; // Reset the array at the beginning
+      // const userRef = await getDocs(collection(db, "Users"));
+      // userRef.forEach((doc) => {
+      //   this.allphoneNo.push(doc.data().PhoneNo)
+      // });
+      // return this.allphoneNo.includes(phoneNo); 
+      // },
 
       async updatePW() {
         const auth = getAuth();
@@ -188,26 +187,26 @@
           }
         })},
 
-      async updatePIfirebase() {
-        const auth = getAuth();
-        onAuthStateChanged(auth, user => {
-          if (user) {
-            const userID = user.uid;
-            console.log("User ID: " + userID);
-            const docRef = doc(db, "Users", this.user.email)
-            setDoc(docRef, {
-            UserID: userID,
-            UserType: "Customer",
-            Email: this.form.email,
-            PhoneNo: this.form.phoneNo
-            }).then(docRef =>
-              this.showPISuccess="true"
-            )
-          } else {
-            console.log('error');
-          }
-        });
-    },
+    //   async updatePIfirebase() {
+    //     const auth = getAuth();
+    //     onAuthStateChanged(auth, user => {
+    //       if (user) {
+    //         const userID = user.uid;
+    //         console.log("User ID: " + userID);
+    //         const docRef = doc(db, "Users", this.user.email)
+    //         setDoc(docRef, {
+    //         UserID: userID,
+    //         UserType: "Customer",
+    //         Email: this.form.email,
+    //         PhoneNo: this.form.phoneNo
+    //         }).then(docRef =>
+    //           this.showPISuccess="true"
+    //         )
+    //       } else {
+    //         console.log('error');
+    //       }
+    //     });
+    // },
   }
 }
 </script>
