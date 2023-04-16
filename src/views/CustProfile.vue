@@ -20,7 +20,6 @@
            <v-text-field
             v-model="form.phoneNo"
             type="text"
-            hint="Enter your new SG phone number"
             style="font-family:Nunito"
             :readonly="isReadOnly"
             :error-messages="formErrors.phoneNo"
